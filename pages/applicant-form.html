@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Applicant Form | QuestServ Hiring System</title>
+  <style>
+    :root {
+      --ink-900: #111827;
+      --ink-700: #374151;
+      --ink-500: #6b7280;
+      --surface-100: #f3f4f6;
+      --surface-50: #f9fafb;
+      --white: #ffffff;
+      --gray-900: #1f2937;
+      --gray-700: #4b5563;
+      --gray-500: #6b7280;
+      --gray-300: #d1d5db;
+      --gray-200: #e5e7eb;
+      --red-600: #dc2626;
+      --shadow: 0 24px 60px rgba(17, 24, 39, 0.1);
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--gray-900);
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .signup-shell {
+      width: 100%;
+      max-width: 1160px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+      background: var(--white);
+      border: 1px solid #e5e7eb;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .signup-aside {
+      background: var(--white);
+      color: var(--ink-900);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 20px;
+      border-right: 1px solid var(--gray-200);
+    }
+
+    .brand-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--surface-100);
+      border: 1px solid #e5e7eb;
+    }
+
+    .brand-row img {
+      width: 34px;
+      height: 34px;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .brand-row span {
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-size: 0.95rem;
+      color: var(--ink-900);
+    }
+
+    .signup-intro {
+      display: grid;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .signup-aside h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2rem, 3vw, 3rem);
+      line-height: 1.05;
+      color: var(--ink-900);
+    }
+
+    .signup-aside p {
+      margin: 0;
+      color: var(--ink-700);
+      line-height: 1.7;
+    }
+
+
+    .quest-main-image {
+      width: 100%;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      object-fit: contain;
+      max-height: 180px;
+    }
+
+    .quest-thumb-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .quest-thumb {
+      width: 100%;
+      height: 72px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      padding: 8px;
+    }
+
+    .role-note,
+    .feature-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .role-note {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .role-note strong {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .feature-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #7dd3a7;
+      flex-shrink: 0;
+    }
+
+    .signup-card {
+      padding: 36px 32px;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .signup-card-inner {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .card-header h2 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      color: var(--ink-900);
+    }
+
+    .card-header p {
+      margin: 0;
+      color: var(--gray-700);
+      line-height: 1.65;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--ink-900);
+      border: 1px solid #c7ced9;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 700;
+      white-space: nowrap;
+      background: #ffffff;
+      box-shadow: 0 1px 2px rgba(17, 24, 39, 0.06);
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .back-link:hover {
+      background: #f8fafc;
+      border-color: #9ca3af;
+      transform: translateY(-1px);
+    }
+
+    .back-link:focus-visible {
+      outline: 2px solid #94a3b8;
+      outline-offset: 2px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .input,
+    .select,
+    .file-input {
+      width: 100%;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      font: inherit;
+      color: var(--gray-900);
+      background: var(--white);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input:focus,
+    .select:focus,
+    .file-input:focus {
+      outline: none;
+      border-color: #9ca3af;
+      box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.08);
+    }
+
+    .helper {
+      font-size: 0.84rem;
+      color: var(--gray-500);
+    }
+
+    .error-text {
+      min-height: 18px;
+      font-size: 0.84rem;
+      color: var(--red-600);
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding-top: 6px;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--ink-900);
+    }
+
+    .checkbox-row label {
+      font-weight: 600;
+      color: var(--gray-700);
+      line-height: 1.5;
+    }
+
+    .submit-row {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .submit-btn {
+      border: 0;
+      border-radius: var(--radius-md);
+      background: var(--ink-900);
+      color: var(--white);
+      font: inherit;
+      font-weight: 700;
+      padding: 15px 18px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: #0b1220;
+    }
+
+    .submit-btn:disabled {
+      cursor: wait;
+      opacity: 0.72;
+    }
+
+    .form-message {
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .form-message.error {
+      display: block;
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .form-message.success {
+      display: block;
+      background: #ecfdf3;
+      color: #14532d;
+      border: 1px solid #bbf7d0;
+    }
+
+    @media (max-width: 920px) {
+      .signup-shell {
+        grid-template-columns: 1fr;
+      }
+      .signup-aside,
+      .signup-card { padding: 28px 22px; }
+      .card-header { flex-direction: column; }
+      .signup-aside {
+        gap: 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--gray-200);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 14px; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <section class="signup-shell">
+    <aside class="signup-aside">
+      <div class="signup-intro">
+        <div class="brand-row" aria-label="QuestServ brand">
+          <img src="../assets/logo.png" alt="QuestServ logo" />
+          <span>QuestServ Solutions Inc.</span>
+        </div>
+      </div>
+
+      <div class="quest-image-stage" aria-label="QuestServ company visuals">
+      </div>
+
+    </aside>
+
+    <div class="signup-card">
+      <div class="signup-card-inner">
+      <div class="card-header">
+        <div>
+          <h2>Applicant Form</h2>
+          <p>Fill out the required details below to submit your applicant form.</p>
+        </div>
+        <a class="back-link" href="/index.html">Back</a>
+      </div>
+
+      <form id="signupForm" novalidate>
+        <div class="form-grid">
+          <div class="field full">
+            <label for="fullName">Full Name</label>
+            <input class="input" type="text" id="fullName" name="full_name" />
+            <span class="error-text" id="fullNameError"></span>
+          </div>
+
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input class="input" type="email" id="email" name="email" />
+            <span class="error-text" id="emailError"></span>
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input class="input" type="text" id="phone" name="phone" />
+            <span class="error-text" id="phoneError"></span>
+          </div>
+
+          <div class="field full">
+            <label for="position">Position Applying For</label>
+            <select class="select" id="position" name="position">
+              <option value="">Loading available jobs...</option>
+            </select>
+            <span class="error-text" id="positionError"></span>
+          </div>
+
+          <div class="field full">
+            <label for="resume">Resume Upload</label>
+            <input class="file-input" type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" />
+            <span class="helper">Accepted formats: PDF, DOC, DOCX</span>
+            <span class="error-text" id="resumeError"></span>
+          </div>
+
+          <div class="field full">
+            <div class="checkbox-row">
+              <input type="checkbox" id="terms" name="terms" />
+              <label for="terms">I agree to the Terms &amp; Conditions and confirm that all provided information is correct.</label>
+            </div>
+            <span class="error-text" id="termsError"></span>
+          </div>
+        </div>
+
+        <div class="submit-row">
+          <button id="submitBtn" class="submit-btn" type="submit">Submit Applicant Form</button>
+          <div id="formMessage" class="form-message" role="alert" aria-live="polite"></div>
+        </div>
+      </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const API_BASE = window.location.origin.includes(':5000')
+      ? '/api'
+      : 'http://localhost:5000/api';
+
+    const form = document.getElementById('signupForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formMessage = document.getElementById('formMessage');
+
+    const fields = {
+      fullName: document.getElementById('fullName'),
+      email: document.getElementById('email'),
+      phone: document.getElementById('phone'),
+      position: document.getElementById('position'),
+      resume: document.getElementById('resume'),
+      terms: document.getElementById('terms')
+    };
+
+    const errors = {
+      fullName: document.getElementById('fullNameError'),
+      email: document.getElementById('emailError'),
+      phone: document.getElementById('phoneError'),
+      position: document.getElementById('positionError'),
+      resume: document.getElementById('resumeError'),
+      terms: document.getElementById('termsError')
+    };
+
+    function setError(fieldName, message) {
+      errors[fieldName].textContent = message;
+    }
+
+    function clearErrors() {
+      Object.values(errors).forEach((node) => {
+        node.textContent = '';
+      });
+      formMessage.className = 'form-message';
+      formMessage.textContent = '';
+    }
+
+    function showFormMessage(type, message) {
+      formMessage.className = `form-message ${type}`;
+      formMessage.textContent = message;
+    }
+
+    function validateEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function validateResume(file) {
+      if (!file) return false;
+      const allowed = ['pdf', 'doc', 'docx'];
+      const extension = file.name.split('.').pop().toLowerCase();
+      return allowed.includes(extension);
+    }
+
+    async function loadAvailableJobs() {
+      try {
+        fields.position.disabled = true;
+        fields.position.innerHTML = '<option value="">Loading available jobs...</option>';
+
+        const res = await fetch('/api/jobs');
+        const jobs = await res.json().catch(() => []);
+
+        if (!res.ok) {
+          throw new Error('Failed to load jobs');
+        }
+
+        if (!Array.isArray(jobs) || !jobs.length) {
+          fields.position.innerHTML = '<option value="">No jobs available yet</option>';
+          return;
+        }
+
+        fields.position.innerHTML = '<option value="">Select a position</option>';
+        jobs.forEach((job) => {
+          const option = document.createElement('option');
+          option.value = job.title;
+          option.textContent = job.title;
+          fields.position.appendChild(option);
+        });
+      } catch (error) {
+        fields.position.innerHTML = '<option value="">No jobs available right now</option>';
+        setError('position', 'Unable to load available jobs.');
+      } finally {
+        fields.position.disabled = false;
+      }
+    }
+
+    function validateForm() {
+      let isValid = true;
+
+      const fullName = fields.fullName.value.trim();
+      const email = fields.email.value.trim();
+      const phone = fields.phone.value.trim();
+      const position = fields.position.value;
+      const resume = fields.resume.files[0];
+      const acceptedTerms = fields.terms.checked;
+
+      if (!fullName) {
+        setError('fullName', 'Full Name is required.');
+        isValid = false;
+      }
+
+      if (!email) {
+        setError('email', 'Email Address is required.');
+        isValid = false;
+      } else if (!validateEmail(email)) {
+        setError('email', 'Enter a valid email address.');
+        isValid = false;
+      }
+
+      if (!phone) {
+        setError('phone', 'Phone Number is required.');
+        isValid = false;
+      }
+
+      if (!position) {
+        setError('position', 'Please select a position.');
+        isValid = false;
+      }
+
+      if (!resume) {
+        setError('resume', 'Resume upload is required.');
+        isValid = false;
+      } else if (!validateResume(resume)) {
+        setError('resume', 'Only PDF, DOC, or DOCX files are allowed.');
+        isValid = false;
+      }
+
+      if (!acceptedTerms) {
+        setError('terms', 'You must accept the Terms & Conditions.');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    async function submitToSystem(payload) {
+      // Keep the requested JSON payload visible for debugging / simulation.
+      console.log('Signup Payload:', payload);
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: payload.full_name,
+          email: payload.email,
+          password: 'temp12345',
+          role: 'user'
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || 'Request failed');
+      }
+      return data;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearErrors();
+
+      const isValid = validateForm();
+      if (!isValid) {
+        showFormMessage('error', 'Request failed');
+        return;
+      }
+
+      const payload = {
+        full_name: fields.fullName.value.trim(),
+        email: fields.email.value.trim(),
+        phone: fields.phone.value.trim(),
+        position: fields.position.value,
+        role: 'user'
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting Form...';
+
+      try {
+        await submitToSystem(payload);
+        showFormMessage('success', 'Applicant form submitted successfully.');
+        form.reset();
+      } catch (error) {
+        showFormMessage('error', error.message || 'Request failed');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Applicant Form';
+      }
+    });
+
+    loadAvailableJobs();
+  </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Jobs | Questserv</title>
+  <link rel="stylesheet" href="/src/styles/theme.css" />
+</head>
+<body>
+  <header class="navbar admin-navbar">
+    <div class="container nav-wrap">
+      <a href="/index.html" class="site-brand" aria-label="QuestServ home">
+        <img class="brand-logo brand-logo-icon" src="/assets/logo.png" alt="QuestServ logo" />
+        <span class="brand-text" aria-hidden="true">
+          <span class="brand-title">QUESTSERV</span>
+          <span class="brand-subtitle">SOLUTIONS INC.</span>
+        </span>
+      </a>
+      <div class="admin-head-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input type="text" placeholder="Search applicants, posts, users..." />
+      </div>
+      <div class="admin-head-actions">
+        <button type="button" class="admin-head-icon" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V10a6 6 0 0 0-12 0v4.2a2 2 0 0 1-.6 1.4L4 17h5"></path><path d="M9 17a3 3 0 0 0 6 0"></path></svg>
+        </button>
+        <button type="button" class="admin-head-icon" aria-label="Messages">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="m4 7 8 6 8-6"></path></svg>
+        </button>
+        <div class="admin-user-pill">
+          <span class="admin-user-avatar">A</span>
+          <span>Admin</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="sidebar" id="sidebar">
+      <nav class="sidebar-nav" aria-label="Admin navigation">
+        <a class="sidebar-link" href="/pages/admin-dashboard.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="sidebar-link" href="/pages/admin-applicants.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><path d="M20 8v6"></path><path d="M23 11h-6"></path></svg>
+          <span>Applicants</span>
+        </a>
+        <a class="sidebar-link is-disabled" href="javascript:void(0)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><circle cx="18" cy="8" r="3"></circle></svg>
+          <span>User Management</span>
+        </a>
+        <a class="sidebar-link active" href="/pages/admin-jobs.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+          <span>Job Hire Templates</span>
+        </a>
+        <a class="sidebar-link" href="/pages/admin-home-posts.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
+          <span>Home Posts</span>
+        </a>
+        <a class="sidebar-link" href="/pages/admin-settings.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.76l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.6 1.6 0 0 0-1.76-.32 1.6 1.6 0 0 0-1 1.45V21a2 2 0 0 1-4 0v-.09a1.6 1.6 0 0 0-1-1.45 1.6 1.6 0 0 0-1.76.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .32-1.76 1.6 1.6 0 0 0-1.45-1H3a2 2 0 0 1 0-4h.09a1.6 1.6 0 0 0 1.45-1 1.6 1.6 0 0 0-.32-1.76l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.76.32h.01a1.6 1.6 0 0 0 1-1.45V3a2 2 0 1 1 4 0v.09a1.6 1.6 0 0 0 1 1.45 1.6 1.6 0 0 0 1.76-.32l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.32 1.76v.01a1.6 1.6 0 0 0 1.45 1H21a2 2 0 0 1 0 4h-.09a1.6 1.6 0 0 0-1.45 1Z"></path></svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+      <div class="sidebar-foot">
+        <button id="nav-logout" class="btn sidebar-link sidebar-logout" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+    <main class="admin-main">
+      <button id="mobile-toggle" class="btn btn-secondary mobile-toggle">Menu</button>
+      <h1 class="admin-title">Job Hire Templates</h1>
+      <p class="admin-subtitle">Create and publish hiring post templates</p>
+
+      <section class="job-template-grid">
+        <article class="panel job-editor-panel">
+          <h2 class="job-editor-title">Upload Image</h2>
+          <label class="job-upload-zone" for="template-image">
+            <input id="template-image" type="file" accept="image/*" hidden />
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4"></path><path d="m7 9 5-5 5 5"></path><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"></path></svg>
+            <p>Drag &amp; Drop your image here</p>
+            <span class="muted">or</span>
+            <span class="btn btn-primary">Browse Files</span>
+          </label>
+          <button type="button" class="btn btn-secondary job-change-image">Change Image</button>
+
+          <div class="job-section-divider"></div>
+          <h3>Image Editing Tools</h3>
+          <div class="job-tools-grid">
+            <button type="button" class="job-tool-btn">Crop</button>
+            <button type="button" class="job-tool-btn">Resize</button>
+            <button type="button" class="job-tool-btn">Brightness</button>
+            <button type="button" class="job-tool-btn">Contrast</button>
+            <button type="button" class="job-tool-btn full">Text Overlay</button>
+          </div>
+
+          <div class="job-section-divider"></div>
+          <h3>Job Content</h3>
+          <div id="feedback"></div>
+          <form id="job-form" class="job-content-form">
+            <input type="hidden" id="job_id" />
+            <label>Job Title
+              <input class="input" name="title" placeholder="Senior Software Engineer" required />
+            </label>
+            <label>Description
+              <textarea class="textarea" name="description" placeholder="Join our innovative team and build cutting-edge solutions" required></textarea>
+            </label>
+            <label>Hiring Details
+              <input class="input" name="details" placeholder="Full-time • Remote • $120k-$160k" />
+            </label>
+            <label>CTA Text
+              <input class="input" name="cta" placeholder="Apply Now" />
+            </label>
+
+            <div class="job-section-divider"></div>
+            <h3>Style Controls</h3>
+            <label>Font Style
+              <select class="select" name="fontFamily" id="style-font-family">
+                <option value="Inter">Inter</option>
+                <option value="Manrope">Manrope</option>
+                <option value="Arial">Arial</option>
+                <option value="Georgia">Georgia</option>
+              </select>
+            </label>
+            <label>Font Size: <span id="style-font-size-label">24px</span>
+              <input type="range" id="style-font-size" min="16" max="42" value="24" />
+            </label>
+            <label>Text Color
+              <div class="job-color-row">
+                <input type="color" id="style-text-color-picker" value="#ffffff" />
+                <input class="input" name="textColor" id="style-text-color" value="#ffffff" />
+              </div>
+            </label>
+            <label>Background Overlay: <span id="style-overlay-label">60%</span>
+              <input type="range" id="style-overlay" min="0" max="100" value="60" />
+            </label>
+
+            <div class="job-section-divider"></div>
+            <h3>Actions</h3>
+            <button id="save-draft-btn" class="btn btn-secondary job-action-btn" type="button">Save Draft</button>
+            <button id="preview-post-btn" class="btn btn-secondary job-action-btn" type="button">Preview Post</button>
+            <button id="job-save-btn" class="btn btn-primary job-action-btn job-publish-btn" type="submit">Publish Post</button>
+          </form>
+        </article>
+
+        <aside class="panel job-preview-panel">
+          <h3>Live Preview</h3>
+          <article class="job-preview-card" id="job-preview-card">
+            <h4 id="preview-title">Senior Software Engineer</h4>
+            <p id="preview-description">Join our innovative team and build cutting-edge solutions</p>
+            <p class="job-preview-meta" id="preview-meta">Full-time • Remote • $120k-$160k</p>
+            <button type="button" class="btn job-preview-btn" id="preview-cta">Apply Now</button>
+          </article>
+          <p class="job-preview-note muted">This preview shows how your hiring post will appear on social media and your company's homepage.</p>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/src/js/common.js"></script>
+  <script type="module" src="/src/js/admin-common.js"></script>
+  <script type="module" src="/src/js/admin-jobs.js"></script>
+</body>
+</html>
+
+

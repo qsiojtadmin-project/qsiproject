@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuestServ Solution Inc. | Hiring Portal</title>
+  <link rel="icon" type="image/x-icon" href="assets/icon.ico?v=3" />
+  <link rel="shortcut icon" href="assets/icon.ico?v=3" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="font.css">
+</head>
+<body>
+  <header class="site-header" id="home">
+    <div class="container header-wrap">
+      <a href="#home" class="site-brand" aria-label="QuestServ home">
+        <img src="assets/logo.png" alt="QuestServ logo" class="site-brand-logo" />
+        <span class="brand-text" aria-hidden="true">
+          <span class="brand-title">QUESTSERV</span>
+          <span class="brand-subtitle">SOLUTIONS INC.</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle" type="button">Jobs</button>
+          <div class="nav-dropdown-menu">
+            <a href="#jobs">Available Job</a>
+            <a href="pages/result.html">Result</a>
+          </div>
+        </div>
+        <a href="#contact">Contact</a>
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle" type="button">Login</button>
+          <div class="nav-dropdown-menu">
+            <a href="pages/applicant-form.html">Applicant Job</a>
+            <a href="pages/admin-account.html">Admin Account</a>
+          </div>
+        </div>
+      </nav>
+
+      <div class="session-box">
+        <span id="session-label" class="muted">Guest</span>
+        <button id="logout-btn" class="btn btn-outline hidden" type="button">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-backdrop" aria-hidden="true"></div>
+      <div class="container hero-grid hero-grid-single">
+        <div class="hero-slider" id="hero-slider">
+          <div class="hero-visual" id="hero-visual" aria-hidden="true"></div>
+          <div class="hero-content hero-content-centered hero-slider-card">
+            <p class="badge hero-badge-dark" id="hero-badge">QuestServ Hiring Solutions</p>
+            <h1 id="hero-title">Hire With Intention</h1>
+            <p id="hero-description">
+              QuestServ connects applicants, staff, and administrators in one hiring system built
+              for faster screening, clearer tracking, and better candidate decisions.
+            </p>
+            <div class="hero-actions hero-actions-centered">
+              <a href="pages/applicant-form.html" class="btn btn-primary btn-hero-accent" id="hero-primary-btn">Apply Now</a>
+            </div>
+            <div class="hero-slider-controls">
+              <button class="hero-nav-btn" type="button" id="hero-prev-btn" aria-label="Previous recruitment slide">Prev</button>
+              <div class="hero-slider-meta">
+                <strong id="hero-company">QuestServ Recruitment</strong>
+                <span id="hero-counter">1 / 3</span>
+              </div>
+              <button class="hero-nav-btn" type="button" id="hero-next-btn" aria-label="Next recruitment slide">Next</button>
+            </div>
+            <div class="hero-slider-dots" id="hero-slider-dots" aria-label="Hero slides"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip" aria-label="Trusted companies">
+      <div class="container trust-strip-inner">
+        <span class="trust-label">Used for hiring workflows across growing teams</span>
+        <div class="trust-logos">
+          <span>QSI Logistics</span>
+          <span>OpsCore</span>
+          <span>HireTrack</span>
+          <span>PeopleFlow</span>
+          <span>WorkGrid</span>
+          <span>TalentDesk</span>
+          <span>StaffLink</span>
+          <span>RecruitOps</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="jobs">
+      <div class="container">
+        <h2>Open Positions</h2>
+        <div class="jobs-grid">
+          <article class="job-card">
+            <h3>Frontend Developer</h3>
+            <p>Build responsive interfaces for internal platforms and client systems.</p>
+            <button class="btn btn-outline apply-job-btn" data-position="Frontend Developer">Apply</button>
+          </article>
+          <article class="job-card">
+            <h3>HR Associate</h3>
+            <p>Manage applicant coordination, screening support, and onboarding processes.</p>
+            <button class="btn btn-outline apply-job-btn" data-position="HR Associate">Apply</button>
+          </article>
+          <article class="job-card">
+            <h3>Technical Support Staff</h3>
+            <p>Deliver technical support and service quality for internal and external users.</p>
+            <button class="btn btn-outline apply-job-btn" data-position="Technical Support Staff">Apply</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="container note-card">
+        <h3>Ready to apply?</h3>
+        <p class="muted">Use the Login button in the header to access your account and continue your application.</p>
+      </div>
+    </section>
+  </main>
+
+ <footer class="footer pt-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Company Info -->
+                <div class="col-lg-4 col-md-6">
+                    <h3 class="footer-title">About Company</h3></p>
+                    <p class="mb-4">Comming Soon
+                    <div class="social-links mb-4">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Products</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div class="col-lg-2 col-md-6">
+                    <h3 class="footer-title">Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom mt-5">
+            <div class="container">
+                <div class="row py-3">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="mb-0">&copy; 2026 Questserve. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
