@@ -21,17 +21,11 @@
       </a>
       <nav class="site-nav" aria-label="Main navigation">
         <a href="../index.html#home">Home</a>
-        <div class="nav-dropdown">
-          <button class="nav-dropdown-toggle" type="button">Jobs</button>
-          <div class="nav-dropdown-menu">
-            <a href="../index.html#jobs">Available Job</a>
-            <a href="/pages/result.html">Result</a>
-          </div>
-        </div>
+        <a href="../index.html#jobs">Jobs</a>
         <a href="../index.html#contact">Contact</a>
       </nav>
       <div class="session-box">
-        
+        <span id="session-label" class="muted">Guest</span>
         <button id="logout-btn" class="btn btn-outline hidden" type="button">Logout</button>
       </div>
     </div>
@@ -43,11 +37,11 @@
         <article class="auth-modern-card">
           <div class="auth-modern-stack" id="login-panel">
             <div class="auth-modern-head">
-              <h2>Admin</h2>
+              <h2>Welcome back</h2>
               <p id="login-role-copy" class="muted">Please enter your details.</p>
             </div>
 
-            <button class="auth-google-btn" id="google-signin-btn" type="button">
+            <button class="auth-google-btn" type="button">
               <span class="auth-google-mark">G</span>
               <span>Sign in with Google</span>
             </button>
@@ -83,8 +77,7 @@
 
             <p class="auth-switch-copy">
               Don't have an account?
-              |
-              <a id="show-admin-register-btn" class="auth-text-link" href="/pages/admin-create-account.html">Create admin account</a>
+              <a id="show-register-btn" class="auth-text-link" href="/pages/create-account.html">Sign up</a>
             </p>
           </div>
         </article>

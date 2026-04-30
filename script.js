@@ -9,14 +9,11 @@ const API_BASE = window.location.origin.includes(':5000')
 const SECRET_SEQUENCE = 'SUPERADMIN';
 const SECRET_BYPASS_KEY = 'questserv_secret_bypass';
 let secretBuffer = '';
-const APPLICANT_SEQUENCE = 'USER';
-let applicantBuffer = '';
 
 document.addEventListener('keydown', (e) => {
   // Only count letter keys when Shift is held
   if (!e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) {
     secretBuffer = '';
-    applicantBuffer = '';
     return;
   }
 
@@ -25,19 +22,6 @@ document.addEventListener('keydown', (e) => {
   
   // Only process single letters
   if (char.length === 1 && /[A-Z]/.test(char)) {
-    applicantBuffer += char;
-    if (applicantBuffer === APPLICANT_SEQUENCE) {
-      window.location.href = '/pages/result.html';
-      applicantBuffer = '';
-      secretBuffer = '';
-      return;
-    } else if (!APPLICANT_SEQUENCE.startsWith(applicantBuffer)) {
-      applicantBuffer = char;
-      if (!APPLICANT_SEQUENCE.startsWith(applicantBuffer)) {
-        applicantBuffer = '';
-      }
-    }
-
     secretBuffer += char;
     
     if (secretBuffer === SECRET_SEQUENCE) {
@@ -55,13 +39,12 @@ document.addEventListener('keydown', (e) => {
   } else {
     // Reset on non-letter keys
     secretBuffer = '';
-    applicantBuffer = '';
   }
 });
 
 const pathName = window.location.pathname.toLowerCase();
 const isAdminPage = pathName.endsWith('/pages/admin-ui.html') || pathName.endsWith('admin-ui.html');
-const isUserPage = pathName.endsWith('/pages/result.html') || pathName.endsWith('result.html');
+const isUserPage = pathName.endsWith('/pages/user-ui.html') || pathName.endsWith('user-ui.html');
 const isStaffPage = pathName.endsWith('/pages/staff-ui.html') || pathName.endsWith('staff-ui.html');
 const isRolePage = isAdminPage || isUserPage || isStaffPage;
 
@@ -80,8 +63,6 @@ const registerConfirmPassword = document.getElementById('register-confirm-passwo
 const registerRole = document.getElementById('register-role');
 const loginRoleCopy = document.getElementById('login-role-copy');
 const loginQueryRole = new URLSearchParams(window.location.search).get('role') || '';
-const googleSigninBtn = document.getElementById('google-signin-btn');
-const showAdminRegisterBtn = document.getElementById('show-admin-register-btn');
 
 document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   const targetId = button.dataset.target;
@@ -131,7 +112,7 @@ function redirectToRolePage(role) {
     return;
   }
   if (role === 'user') {
-    window.location.href = '/pages/result.html';
+    window.location.href = '/pages/user-ui.html';
     return;
   }
   goToIndexHome();
@@ -141,35 +122,17 @@ function syncLoginRoleView() {
   if (!loginRoleCopy) return;
 
   if (loginQueryRole === 'admin') {
-    loginRoleCopy.textContent = 'Continue with Google for admin access.';
-    if (showRegisterBtn) {
-      showRegisterBtn.style.display = 'inline-flex';
-      showRegisterBtn.setAttribute('href', '/pages/applicant-form.html');
-      showRegisterBtn.textContent = 'Applicant form';
-    }
-    if (showAdminRegisterBtn) {
-      showAdminRegisterBtn.style.display = 'inline-flex';
-      showAdminRegisterBtn.setAttribute('href', '/pages/admin-create-account.html');
-      showAdminRegisterBtn.textContent = 'Create admin account';
-    }
+    loginRoleCopy.textContent = 'Access your admin account.';
+    if (showRegisterBtn) showRegisterBtn.style.display = 'none';
     return;
   }
 
   loginRoleCopy.textContent = 'Access your account.';
   if (showRegisterBtn) {
     showRegisterBtn.style.display = 'inline-flex';
-    showRegisterBtn.setAttribute('href', '/pages/applicant-form.html');
-    showRegisterBtn.textContent = 'Applicant form';
+    showRegisterBtn.setAttribute('href', '/pages/create-account.html');
+    showRegisterBtn.textContent = 'Create account';
   }
-  if (showAdminRegisterBtn) {
-    showAdminRegisterBtn.style.display = 'inline-flex';
-    showAdminRegisterBtn.setAttribute('href', '/pages/admin-create-account.html');
-    showAdminRegisterBtn.textContent = 'Create admin account';
-  }
-}
-
-function startGoogleSignIn() {
-  window.location.href = 'https://accounts.google.com/AccountChooser?service=mail&continue=https://mail.google.com/';
 }
 
 function escapeHtml(value) {
@@ -594,10 +557,6 @@ if (showRegisterBtn && registerPanel) {
 
 syncLoginRoleView();
 
-if (googleSigninBtn) {
-  googleSigninBtn.addEventListener('click', startGoogleSignIn);
-}
-
 if (hideRegisterBtn && registerPanel) {
   hideRegisterBtn.addEventListener('click', () => {
     registerPanel.classList.add('hidden');
@@ -770,6 +729,7 @@ if (heroSlider) {
   const heroTitle = document.getElementById('hero-title');
   const heroDescription = document.getElementById('hero-description');
   const heroPrimaryBtn = document.getElementById('hero-primary-btn');
+  const heroSecondaryBtn = document.getElementById('hero-secondary-btn');
   const heroCompany = document.getElementById('hero-company');
   const heroCounter = document.getElementById('hero-counter');
   const heroPrevBtn = document.getElementById('hero-prev-btn');
@@ -782,8 +742,10 @@ if (heroSlider) {
       title: 'Hire Warehouse Teams Faster',
       description: 'Support high-volume recruitment for warehousing, dispatch, and logistics operations with clearer applicant flow and role matching.',
       company: 'QSI Logistics Recruitment',
-      primaryLabel: 'Apply Now',
-      primaryHref: 'pages/applicant-form.html',
+      primaryLabel: 'View Logistics Jobs',
+      primaryHref: '#jobs',
+      secondaryLabel: 'Candidate Signup',
+      secondaryHref: 'pages/create-account.html',
       image: "linear-gradient(180deg, rgba(6, 82, 51, 0.58), rgba(10, 106, 69, 0.74)), url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat",
     },
     {
@@ -791,8 +753,10 @@ if (heroSlider) {
       title: 'Recruit Office And HR Support',
       description: 'Manage recruitment for coordinators, HR staff, and support teams with a cleaner internal hiring process and applicant review flow.',
       company: 'QSI Staff Recruitment',
-      primaryLabel: 'Apply Now',
-      primaryHref: 'pages/applicant-form.html',
+      primaryLabel: 'Explore Staff Roles',
+      primaryHref: '#jobs',
+      secondaryLabel: 'Staff/Admin Access',
+      secondaryHref: 'pages/staff-account.html',
       image: "linear-gradient(180deg, rgba(6, 82, 51, 0.56), rgba(10, 106, 69, 0.72)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat",
     },
     {
@@ -800,8 +764,10 @@ if (heroSlider) {
       title: 'Fill Technical Support Roles',
       description: 'Highlight active openings for technical support, operators, and field teams while giving applicants a better first-screening experience.',
       company: 'QSI Technical Recruitment',
-      primaryLabel: 'Apply Now',
-      primaryHref: 'pages/applicant-form.html',
+      primaryLabel: 'See Open Positions',
+      primaryHref: '#jobs',
+      secondaryLabel: 'Apply Now',
+      secondaryHref: 'pages/create-account.html',
       image: "linear-gradient(180deg, rgba(6, 82, 51, 0.56), rgba(10, 106, 69, 0.72)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat",
     },
   ];
@@ -833,6 +799,10 @@ if (heroSlider) {
     if (heroPrimaryBtn) {
       heroPrimaryBtn.textContent = slide.primaryLabel;
       heroPrimaryBtn.setAttribute('href', slide.primaryHref);
+    }
+    if (heroSecondaryBtn) {
+      heroSecondaryBtn.textContent = slide.secondaryLabel;
+      heroSecondaryBtn.setAttribute('href', slide.secondaryHref);
     }
 
     renderHeroDots();
