@@ -32,8 +32,7 @@
         <div class="nav-dropdown">
           <button class="nav-dropdown-toggle" type="button">Login</button>
           <div class="nav-dropdown-menu">
-            <a href="pages/create-account.html">Applicant Job</a>
-            <a href="pages/staff-account.html">Admin Account</a>
+            <a href="pages/apply.html">Applicant Job</a>
           </div>
         </div>
       </nav>
@@ -46,8 +45,31 @@
   </header>
 
   <main>
-    
-    
+    <!-- Available Positions Section -->
+    <section class="home-section">
+      <div class="container">
+        <h2>Available Positions</h2>
+        <form id="home-job-filter" class="home-filters panel">
+          <input class="input" type="text" name="keyword" placeholder="Find Your Dream Role" />
+          <input class="input" type="text" name="location" placeholder="Location" />
+          <button class="btn btn-primary" type="submit">Search Jobs</button>
+        </form>
+        
+        <!-- Recommended Jobs -->
+        <div class="home-jobs-section">
+          <h3 class="section-subtitle">Recommended Jobs</h3>
+          <div id="recommended-jobs-list" class="home-jobs-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin Uploaded Designs Section -->
+    <section class="home-section home-designs-section">
+      <div class="container">
+        <h2>Admin Uploaded Designs</h2>
+        <div id="admin-designs-list" class="home-designs-grid"></div>
+      </div>
+    </section>
   </main>
 
  <footer class="footer pt-5">
@@ -86,6 +108,7 @@
                         <li><a href="#">Community</a></li>
                         <li><a href="#">Privacy Policy</a></li>
                         <li><a href="#">Terms of Service</a></li>
+                        <li><a href="pages/register.html">Admin</a></li>
                     </ul>
                 </div>
 
@@ -107,5 +130,6 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="script.js"></script>
+    <script type="module" src="src/js/home.js"></script>
 </body>
 </html>

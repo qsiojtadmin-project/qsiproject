@@ -1372,6 +1372,252 @@ input, select {
   border: 1px solid #d9dde3;
   background: #ffffff;
   border-radius: 20px;
+  }
+
+  /* Home Page Sections */
+  .home-section {
+    padding: 150px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .home-section h2 {
+    margin-top: 0;
+    margin-bottom: 36px;
+    font-size: clamp(1.8rem, 3vw, 2.2rem);
+  }
+
+  .home-filters {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr auto;
+    gap: 12px;
+    margin-bottom: 36px;
+    align-items: flex-end;
+  }
+
+  .home-filters .btn {
+    padding: 11px 24px;
+  }
+
+    .home-filters .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+  .home-jobs-section {
+    margin-top: 40px;
+  }
+
+  .section-subtitle {
+    margin: 0 0 18px;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .home-jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+  }
+
+    @media (min-width: 1400px) {
+      .home-jobs-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (min-width: 1200px) and (max-width: 1399px) {
+      .home-jobs-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+  .home-job-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+  }
+
+  .home-job-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(7, 62, 43, 0.14);
+  }
+
+  .home-job-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .home-job-card-logo {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), #0a7f3f);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .home-job-card-title {
+    margin: 0 0 4px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .home-job-card-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .home-job-card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .home-job-card-desc {
+    margin: 12px 0;
+    font-size: 0.95rem;
+    color: #4b5563;
+    line-height: 1.5;
+  }
+
+  .home-job-card-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+
+  .home-job-card .btn {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .home-designs-section {
+    background: #f1f7f3;
+  }
+
+  .home-designs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+    @media (min-width: 1400px) {
+      .home-designs-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+
+    @media (min-width: 1200px) and (max-width: 1399px) {
+      .home-designs-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+  .home-design-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-design-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(7, 62, 43, 0.14);
+  }
+
+  .home-design-card-image {
+    width: 100%;
+    height: 280px;
+    background: linear-gradient(135deg, var(--primary), #14532d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 20px;
+    overflow: hidden;
+    object-fit: cover;
+  }
+
+  .home-design-card-content {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .home-design-card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .home-design-card-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .home-design-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #dff5ea;
+    color: var(--primary);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .home-design-card-footer {
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    margin-top: auto;
+  }
+
+  .home-design-card .btn {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .home-filters {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .home-jobs-grid,
+    .home-designs-grid {
+      grid-template-columns: 1fr;
+    }
 }
 
 .table-card table th {
