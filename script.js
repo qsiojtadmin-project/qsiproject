@@ -130,7 +130,7 @@ function syncLoginRoleView() {
   loginRoleCopy.textContent = 'Access your account.';
   if (showRegisterBtn) {
     showRegisterBtn.style.display = 'inline-flex';
-    showRegisterBtn.setAttribute('href', '/pages/create-account.html');
+    showRegisterBtn.setAttribute('href', '/pages/create-account-admin.html');
     showRegisterBtn.textContent = 'Create account';
   }
 }
@@ -745,7 +745,7 @@ if (heroSlider) {
       primaryLabel: 'View Logistics Jobs',
       primaryHref: '#jobs',
       secondaryLabel: 'Candidate Signup',
-      secondaryHref: 'pages/create-account.html',
+      secondaryHref: '/pages/create-account-admin.html',
       image: "linear-gradient(180deg, rgba(6, 82, 51, 0.58), rgba(10, 106, 69, 0.74)), url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat",
     },
     {
@@ -756,7 +756,7 @@ if (heroSlider) {
       primaryLabel: 'Explore Staff Roles',
       primaryHref: '#jobs',
       secondaryLabel: 'Staff/Admin Access',
-      secondaryHref: 'pages/staff-account.html',
+      secondaryHref: '/pages/login-only.html?role=staff',
       image: "linear-gradient(180deg, rgba(6, 82, 51, 0.56), rgba(10, 106, 69, 0.72)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat",
     },
     {
@@ -767,7 +767,7 @@ if (heroSlider) {
       primaryLabel: 'See Open Positions',
       primaryHref: '#jobs',
       secondaryLabel: 'Apply Now',
-      secondaryHref: 'pages/create-account.html',
+      secondaryHref: '/pages/create-account-admin.html',
       image: "linear-gradient(180deg, rgba(6, 82, 51, 0.56), rgba(10, 106, 69, 0.72)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat",
     },
   ];
