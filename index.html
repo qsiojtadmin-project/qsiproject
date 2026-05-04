@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="/src/styles/styles.css" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/src/styles/font.css">
 </head>
 <body>
@@ -41,7 +40,7 @@
           <a href="pages/employers.html">Employers</a>
         </div>
       </div>
-
+      
       <div class="session-box">
         <button id="logout-btn" class="btn btn-outline-danger btn-sm hidden" type="button">Logout</button>
       </div>
@@ -50,44 +49,52 @@
   </div>
 </header>
 
- <main>
-  <!-- Added hero-section class for better padding and background -->
-  <section class="home-section hero-section">
+<main>
+  <!-- Modern Hero with Glassmorphism Search -->
+  <section class="hero-section">
     <div class="container">
-      <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold">Available Positions</h1>
-        <p class="text-muted">Discover your next career move with QuestServ</p>
+      <div class="hero-text-content text-center mb-5">
+        <h1 class="display-4 fw-bold">Available Positions</h1>
+        <p class="lead">Discover your next career move with <span class="brand-highlight">QuestServ</span></p>
       </div>
 
-      <!-- Optimized Filter Bar -->
-      <div class="search-container panel mb-5">
-        <form id="home-job-filter" class="row g-3 justify-content-center">
-          <div class="col-md-5">
-            <input class="form-control form-control-lg" type="text" name="keyword" placeholder="Find Your Dream Role" />
+      <!-- Enhanced Search Bar -->
+      <div class="search-box-wrapper p-4 mb-5">
+        <form id="home-job-filter" class="row g-3 align-items-center">
+          <div class="col-lg-5">
+            <div class="input-group-custom">
+              <i class="fas fa-search"></i>
+              <input class="form-control-lg border-0 w-100" type="text" name="keyword" placeholder="Find Your Dream Role" />
+            </div>
           </div>
-          <div class="col-md-4">
-            <input class="form-control form-control-lg" type="text" name="location" placeholder="Location" />
+          <div class="col-lg-4">
+            <div class="input-group-custom">
+              <i class="fas fa-map-marker-alt"></i>
+              <input class="form-control-lg border-0 w-100" type="text" name="location" placeholder="Location" />
+            </div>
           </div>
-          <div class="col-md-2">
-            <button class="btn btn-primary btn-lg w-100" type="submit">Search Jobs</button>
+          <div class="col-lg-3">
+            <button class="btn btn-search-primary w-100" type="submit">Search Jobs</button>
           </div>
         </form>
       </div>
       
       <div class="home-jobs-section">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h3 class="section-subtitle mb-0">Recommended Jobs</h3>
-          <span class="badge bg-light text-dark">Latest Openings</span>
+        <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-3">
+          <div>
+            <h3 class="section-title mb-0">Recommended Jobs</h3>
+            <p class="text-muted small mb-0">Tailored opportunities for you</p>
+          </div>
+          <span class="badge-custom">Latest Openings</span>
         </div>
         <!-- Grid for jobs -->
         <div id="recommended-jobs-list" class="home-jobs-grid">
-           <!-- Jobs will be injected here -->
+           <!-- Dynamic Content -->
         </div>
       </div>
     </div>
   </section>
 </main>
-
  <footer class="footer pt-5">
         <div class="container">
             <div class="row g-4">
