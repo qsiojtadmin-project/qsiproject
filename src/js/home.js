@@ -7,6 +7,7 @@ const jobsTotalCount = document.getElementById('jobs-total-count');
 const jobsPaginationText = document.getElementById('jobs-pagination-text');
 const topMatchesList = document.getElementById('top-matches-list');
 const latestOpeningsList = document.getElementById('latest-openings-list');
+const jobsKickerTyping = document.getElementById('jobs-kicker-typing');
 
 function escapeHtml(text = '') {
   const div = document.createElement('div');
@@ -44,6 +45,37 @@ function getCompanyName(job = {}) {
 
 function getJobType(job = {}) {
   return job.type || 'Full-time';
+}
+
+function startKickerTypingAnimation() {
+  if (!jobsKickerTyping) return;
+
+  const words = ['Solution'];
+  let wordIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+
+  const tick = () => {
+    const currentWord = words[wordIndex];
+    charIndex = isDeleting ? charIndex - 1 : charIndex + 1;
+    jobsKickerTyping.textContent = currentWord.slice(0, Math.max(charIndex, 0));
+
+    let delay = isDeleting ? 220 : 260;
+
+    if (!isDeleting && charIndex === currentWord.length) {
+      delay = 1800;
+      isDeleting = true;
+    } else if (isDeleting && charIndex === 0) {
+      isDeleting = false;
+      wordIndex = (wordIndex + 1) % words.length;
+      delay = 540;
+    }
+
+    window.setTimeout(tick, delay);
+  };
+
+  jobsKickerTyping.textContent = '';
+  window.setTimeout(tick, 450);
 }
 
 function updateJobSummary(total, visible) {
@@ -208,3 +240,4 @@ homeJobFilter?.addEventListener('submit', async (event) => {
 
 loadRecommendedJobs();
 loadAdminDesigns();
+startKickerTypingAnimation();
