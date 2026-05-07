@@ -8,64 +8,102 @@
   <link rel="shortcut icon" href="assets/icon.ico?v=3" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="/src/styles/styles.css" />
-  <link rel="stylesheet" href="/src/styles/font.css">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="src/styles/styles.css">
 </head>
+<style>
+  
+</style>
 <body>
+
 <header class="site-header" id="home">
-  <div class="container header-wrap header-wrap-simple">
+  <div class="container header-wrap">
     <div class="header-left-group">
       <a href="#home" class="site-brand" aria-label="QuestServ home">
-        <img src="assets/logo.png" alt="QuestServ logo" class="site-brand-logo" />
-        <span class="brand-text" aria-hidden="true">
+        <img src="assets/logo.png" alt="QuestServ logo" class="site-brand-logo" onerror="this.style.display='none'" />
+        <span class="brand-text">
           <span class="brand-title">QUESTSERV</span>
           <span class="brand-subtitle">SOLUTIONS INC.</span>
         </span>
       </a>
 
-      <nav class="site-nav site-nav-simple" aria-label="Main navigation">
+      <nav class="site-nav" aria-label="Main navigation">
         <a href="#home">Home</a>
         <a href="#jobs">Jobs</a>
         <a href="#contact">Contact</a>
       </nav>
     </div>
 
-    <div class="header-actions header-actions-simple">
+    <div class="header-actions">
       <a href="pages/login-only.html" class="header-login-link">Login</a>
       <a href="pages/employers.html" class="header-post-btn">Post a Job</a>
-      <div class="session-box">
-        <button id="logout-btn" class="btn btn-outline-danger btn-sm hidden" type="button">Logout</button>
-      </div>
+      <button id="logout-btn" class="hidden" type="button">Logout</button>
     </div>
   </div>
 </header>
 
 <main>
-  <section class="jobs-landing" id="jobs">
-    <div class="container jobs-shell">
-      <section class="jobs-hero-panel">
-        <div class="jobs-hero-copy">
-          <span class="jobs-kicker jobs-kicker-brand">
-            <img src="assets/logo.png" alt="QuestServ logo" class="jobs-kicker-logo" />
-            <span>QuestServ <span id="jobs-kicker-typing" class="jobs-kicker-typing">Solution</span></span>
-          </span>
-          <h1>Available Positions</h1>
-          <p>
-            Discover your next career move with QuestServ. We are looking for talented
-            individuals to help us build the future of enterprise intelligence.
-          </p>
+
+  <!-- ===== HERO SECTION (matching Image 1) ===== -->
+  <section class="hero-section">
+    <div class="hero-geo"></div>
+    <div class="container">
+      <div class="hero-content">
+        <h1>Your Trusted Manpower Partner in the Philippines</h1>
+        <p>Connecting skilled workers with top companies in Metro Manila, Cavite, and beyond. Be part of our growing team today!</p>
+
+        <div class="hero-buttons">
+          <a href="#jobs" class="btn-hero-white">
+            View Job Openings <span class="btn-icon">💼</span>
+          </a>
+          <a href="pages/employers.html" class="btn-hero-outline">
+            Partner With Us <span class="btn-icon">🤝</span>
+          </a>
         </div>
 
-        <form id="home-job-filter" class="jobs-search-bar">
+        <div class="hero-badges">
+          <div class="hero-badge hero-badge-gold">
+            <div class="hero-badge-icon"><i class="fas fa-check-circle"></i></div>
+            SEC Registered Business
+          </div>
+          <div class="hero-badge hero-badge-green">
+            <div class="hero-badge-icon"><i class="fas fa-map-marker-alt"></i></div>
+            Taguig | Mandaluyong | Cavite
+          </div>
+          <div class="hero-badge hero-badge-chart">
+            <div class="hero-badge-icon"><i class="fas fa-chart-line"></i></div>
+            Industrial &amp; Production Specialists
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== JOBS SECTION (matching Image 2) ===== -->
+  <section class="jobs-landing" id="jobs">
+    <div class="container jobs-shell">
+
+      <section class="jobs-hero-panel">
+        <div class="jobs-hero-copy">
+          <div class="jobs-kicker">
+            <img src="assets/logo.png" alt="QuestServ logo" class="jobs-kicker-logo" onerror="this.style.display='none'" />
+            <span>QuestServ <span id="jobs-kicker-typing" class="jobs-kicker-typing">Solution</span></span>
+          </div>
+          <h1>Available Positions</h1>
+          <p>Discover your next career move with QuestServ. We are looking for talented individuals to help us build the future of enterprise intelligence.</p>
+        </div>
+
+        <form id="home-job-filter" class="jobs-search-bar" onsubmit="return false;">
           <label class="jobs-search-field" aria-label="Search role">
-            <span class="jobs-search-icon" aria-hidden="true"></span>
+            <span class="jobs-search-icon"></span>
             <input type="text" name="keyword" placeholder="Find Your Dream Role" />
           </label>
           <label class="jobs-search-field" aria-label="Search location">
-            <span class="jobs-search-icon jobs-search-icon-location" aria-hidden="true"></span>
+            <span class="jobs-search-icon jobs-search-icon-location"></span>
             <input type="text" name="location" placeholder="Location" />
           </label>
-          <button class="btn jobs-search-button" type="submit">Search Jobs</button>
+          <button class="jobs-search-button" type="submit">Search Jobs</button>
         </form>
 
         <div class="jobs-chip-row" aria-label="Job categories">
@@ -93,12 +131,12 @@
           </div>
 
           <div id="recommended-jobs-list" class="jobs-listing-stack">
-            <!-- Dynamic Content -->
+            <p class="error-state">Error loading jobs: Failed to fetch</p>
           </div>
 
           <div class="jobs-pagination">
             <p id="jobs-pagination-text">Showing 0 results</p>
-            <div class="jobs-pagination-controls" aria-label="Pagination">
+            <div class="jobs-pagination-controls">
               <button class="jobs-page-button" type="button">&#8249;</button>
               <button class="jobs-page-button is-current" type="button">1</button>
               <button class="jobs-page-button" type="button">2</button>
@@ -122,7 +160,7 @@
               <span>Profile Completion</span>
               <strong>85%</strong>
             </div>
-            <div class="jobs-progress-bar" aria-hidden="true">
+            <div class="jobs-progress-bar">
               <span></span>
             </div>
             <a href="pages/apply.html" class="jobs-side-action">Manage Applications</a>
@@ -132,26 +170,17 @@
             <div class="jobs-side-title-row">
               <h3>Top Matches for You</h3>
             </div>
-            <div id="top-matches-list" class="jobs-mini-list">
+            <div class="jobs-mini-list">
               <article class="jobs-mini-item">
-                <div>
-                  <strong>Cloud Architect</strong>
-                  <span>Remote</span>
-                </div>
+                <div><strong>Cloud Architect</strong><span>Remote</span></div>
                 <em>$190k</em>
               </article>
               <article class="jobs-mini-item">
-                <div>
-                  <strong>Security Specialist</strong>
-                  <span>DC</span>
-                </div>
+                <div><strong>Security Specialist</strong><span>DC</span></div>
                 <em>$155k</em>
               </article>
               <article class="jobs-mini-item">
-                <div>
-                  <strong>HR Director</strong>
-                  <span>Chicago</span>
-                </div>
+                <div><strong>HR Director</strong><span>Chicago</span></div>
                 <em>$130k</em>
               </article>
             </div>
@@ -162,26 +191,17 @@
             <div class="jobs-side-title-row jobs-side-title-row-accent">
               <h3>Latest Openings</h3>
             </div>
-            <div id="latest-openings-list" class="jobs-mini-list">
+            <div class="jobs-mini-list">
               <article class="jobs-mini-item">
-                <div>
-                  <strong>Fullstack Dev</strong>
-                  <span>Remote</span>
-                </div>
+                <div><strong>Fullstack Dev</strong><span>Remote</span></div>
                 <em>$130k+</em>
               </article>
               <article class="jobs-mini-item">
-                <div>
-                  <strong>DevOps Lead</strong>
-                  <span>London</span>
-                </div>
+                <div><strong>DevOps Lead</strong><span>London</span></div>
                 <em>$90k+</em>
               </article>
               <article class="jobs-mini-item">
-                <div>
-                  <strong>Project Manager</strong>
-                  <span>Berlin</span>
-                </div>
+                <div><strong>Project Manager</strong><span>Berlin</span></div>
                 <em>$75k+</em>
               </article>
             </div>
@@ -193,75 +213,91 @@
               <h3>Job Alerts</h3>
             </div>
             <p>Get notified instantly when new roles in Engineering match your profile.</p>
-            <form class="jobs-alert-form">
+            <div class="jobs-alert-form">
               <input type="email" placeholder="Email Address" />
-              <button class="btn jobs-alert-button" type="button">Turn on Alerts</button>
-            </form>
+              <button class="jobs-alert-button" type="button">Turn on Alerts</button>
+            </div>
           </section>
         </aside>
       </section>
     </div>
   </section>
+
 </main>
- <footer class="footer pt-5">
-        <div class="container">
-            <div class="row g-4">
-                <!-- Company Info -->
-                <div class="col-lg-4 col-md-6">
-                    <h3 class="footer-title">About Company</h3>
-                    <p class="mb-4">We're dedicated to delivering innovative solutions that empower businesses to thrive in the digital age.</p>
-                    <div class="social-links mb-4">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
 
-                <!-- Quick Links -->
-                <div class="col-lg-2 col-md-6">
-                    <h3 class="footer-title">Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Services</a></li>
-                        <li><a href="#">Products</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
-                </div>
-
-                <!-- Support -->
-                <div class="col-lg-2 col-md-6">
-                    <h3 class="footer-title">Support</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Community</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="pages/register.html">Admin</a></li>
-                    </ul>
-                </div>
-
-            </div>
+<footer class="footer" id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h3 class="footer-title">About Company</h3>
+        <p style="color:#b4b6bb; margin-bottom:1.5rem; line-height:1.7; font-size:0.95rem;">We're dedicated to delivering innovative solutions that empower businesses to thrive in the digital age.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
         </div>
+      </div>
 
-        <!-- Footer Bottom -->
-        <div class="footer-bottom mt-5">
-            <div class="container">
-                <div class="row py-3">
-                    <div class="col-md-6 text-center text-md-start">
-                        <p class="mb-0">&copy; 2026 Questserve. All rights reserved.</p>
-                    </div>
-                    <div class="col-md-6 text-center text-md-end">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="script.js"></script>
-    <script type="module" src="src/js/home.js"></script>
+      <div>
+        <h3 class="footer-title">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Products</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="footer-title">Support</h3>
+        <ul class="footer-links">
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Community</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="pages/register.html">Admin</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <p>&copy; 2026 Questserve. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Chip filter toggle
+  document.querySelectorAll('.jobs-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.jobs-chip').forEach(c => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+    });
+  });
+
+  // Typing animation for kicker
+  const words = ['Solution', 'Hiring', 'Partner', 'Portal'];
+  let wi = 0, ci = 0, deleting = false;
+  const el = document.getElementById('jobs-kicker-typing');
+  if (el) {
+    setInterval(() => {
+      const w = words[wi];
+      if (!deleting) {
+        el.textContent = w.slice(0, ++ci);
+        if (ci === w.length) { deleting = true; setTimeout(() => {}, 1200); }
+      } else {
+        el.textContent = w.slice(0, --ci);
+        if (ci === 0) { deleting = false; wi = (wi + 1) % words.length; }
+      }
+    }, 110);
+  }
+</script>
+<script type="module" src="src/js/home.js" onerror="console.log('home.js not found')"></script>
 </body>
 </html>
-
