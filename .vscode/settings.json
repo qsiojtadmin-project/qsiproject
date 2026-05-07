@@ -1,4 +1,17 @@
 {
     "liveServer.settings.port": 5501,
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "aws-1-ap-northeast-1.pooler.supabase.com",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "supabase",
+            "group": "supabase",
+            "database": "postgres",
+            "username": "postgres.ilbneblzkvzebuklyzgn"
+        }
+    ]
 }

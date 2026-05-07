@@ -6,7 +6,6 @@
   <title>Admin Jobs | Questserv</title>
   <link rel="stylesheet" href="/src/styles/theme.css" />
   <style>
-    /* ─── Layout ──────────────────────────────────────── */
     .job-template-grid {
       display: grid;
       grid-template-columns: 420px 1fr;
@@ -16,7 +15,6 @@
     .job-editor-panel { overflow-y: auto; max-height: calc(100vh - 180px); }
     .job-preview-panel { position: sticky; top: 80px; }
 
-    /* ─── Editor helpers ──────────────────────────────── */
     .job-section-divider { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
     .dynamic-list-field  { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
     .dynamic-list-item   { display: flex; gap: 6px; align-items: center; }
@@ -41,174 +39,434 @@
     .upload-zone .upload-icon { width: 28px; height: 28px; color: #2d6a4f; }
     .upload-zone .browse-btn { margin-top: 8px; font-size: 12px; padding: 4px 12px; display: inline-block; }
 
-    /* ─── POSTER ──────────────────────────────────────── */
-    .poster-outer { display: flex; justify-content: center; padding: 4px 0 12px; }
-
+    .poster-outer { display: flex; justify-content: center; padding: 8px 0 14px; }
     #qs-poster {
-      width: 480px;
-      background: #fff;
-      font-family: 'Arial', 'Helvetica Neue', sans-serif;
-      box-shadow: 0 12px 48px rgba(0,0,0,.22);
+      width: 500px;
+      background: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, 0.16);
       overflow: hidden;
       position: relative;
+      color: #163723;
+      border-radius: 4px;
     }
-
-    /* ── 1. Top header ── */
-    .p-header {
-      display: grid;
-      grid-template-columns: 47% 53%;
-      height: 90px;
-      position: relative;
-    }
-    .p-logo-half {
-      background: #fff;
-      display: flex; align-items: center;
-      padding: 0 0 0 14px;
-      z-index: 3;
-      position: relative;
-    }
-    .p-logo-inner { display: flex; align-items: center; gap: 9px; }
-    .p-hex-icon { width: 46px; height: 46px; flex-shrink: 0; }
-    .p-brand-name { font-size: 13.5px; font-weight: 900; color: #12301d; letter-spacing: .5px; line-height: 1; }
-    .p-brand-sub  { font-size: 8px; color: #12301d; letter-spacing: 1px; opacity: .75; margin-top: 2px; }
-
-    .p-badge-half {
-      background: #12301d;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden; z-index: 2;
-    }
-    /* White diagonal wedge (the angled separator from logo side) */
-    .p-badge-half::before {
-      content: '';
-      position: absolute; left: -30px; top: 0;
-      width: 60px; height: 100%;
-      background: #fff;
-      transform: skewX(-10deg);
-      z-index: 1;
-    }
-    /* large rotated square accent top-right */
-    .p-badge-half::after {
-      content: '';
-      position: absolute; right: -18px; top: -18px;
-      width: 72px; height: 72px;
-      background: #1e4d2e;
-      transform: rotate(45deg);
+    #qs-poster::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(140deg, rgba(15, 55, 31, 0.02) 0 18%, transparent 18% 32%, rgba(15, 55, 31, 0.03) 32% 44%, transparent 44% 58%, rgba(15, 55, 31, 0.02) 58% 72%, transparent 72%),
+        linear-gradient(-38deg, rgba(15, 55, 31, 0.03) 0 10%, transparent 10% 28%, rgba(15, 55, 31, 0.02) 28% 42%, transparent 42% 58%, rgba(15, 55, 31, 0.03) 58% 74%, transparent 74%),
+        linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
+      pointer-events: none;
       z-index: 0;
     }
-    /* Small diagonal stripe accents */
-    .p-badge-stripes {
-      position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none;
-    }
-    .p-badge-stripes span {
-      position: absolute; top: 0; height: 100%;
-      background: rgba(255,255,255,.07);
-      transform: skewX(-14deg);
-    }
-    .p-badge-stripes span:nth-child(1) { width: 30px; left: 18px; }
-    .p-badge-stripes span:nth-child(2) { width: 16px; left: 54px; }
 
+    .p-header {
+      display: grid;
+      grid-template-columns: 54% 46%;
+      min-height: 88px;
+      position: relative;
+      z-index: 2;
+    }
+    .p-logo-half {
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      padding: 0 0 0 18px;
+      position: relative;
+      z-index: 2;
+    }
+    .p-logo-inner { display: flex; align-items: center; gap: 10px; }
+    .p-hex-icon { width: 42px; height: 42px; flex-shrink: 0; object-fit: contain; }
+    .p-brand-name {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #163723;
+      line-height: 1;
+    }
+    .p-brand-sub {
+      margin-top: 3px;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #1c2d23;
+      opacity: .85;
+    }
+
+    .p-badge-half {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a4829 0%, #12361e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      clip-path: polygon(18% 0, 100% 0, 100% 100%, 0 100%);
+    }
+    .p-badge-half::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      top: -6px;
+      bottom: -6px;
+      width: 12px;
+      transform: skewX(-16deg);
+      background: rgba(255,255,255,.08);
+      box-shadow: 18px 0 0 rgba(255,255,255,.05);
+    }
+    .p-badge-half::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      top: -18px;
+      width: 92px;
+      height: 92px;
+      background: rgba(60, 138, 78, 0.45);
+      transform: rotate(45deg);
+    }
     .p-badge-text {
-      position: relative; z-index: 2;
-      text-align: center; color: #fff;
-      font-size: 28px; font-weight: 900;
-      letter-spacing: 3px; line-height: 1;
-      padding-right: 6px;
-      text-shadow: 1px 2px 6px rgba(0,0,0,.25);
+      position: relative;
+      z-index: 1;
+      color: #fff;
+      text-align: center;
+      font-size: 31px;
+      line-height: .95;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-shadow: 0 5px 14px rgba(0,0,0,.22);
     }
 
-    /* ── 2. Hero ── */
     .p-hero {
       position: relative;
-      padding: 22px 72px 18px;
+      padding: 22px 64px 16px;
       text-align: center;
-      background: #fff;
       overflow: hidden;
+      z-index: 2;
     }
-    /* Background image layer */
     .p-hero-bg {
-      position: absolute; inset: 0;
-      background-size: cover; background-position: center;
-      opacity: .1;
-      transition: opacity .3s;
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity .2s ease;
+      filter: grayscale(100%);
     }
-    .p-hero-bg.has-image { opacity: .15; }
-
-    /* Chevron decorations */
-    .p-chevron-left, .p-chevron-right {
-      position: absolute; top: 0; bottom: 0;
-      width: 58px;
-      display: flex; flex-direction: column;
-      justify-content: center; gap: 5px;
-      padding: 0 4px;
+    .p-hero-bg.has-image { opacity: .09; }
+    .p-hero::before,
+    .p-hero::after {
+      content: "";
+      position: absolute;
+      top: 30px;
+      width: 60px;
+      height: 56px;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, transparent 20px, #2f7a47 20px) left top / 100% 50% no-repeat,
+        linear-gradient(225deg, transparent 20px, #12361e 20px) left bottom / 100% 50% no-repeat;
     }
-    .p-chevron-left  { left: 0; }
-    .p-chevron-right { right: 0; transform: scaleX(-1); }
-
-    .p-chev {
-      display: block; height: 26px;
-      clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%, 25% 50%);
-      margin-left: -6px;
-    }
-    .p-chev-1 { background: #2d6a3f; }
-    .p-chev-2 { background: #12301d; margin-left: 2px; }
-
+    .p-hero::before { left: 0; }
+    .p-hero::after { right: 0; transform: scaleX(-1); }
     .p-hero-title {
-      font-size: 46px; font-weight: 900;
-      color: #12301d;
-      letter-spacing: 4px; margin: 0; line-height: 1;
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: #163723;
+      font-size: 58px;
+      line-height: .95;
+      font-weight: 900;
       font-style: italic;
-      position: relative; z-index: 1;
-      text-shadow: 1px 1px 0 rgba(0,0,0,.05);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 0 2px 0 rgba(255,255,255,.9);
     }
     .p-hero-sub {
-      font-size: 13px; color: #333;
-      margin: 8px 0 0;
-      position: relative; z-index: 1;
+      position: relative;
+      z-index: 1;
+      margin: 10px 0 0;
+      font-size: 13px;
+      color: #29342d;
+      letter-spacing: .2px;
     }
 
-    /* ── 3. Body ── */
     .p-body {
-      display: grid; grid-template-columns: 1fr 1fr;
-      padding: 14px 16px 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 14px 18px 8px;
+      position: relative;
+      z-index: 2;
     }
-    .p-col { padding: 0 9px; }
-    .p-col:first-child { border-right: 1.5px solid #ddd; padding-left: 2px; }
-    .p-col:last-child  { padding-right: 2px; }
-
+    .p-col {
+      padding: 0 12px;
+      min-width: 0;
+    }
+    .p-col:first-child {
+      border-right: 1px solid #d5ddd7;
+      padding-left: 4px;
+    }
+    .p-col:last-child { padding-right: 4px; }
     .p-sec-title {
-      font-size: 10.5px; font-weight: 900; color: #1a4a25;
-      text-transform: uppercase; letter-spacing: 1px;
-      margin: 0 0 6px;
+      margin: 0 0 7px;
+      font-size: 11px;
+      color: #1c582f;
+      font-weight: 900;
       font-style: italic;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
     .p-list {
-      list-style: none; margin: 0 0 12px; padding: 0;
+      list-style: none;
+      margin: 0 0 12px;
+      padding: 0;
     }
     .p-list li {
-      font-size: 9.5px; color: #1e1e1e; line-height: 1.6;
-      padding-left: 10px; position: relative; margin-bottom: 1px;
+      position: relative;
+      padding-left: 11px;
+      margin-bottom: 3px;
+      color: #202923;
+      font-size: 10px;
+      line-height: 1.62;
     }
-    .p-list li::before { content: '•'; position: absolute; left: 0; color: #1a4a25; font-weight: 900; }
+    .p-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #1c582f;
+      font-weight: 900;
+    }
 
     .p-submit-box {
-      background: #f2faf5; border-left: 3px solid #2d6a3f;
-      padding: 7px 8px; border-radius: 0 4px 4px 0; margin-bottom: 6px;
+      background: linear-gradient(180deg, #f4faf5 0%, #eaf4ed 100%);
+      border-left: 3px solid #2f7a47;
+      border-radius: 0 4px 4px 0;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      box-shadow: inset 0 0 0 1px rgba(47, 122, 71, 0.06);
     }
-    .p-submit-box p { margin: 0; font-size: 9.5px; color: #1e1e1e; line-height: 1.65; }
-    .p-submit-box strong { color: #12301d; }
+    .p-submit-box p {
+      margin: 0;
+      color: #203027;
+      font-size: 10px;
+      line-height: 1.65;
+    }
+    .p-submit-box strong { color: #163723; }
 
-    /* ── 4. Footer ── */
     .p-footer {
-      background: #0e0e0e;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 9px 16px; margin-top: 6px;
+      position: relative;
+      z-index: 2;
+      background: #101010;
+      color: #fff;
+      display: grid;
+      grid-template-columns: 1fr 1.3fr 54px;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      margin-top: 8px;
     }
-    .p-footer-item { display: flex; align-items: center; gap: 6px; color: #fff; }
-    .p-footer-item svg { width: 15px; height: 15px; flex-shrink: 0; }
-    .p-footer-label { font-size: 7.5px; opacity: .65; display: block; }
-    .p-footer-val   { font-size: 9px; display: block; }
-    .p-footer-phone { font-size: 9.5px; }
-    .p-qr { width: 48px; height: 48px; background: #fff; border-radius: 3px; display: grid; place-items: center; }
+    .p-footer-item { display: flex; align-items: center; gap: 7px; min-width: 0; }
+    .p-footer-icon {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      color: #fff;
+    }
+    .p-footer-icon svg { width: 100%; height: 100%; fill: currentColor; }
+    .p-footer-phone { font-size: 10px; color: #fff; }
+    .p-footer-label {
+      display: block;
+      font-size: 7px;
+      opacity: .72;
+      line-height: 1.15;
+    }
+    .p-footer-val {
+      display: block;
+      font-size: 9px;
+      color: #fff;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+    .p-qr {
+      width: 48px;
+      height: 48px;
+      background: #fff;
+      border-radius: 3px;
+      display: grid;
+      place-items: center;
+      padding: 2px;
+      justify-self: end;
+    }
+
+    .job-alert-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(2px);
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .45s cubic-bezier(.2, .8, .2, 1), visibility .45s cubic-bezier(.2, .8, .2, 1);
+    }
+    .job-alert-overlay.is-open,
+    .job-alert-overlay.is-closing {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .job-alert-overlay.is-closing {
+      pointer-events: none;
+      opacity: 0;
+    }
+    .job-alert-modal {
+      width: min(100%, 720px);
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 30px 90px rgba(15, 23, 42, 0.32);
+      padding: 44px 42px 34px;
+      text-align: center;
+      transform: translateY(26px) scale(.94);
+      opacity: 0;
+    }
+    .job-alert-overlay.is-open .job-alert-modal {
+      animation: jobAlertModalIn .64s cubic-bezier(.2, .9, .2, 1) forwards;
+    }
+    .job-alert-overlay.is-closing .job-alert-modal {
+      animation: jobAlertModalOut .34s ease-in forwards;
+    }
+    .job-alert-icon {
+      width: 132px;
+      height: 132px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #8fdb83;
+      background: #ffffff;
+      position: relative;
+    }
+    .job-alert-icon::before,
+    .job-alert-icon::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .job-alert-icon::before {
+      border: 5px solid #eaf7e7;
+      transform: scale(.7);
+      opacity: 0;
+    }
+    .job-alert-icon::after {
+      border: 12px solid rgba(143, 219, 131, 0.12);
+      transform: scale(.4);
+      opacity: 0;
+    }
+    .job-alert-overlay.is-open .job-alert-icon::before {
+      animation: jobAlertRingIn .66s ease-out .1s forwards;
+    }
+    .job-alert-overlay.is-open .job-alert-icon::after {
+      animation: jobAlertPulse .86s ease-out .18s forwards;
+    }
+    .job-alert-check {
+      width: 58px;
+      height: 58px;
+      position: relative;
+      z-index: 1;
+    }
+    .job-alert-check path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 26;
+      stroke-dashoffset: 26;
+    }
+    .job-alert-overlay.is-open .job-alert-check path {
+      animation: jobAlertCheckDraw .5s cubic-bezier(.65, 0, .35, 1) .3s forwards;
+    }
+    .job-alert-title {
+      margin: 0 0 14px;
+      color: #4b5563;
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: .02em;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    .job-alert-overlay.is-open .job-alert-title {
+      animation: jobAlertTextIn .42s ease .26s forwards;
+    }
+    .job-alert-message {
+      margin: 0 0 28px;
+      color: #b0b6be;
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    .job-alert-overlay.is-open .job-alert-message {
+      animation: jobAlertTextIn .42s ease .34s forwards;
+    }
+    .job-alert-ok {
+      min-width: 126px;
+      border: 0;
+      border-radius: 8px;
+      padding: 14px 26px;
+      background: linear-gradient(180deg, #84cef2 0%, #69c1ea 100%);
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(105, 193, 234, 0.35);
+      opacity: 0;
+      transform: translateY(12px) scale(.96);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .job-alert-overlay.is-open .job-alert-ok {
+      animation: jobAlertButtonIn .46s cubic-bezier(.2, .9, .2, 1) .44s forwards;
+    }
+    .job-alert-ok:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(105, 193, 234, 0.42);
+    }
+
+    @keyframes jobAlertModalIn {
+      from { opacity: 0; transform: translateY(26px) scale(.94); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes jobAlertModalOut {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(16px) scale(.98); }
+    }
+    @keyframes jobAlertRingIn {
+      0% { opacity: 0; transform: scale(.6); }
+      65% { opacity: 1; transform: scale(1.06); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes jobAlertPulse {
+      0% { opacity: 0; transform: scale(.4); }
+      35% { opacity: .55; }
+      100% { opacity: 0; transform: scale(1.18); }
+    }
+    @keyframes jobAlertCheckDraw {
+      from { stroke-dashoffset: 26; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes jobAlertTextIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes jobAlertButtonIn {
+      from { opacity: 0; transform: translateY(12px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
   </style>
 </head>
 <body>
@@ -279,11 +537,9 @@
     <main class="admin-main">
       <button id="mobile-toggle" class="btn btn-secondary mobile-toggle">Menu</button>
       <h1 class="admin-title">Job Hire Templates</h1>
-      <p class="admin-subtitle">Edit the poster content — the template layout and branding are fixed</p>
+      <p class="admin-subtitle">Edit the poster content. The template layout and branding are fixed.</p>
 
       <section class="job-template-grid">
-
-        <!-- ══ EDITOR PANEL ══════════════════════════════ -->
         <article class="panel job-editor-panel">
           <div id="feedback"></div>
           <form id="job-form" class="job-content-form">
@@ -298,7 +554,7 @@
               <p id="upload-label-text">Click to upload background image</p>
               <span class="btn btn-secondary browse-btn">Browse</span>
             </label>
-            <button type="button" id="clear-image-btn" class="btn btn-secondary" style="margin-top:6px;font-size:12px;width:100%;display:none">✕ Remove Image</button>
+            <button type="button" id="clear-image-btn" class="btn btn-secondary" style="margin-top:6px;font-size:12px;width:100%;display:none">Remove Image</button>
 
             <hr class="job-section-divider" />
             <h3>Position</h3>
@@ -339,37 +595,26 @@
               <input class="input" id="field-phone" placeholder="+1 (555) 123-4567" />
             </label>
             <label>Website / Facebook URL
-              <input class="input" id="field-website" placeholder="https://www.facebook.com/spot.carmona" />
+              <input class="input" id="field-website" placeholder="https://www.facebook.com/spal.carmona" />
             </label>
 
             <hr class="job-section-divider" />
             <div style="display:flex;gap:8px">
               <button id="save-draft-btn" class="btn btn-secondary" type="button" style="flex:1">Save Draft</button>
-              <button id="job-save-btn" class="btn btn-primary" type="submit" style="flex:1">Publish Post</button>
+              <button id="job-save-btn" class="btn btn-primary" type="submit" style="flex:1">Submit</button>
             </div>
           </form>
         </article>
 
-        <!-- ══ LIVE PREVIEW ══════════════════════════════ -->
         <aside class="panel job-preview-panel">
           <h3 style="margin-bottom:10px">Live Preview</h3>
 
           <div class="poster-outer">
             <div id="qs-poster">
-
-              <!-- 1. Header -->
               <div class="p-header">
                 <div class="p-logo-half">
                   <div class="p-logo-inner">
-                    <!-- Built-in QuestServ SVG logo -->
-                    <svg class="p-hex-icon" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
-                      <polygon points="23,1 43,12 43,34 23,45 3,34 3,12" fill="#1a3a24"/>
-                      <polygon points="23,7 39,16 39,30 23,39 7,30 7,16" fill="#2d6a3f"/>
-                      <polygon points="23,13 33,19 33,27 23,33 13,27 13,19" fill="#1a3a24"/>
-                      <circle cx="23" cy="23" r="5" fill="#fff" opacity=".9"/>
-                      <circle cx="23" cy="23" r="2.5" fill="#2d6a3f"/>
-                      <line x1="26.5" y1="26.5" x2="30" y2="30" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-                    </svg>
+                    <img class="p-hex-icon" src="/assets/logo.png" alt="QuestServ Logo" />
                     <div>
                       <div class="p-brand-name">QUESTSERV</div>
                       <div class="p-brand-sub">SOLUTIONS INC.</div>
@@ -377,27 +622,16 @@
                   </div>
                 </div>
                 <div class="p-badge-half">
-                  <div class="p-badge-stripes"><span></span><span></span></div>
                   <div class="p-badge-text">JOB<br>HIRING</div>
                 </div>
               </div>
 
-              <!-- 2. Hero -->
               <div class="p-hero">
                 <div class="p-hero-bg" id="p-hero-bg"></div>
-                <div class="p-chevron-left">
-                  <span class="p-chev p-chev-1"></span>
-                  <span class="p-chev p-chev-2"></span>
-                </div>
-                <div class="p-chevron-right">
-                  <span class="p-chev p-chev-1"></span>
-                  <span class="p-chev p-chev-2"></span>
-                </div>
-                <div class="p-hero-title">JOB HIRING</div>
+                <h1 class="p-hero-title">JOB HIRING</h1>
                 <p class="p-hero-sub">For <strong id="p-position-display">Male Production Operator</strong> Position</p>
               </div>
 
-              <!-- 3. Body -->
               <div class="p-body">
                 <div class="p-col">
                   <div class="p-sec-title">Requirements:</div>
@@ -416,73 +650,80 @@
                 </div>
               </div>
 
-              <!-- 4. Footer -->
               <div class="p-footer">
                 <div class="p-footer-item">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 3.08 4.18 2 2 0 0 1 5.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L9.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-                  </svg>
+                  <div class="p-footer-icon">
+                    <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+                  </div>
                   <span class="p-footer-phone" id="p-phone-display">+1 (555) 123-4567</span>
                 </div>
                 <div class="p-footer-item">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                  </svg>
+                  <div class="p-footer-icon">
+                    <svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                  </div>
                   <div>
                     <span class="p-footer-label">Visit Our Website</span>
-                    <span class="p-footer-val" id="p-website-display">facebook.com/spot.carmona</span>
+                    <span class="p-footer-val" id="p-website-display">https://www.facebook.com/spal.carmona</span>
                   </div>
                 </div>
-                <!-- Static QR code SVG -->
                 <div class="p-qr">
                   <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
                     <rect width="40" height="40" fill="#fff"/>
-                    <rect x="2" y="2" width="12" height="12" rx="1" fill="#0e0e0e"/>
+                    <rect x="2" y="2" width="12" height="12" rx="1" fill="#111"/>
                     <rect x="4" y="4" width="8" height="8" fill="#fff" rx=".5"/>
-                    <rect x="5.5" y="5.5" width="5" height="5" fill="#0e0e0e"/>
-                    <rect x="26" y="2" width="12" height="12" rx="1" fill="#0e0e0e"/>
+                    <rect x="5.5" y="5.5" width="5" height="5" fill="#111"/>
+                    <rect x="26" y="2" width="12" height="12" rx="1" fill="#111"/>
                     <rect x="28" y="4" width="8" height="8" fill="#fff" rx=".5"/>
-                    <rect x="29.5" y="5.5" width="5" height="5" fill="#0e0e0e"/>
-                    <rect x="2" y="26" width="12" height="12" rx="1" fill="#0e0e0e"/>
+                    <rect x="29.5" y="5.5" width="5" height="5" fill="#111"/>
+                    <rect x="2" y="26" width="12" height="12" rx="1" fill="#111"/>
                     <rect x="4" y="28" width="8" height="8" fill="#fff" rx=".5"/>
-                    <rect x="5.5" y="29.5" width="5" height="5" fill="#0e0e0e"/>
-                    <rect x="16" y="2" width="2" height="2" fill="#0e0e0e"/>
-                    <rect x="20" y="2" width="2" height="2" fill="#0e0e0e"/>
-                    <rect x="22" y="4" width="2" height="4" fill="#0e0e0e"/>
-                    <rect x="16" y="6" width="4" height="2" fill="#0e0e0e"/>
-                    <rect x="16" y="10" width="2" height="2" fill="#0e0e0e"/>
-                    <rect x="16" y="16" width="6" height="2" fill="#0e0e0e"/>
-                    <rect x="16" y="20" width="2" height="6" fill="#0e0e0e"/>
-                    <rect x="20" y="20" width="4" height="2" fill="#0e0e0e"/>
-                    <rect x="24" y="22" width="2" height="4" fill="#0e0e0e"/>
-                    <rect x="26" y="16" width="12" height="2" fill="#0e0e0e"/>
-                    <rect x="26" y="20" width="4" height="2" fill="#0e0e0e"/>
-                    <rect x="34" y="20" width="4" height="8" fill="#0e0e0e"/>
-                    <rect x="26" y="26" width="4" height="2" fill="#0e0e0e"/>
-                    <rect x="28" y="30" width="4" height="2" fill="#0e0e0e"/>
-                    <rect x="2" y="16" width="4" height="2" fill="#0e0e0e"/>
-                    <rect x="8" y="16" width="2" height="6" fill="#0e0e0e"/>
-                    <rect x="2" y="20" width="2" height="4" fill="#0e0e0e"/>
-                    <rect x="6" y="22" width="2" height="2" fill="#0e0e0e"/>
-                    <rect x="10" y="22" width="2" height="2" fill="#0e0e0e"/>
+                    <rect x="5.5" y="29.5" width="5" height="5" fill="#111"/>
+                    <rect x="16" y="2" width="2" height="2" fill="#111"/>
+                    <rect x="20" y="2" width="2" height="2" fill="#111"/>
+                    <rect x="22" y="4" width="2" height="4" fill="#111"/>
+                    <rect x="16" y="6" width="4" height="2" fill="#111"/>
+                    <rect x="16" y="10" width="2" height="2" fill="#111"/>
+                    <rect x="16" y="16" width="6" height="2" fill="#111"/>
+                    <rect x="16" y="20" width="2" height="6" fill="#111"/>
+                    <rect x="20" y="20" width="4" height="2" fill="#111"/>
+                    <rect x="24" y="22" width="2" height="4" fill="#111"/>
+                    <rect x="26" y="16" width="12" height="2" fill="#111"/>
+                    <rect x="26" y="20" width="4" height="2" fill="#111"/>
+                    <rect x="34" y="20" width="4" height="8" fill="#111"/>
+                    <rect x="26" y="26" width="4" height="2" fill="#111"/>
+                    <rect x="28" y="30" width="4" height="2" fill="#111"/>
+                    <rect x="2" y="16" width="4" height="2" fill="#111"/>
+                    <rect x="8" y="16" width="2" height="6" fill="#111"/>
+                    <rect x="2" y="20" width="2" height="4" fill="#111"/>
+                    <rect x="6" y="22" width="2" height="2" fill="#111"/>
+                    <rect x="10" y="22" width="2" height="2" fill="#111"/>
                   </svg>
                 </div>
               </div>
-
-            </div><!-- /#qs-poster -->
+            </div>
           </div>
 
           <p class="muted" style="font-size:11px;margin-top:8px;text-align:center">
-            Layout &amp; branding are locked — only text and background image change.
+            Layout and branding are locked. Only text and background image change.
           </p>
         </aside>
-
       </section>
     </main>
+  </div>
+
+  <div id="job-alert" class="job-alert-overlay" aria-hidden="true">
+    <div class="job-alert-modal" role="dialog" aria-modal="true" aria-labelledby="job-alert-title" aria-describedby="job-alert-message">
+      <div class="job-alert-icon" aria-hidden="true">
+        <svg class="job-alert-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>
+      </div>
+      <h2 id="job-alert-title" class="job-alert-title">Success Message Title</h2>
+      <p id="job-alert-message" class="job-alert-message">Well done, you pressed a button</p>
+      <button id="job-alert-ok" class="job-alert-ok" type="button">OK</button>
+    </div>
   </div>
 
   <script type="module" src="/src/js/common.js"></script>
   <script type="module" src="/src/js/admin-common.js"></script>
   <script type="module" src="/src/js/admin-jobs.js"></script>
 </body>
-</html> 
+</html>

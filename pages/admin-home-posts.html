@@ -4,7 +4,49 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Home Posts | Questserv</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dashboard: {
+              50: '#f0f8f4',
+              100: '#dff1e6',
+              200: '#bfe2cf',
+              500: '#238a57',
+              600: '#1d7047',
+              700: '#175838',
+            },
+          },
+          boxShadow: {
+            card: '0 10px 28px rgba(16, 45, 30, 0.1)',
+            cardHover: '0 18px 44px rgba(16, 45, 30, 0.16)',
+          },
+        },
+      },
+    };
+  </script>
   <link rel="stylesheet" href="/src/styles/theme.css" />
+  <style>
+    #home-posts-root {
+      margin-top: 1rem;
+    }
+
+    .home-posts-surface {
+      border-radius: 20px;
+      border: 1px solid #d7e7dc;
+      background: linear-gradient(180deg, #f8fcfa 0%, #f4f9f6 100%);
+      padding: 1rem;
+      box-shadow: 0 12px 34px rgba(21, 66, 42, 0.08);
+    }
+
+    @media (min-width: 768px) {
+      .home-posts-surface {
+        padding: 1.25rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="navbar admin-navbar">
@@ -74,13 +116,18 @@
     <main class="admin-main">
       <button id="mobile-toggle" class="btn btn-secondary mobile-toggle">Menu</button>
       <h1 class="admin-title">Home Posts</h1>
-      <p class="admin-subtitle">View all published hiring posts</p>
-      <section id="home-posts-list" class="home-posts-list"></section>
+      <p class="admin-subtitle">View all saved hiring templates and published posts</p>
+      <section class="home-posts-surface">
+        <div id="home-posts-root"></div>
+      </section>
     </main>
   </div>
 
   <script type="module" src="/src/js/common.js"></script>
   <script type="module" src="/src/js/admin-common.js"></script>
-  <script type="module" src="/src/js/admin-home-posts.js"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" data-type="module" src="/src/js/admin-home-posts-react.jsx"></script>
 </body>
 </html>

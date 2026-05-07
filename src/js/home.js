@@ -42,6 +42,13 @@ function getJobType(job = {}) {
   return job.type || 'Full-time';
 }
 
+function getJobSummary(job = {}) {
+  if (job.descriptionText) return job.descriptionText;
+  if (Array.isArray(job.description) && job.description.length) return job.description.join(' ');
+  if (typeof job.description === 'string') return job.description;
+  return 'Explore a high-impact role with a growing team building practical solutions for enterprise clients.';
+}
+
 function startKickerTypingAnimation() {
   if (!jobsKickerTyping) return;
 
@@ -144,7 +151,7 @@ function renderJobCards(jobs = []) {
       </div>
 
       <p class="jobs-listing-description">
-        ${escapeHtml(job.description?.substring(0, 180) || 'Explore a high-impact role with a growing team building practical solutions for enterprise clients.')}
+        ${escapeHtml(getJobSummary(job).substring(0, 180))}
       </p>
 
       <div class="jobs-listing-bottom">
@@ -236,7 +243,7 @@ homeJobFilter?.addEventListener('submit', async (event) => {
     if (keyword) {
       filtered = filtered.filter((job) =>
         job.title.toLowerCase().includes(keyword.toLowerCase()) ||
-        (job.description || '').toLowerCase().includes(keyword.toLowerCase())
+        getJobSummary(job).toLowerCase().includes(keyword.toLowerCase())
       );
     }
 

@@ -16,7 +16,7 @@ function renderJobs(jobs) {
         <span class="tag">${job.location}</span>
         <span class="tag">${job.type}</span>
       </div>
-      <p class="muted">${job.description.slice(0, 160)}...</p>
+      <p class="muted">${(job.descriptionText || (Array.isArray(job.description) ? job.description.join(' ') : job.description) || '').slice(0, 160)}...</p>
       <a class="btn btn-primary" href="/pages/job-details.html?id=${job.id}">Read More</a>
     </article>
   `).join('');

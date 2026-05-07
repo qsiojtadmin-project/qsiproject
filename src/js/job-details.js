@@ -12,15 +12,18 @@ async function loadJob() {
 
   try {
     const job = await request(`/jobs/${id}`);
+    const summary = job.descriptionText || (Array.isArray(job.description) ? job.description.join(' ') : job.description) || '';
+    const requirements = Array.isArray(job.requirements) ? job.requirements : [];
+
     details.innerHTML = `
       <h1>${job.title}</h1>
       <div class="job-meta">
         <span class="tag">${job.location}</span>
         <span class="tag">${job.type}</span>
       </div>
-      <p>${job.description}</p>
+      <p>${summary}</p>
       <h3>Requirements</h3>
-      <p class="muted">Strong communication, team collaboration, and relevant domain experience.</p>
+      <ul class="muted">${requirements.length ? requirements.map((item) => `<li>${item}</li>`).join('') : '<li>Requirements will be shared during screening.</li>'}</ul>
       <a class="btn btn-primary" href="/pages/apply.html?job_id=${job.id}">Apply Now</a>
     `;
 
