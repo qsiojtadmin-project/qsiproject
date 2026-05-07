@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User UI | QuestServ Solution Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/src/styles/styles.css" />
+</head>
+<body>
+  <header class="site-header" id="home">
+    <div class="container header-wrap">
+      <a href="../index.html#home" class="site-brand" aria-label="QuestServ home">
+        <img src="../assets/logo.png" alt="QuestServ logo" class="site-brand-logo" />
+        <span class="brand-text" aria-hidden="true">
+          <span class="brand-title">QUESTSERV</span>
+          <span class="brand-subtitle">SOLUTIONS INC.</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="User navigation">
+        <a href="../index.html#jobs">Jobs</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="/pages/user-ui.html">User UI</a>
+      </nav>
+      <div class="session-box">
+        <span id="session-label" class="muted">Guest</span>
+        <button id="logout-btn" class="btn btn-outline" type="button">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="dashboards">
+      <div class="container">
+        <h2>User UI</h2>
+        <article id="user-dashboard" class="dashboard-card hidden">
+          <div class="dashboard-head">
+            <h3>My Applications</h3>
+            <p class="muted">Submit and track your application progress.</p>
+          </div>
+
+          <form id="application-form" class="form-card" novalidate>
+            <div class="form-grid">
+              <label>
+                Full Name
+                <input type="text" id="fullName" required />
+              </label>
+              <label>
+                Email
+                <input type="email" id="email" required />
+              </label>
+              <label>
+                Phone Number
+                <input type="tel" id="phone" required />
+              </label>
+              <label>
+                Position Applied
+                <input type="text" id="position" required />
+              </label>
+              <label class="full-width">
+                Upload Resume
+                <input type="file" id="resume" accept=".pdf,.doc,.docx" required />
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+            <p id="form-message" class="form-message" aria-live="polite"></p>
+          </form>
+
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Position</th>
+                  <th>Status</th>
+                  <th>Resume</th>
+                </tr>
+              </thead>
+              <tbody id="user-table-body"></tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p>&copy; <span id="year"></span> QuestServ Solution Inc. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>

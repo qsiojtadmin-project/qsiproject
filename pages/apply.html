@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account | QuestServ Hiring System</title>
+  <link rel="stylesheet" href="/src/styles/apply.css">
+</head>
+<body>
+  <section class="signup-shell">
+    <aside class="signup-aside">
+      <div class="signup-intro">
+        <div class="brand-row" aria-label="QuestServ brand">
+          <img src="../assets/logo.png" alt="QuestServ logo" />
+          <span>QuestServ Solutions Inc.</span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="signup-card">
+      <div class="signup-card-inner">
+        <div class="card-header">
+          <div>
+            <h2>Fill-up form</h2>
+            <p>Fill out the required details below to create your applicant account.</p>
+          </div>
+          <a class="back-link" href="/index.html">Back</a>
+        </div>
+
+        <form id="signupForm" novalidate>
+          <div class="form-grid">
+            <div class="field full">
+              <label for="fullName">Full Name</label>
+              <input class="input" type="text" id="fullName" name="full_name" />
+              <span class="error-text" id="fullNameError"></span>
+            </div>
+
+            <div class="field">
+              <label for="email">Email Address</label>
+              <input class="input" type="email" id="email" name="email" />
+              <span class="error-text" id="emailError"></span>
+            </div>
+
+            <div class="field">
+              <label for="experience">Do you have prior experience?</label>
+              <select class="select" id="experience" name="experience">
+                <option value="">Select option</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+              <span class="error-text" id="experienceError"></span>
+            </div>
+
+            <div class="field">
+              <label for="phone">Phone Number</label>
+              <input class="input" type="text" id="phone" name="phone" />
+              <span class="error-text" id="phoneError"></span>
+            </div>
+
+            <div class="field full">
+              <label for="position">Position Applying For</label>
+              <select class="select" id="position" name="position">
+                <option value="">Loading available jobs...</option>
+              </select>
+              <span class="error-text" id="positionError"></span>
+            </div>
+
+            <div class="field full">
+              <label for="resume">Resume Upload</label>
+              <input class="file-input" type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" />
+              <span class="helper">Accepted formats: PDF, DOC, DOCX</span>
+              <span class="error-text" id="resumeError"></span>
+            </div>
+
+            <div class="field full">
+              <div class="checkbox-row">
+                <input type="checkbox" id="terms" name="terms" />
+                <label for="terms">I agree to the Terms &amp; Conditions and confirm that all provided information is correct.</label>
+              </div>
+              <span class="error-text" id="termsError"></span>
+            </div>
+          </div>
+
+          <div class="submit-row">
+            <button id="submitBtn" class="submit-btn" type="submit">Submit Application</button>
+            <div id="formMessage" class="form-message" role="alert" aria-live="polite"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const API_BASE = window.location.origin.includes(':5000')
+      ? '/api'
+      : 'http://localhost:5000/api';
+
+    const form = document.getElementById('signupForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formMessage = document.getElementById('formMessage');
+
+    const fields = {
+      fullName: document.getElementById('fullName'),
+      email: document.getElementById('email'),
+      experience: document.getElementById('experience'),
+      phone: document.getElementById('phone'),
+      position: document.getElementById('position'),
+      resume: document.getElementById('resume'),
+      terms: document.getElementById('terms')
+    };
+
+    const errors = {
+      fullName: document.getElementById('fullNameError'),
+      email: document.getElementById('emailError'),
+      experience: document.getElementById('experienceError'),
+      phone: document.getElementById('phoneError'),
+      position: document.getElementById('positionError'),
+      resume: document.getElementById('resumeError'),
+      terms: document.getElementById('termsError')
+    };
+
+    function setError(fieldName, message) {
+      if (errors[fieldName]) errors[fieldName].textContent = message;
+    }
+
+    function clearErrors() {
+      Object.values(errors).forEach((node) => {
+        node.textContent = '';
+      });
+      formMessage.className = 'form-message';
+      formMessage.textContent = '';
+    }
+
+    function showFormMessage(type, message) {
+      formMessage.className = `form-message ${type}`;
+      formMessage.textContent = message;
+    }
+
+    function validateEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function validateResume(file) {
+      if (!file) return false;
+      const allowed = ['pdf', 'doc', 'docx'];
+      const extension = file.name.split('.').pop().toLowerCase();
+      return allowed.includes(extension);
+    }
+
+    async function loadAvailableJobs() {
+      try {
+        fields.position.disabled = true;
+        fields.position.innerHTML = '<option value="">Loading available jobs...</option>';
+
+        const res = await fetch(`${API_BASE}/jobs`);
+        const jobs = await res.json().catch(() => []);
+
+        if (!res.ok) throw new Error('Failed to load jobs');
+
+        if (!Array.isArray(jobs) || !jobs.length) {
+          fields.position.innerHTML = '<option value="">No jobs available yet</option>';
+          return;
+        }
+
+        fields.position.innerHTML = '<option value="">Select a position</option>';
+        jobs.forEach((job) => {
+          const option = document.createElement('option');
+          option.value = job.title;
+          option.textContent = job.title;
+          fields.position.appendChild(option);
+        });
+      } catch (error) {
+        fields.position.innerHTML = '<option value="">No jobs available right now</option>';
+        setError('position', 'Unable to load available jobs.');
+      } finally {
+        fields.position.disabled = false;
+      }
+    }
+
+    function validateForm() {
+      let isValid = true;
+
+      if (!fields.fullName.value.trim()) {
+        setError('fullName', 'Full Name is required.');
+        isValid = false;
+      }
+
+      if (!fields.email.value.trim()) {
+        setError('email', 'Email Address is required.');
+        isValid = false;
+      } else if (!validateEmail(fields.email.value.trim())) {
+        setError('email', 'Enter a valid email address.');
+        isValid = false;
+      }
+
+      if (!fields.experience.value) {
+        setError('experience', 'Please select an option.');
+        isValid = false;
+      }
+
+      if (!fields.phone.value.trim()) {
+        setError('phone', 'Phone Number is required.');
+        isValid = false;
+      }
+
+      if (!fields.position.value) {
+        setError('position', 'Please select a position.');
+        isValid = false;
+      }
+
+      const resumeFile = fields.resume.files[0];
+      if (!resumeFile) {
+        setError('resume', 'Resume upload is required.');
+        isValid = false;
+      } else if (!validateResume(resumeFile)) {
+        setError('resume', 'Only PDF, DOC, or DOCX files are allowed.');
+        isValid = false;
+      }
+
+      if (!fields.terms.checked) {
+        setError('terms', 'You must agree to the terms.');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearErrors();
+
+      if (!validateForm()) {
+        showFormMessage('error', 'Please correct the highlighted errors.');
+        return;
+      }
+
+      const payload = {
+        full_name: fields.fullName.value.trim(),
+        email: fields.email.value.trim(),
+        experience: fields.experience.value,
+        phone: fields.phone.value.trim(),
+        position: fields.position.value,
+        role: 'user'
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting Application...';
+
+      try {
+        // Example implementation for sending data:
+        // const formData = new FormData();
+        // for (const key in payload) formData.append(key, payload[key]);
+        // formData.append('resume', fields.resume.files[0]);
+        // await fetch(`${API_BASE}/signup`, { method: 'POST', body: formData });
+        
+        showFormMessage('success', 'Application submitted successfully.');
+        form.reset();
+      } catch (error) {
+        showFormMessage('error', error.message || 'Request failed');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Application';
+      }
+    });
+
+    loadAvailableJobs();
+  </script>
+</body>
+</html>
