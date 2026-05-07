@@ -40,6 +40,15 @@ img {
   margin: 0 auto;
 }
 
+#admin-code-field {
+  display: none;
+}
+
+.admin-settings-card {
+  max-width: 680px;
+  margin: 0;
+}
+
 .navbar {
   position: sticky;
   top: 0;

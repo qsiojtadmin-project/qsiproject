@@ -140,6 +140,118 @@
       font-weight: 500;
     }
 
+    .header-login-button {
+      padding: 8px 16px;
+      border: none;
+      background: none;
+      color: #1f2937;
+      cursor: pointer;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .login-dropdown-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .login-dropdown-menu {
+      position: absolute;
+      top: 120%;
+      right: 0;
+      z-index: 1000;
+      display: none;
+      width: 280px;
+      padding: 20px;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      background: #f0fdf4;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-dropdown-title {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #14532d;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .login-dropdown-field {
+      margin-bottom: 12px;
+    }
+
+    .login-dropdown-label {
+      display: block;
+      margin-bottom: 5px;
+      color: #166534;
+      font-size: 13px;
+    }
+
+    .login-dropdown-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #86efac;
+      border-radius: 4px;
+      box-sizing: border-box;
+      outline-color: #22c55e;
+    }
+
+    .login-dropdown-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      font-size: 12px;
+    }
+
+    .login-dropdown-check {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      color: #15803d;
+      cursor: pointer;
+    }
+
+    .login-dropdown-checkbox {
+      margin-right: 6px;
+      accent-color: #22c55e;
+    }
+
+    .login-dropdown-link {
+      color: #16a34a;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-dropdown-submit {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #22c55e;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .login-dropdown-register {
+      margin-top: 15px;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .login-dropdown-register-copy {
+      color: #15803d;
+    }
+
+    .login-dropdown-register-link {
+      color: #16a34a;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
     .header-post-btn {
       display: inline-flex;
       align-items: center;
@@ -860,6 +972,13 @@
       font-weight: 600;
       margin-bottom: 1.5rem;
       position: relative;
+    }
+
+    .footer-about-copy {
+      margin-bottom: 1.5rem;
+      color: #b4b6bb;
+      font-size: 0.95rem;
+      line-height: 1.7;
     }
 
     .footer-title::after {

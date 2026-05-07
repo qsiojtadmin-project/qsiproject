@@ -1,4 +1,5 @@
 import { request } from './api.js';
+import { escapeHtml } from './utils.js';
 
 const statusFilter = document.getElementById('status-filter');
 const positionFilter = document.getElementById('position-filter');
@@ -57,15 +58,6 @@ function normalizeStatus(status) {
 
 function statusClass(label) {
   return label.toLowerCase().replace(/\s+/g, '-');
-}
-
-function escapeHtml(value = '') {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
 }
 
 function populatePositionFilter(rows) {

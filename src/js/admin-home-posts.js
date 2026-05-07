@@ -1,15 +1,7 @@
 import { request } from './api.js';
+import { escapeHtml } from './utils.js';
 
 const listEl = document.getElementById('home-posts-list');
-
-function esc(value = '') {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
 
 function hoursAgo(dateValue) {
   const ms = Date.now() - new Date(dateValue).getTime();
@@ -28,9 +20,9 @@ async function loadPosts() {
     listEl.innerHTML = rows.map((row) => `
       <article class="home-post-card">
         <div class="home-post-banner">
-          <h3>${esc(row.title)}</h3>
-          <p>${esc(row.description || 'Hiring now')}</p>
-          <p class="home-post-details">${esc(row.type || 'Full-time')} • ${esc(row.location || 'Remote')} • ${esc(row.salary || '$120k-$160k')}</p>
+          <h3>${escapeHtml(row.title)}</h3>
+          <p>${escapeHtml(row.description || 'Hiring now')}</p>
+          <p class="home-post-details">${escapeHtml(row.type || 'Full-time')} &bull; ${escapeHtml(row.location || 'Remote')} &bull; ${escapeHtml(row.salary || '$120k-$160k')}</p>
         </div>
         <div class="home-post-meta-row">
           <div class="home-post-meta-left">
@@ -45,7 +37,7 @@ async function loadPosts() {
       </article>
     `).join('');
   } catch (error) {
-    listEl.innerHTML = `<article class="home-post-card"><div class="home-post-meta-row"><span class="notice error">${esc(error.message)}</span></div></article>`;
+    listEl.innerHTML = `<article class="home-post-card"><div class="home-post-meta-row"><span class="notice error">${escapeHtml(error.message)}</span></div></article>`;
   }
 }
 

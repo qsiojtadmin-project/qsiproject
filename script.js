@@ -756,7 +756,7 @@ if (heroSlider) {
       primaryLabel: 'Explore Staff Roles',
       primaryHref: '#jobs',
       secondaryLabel: 'Staff/Admin Access',
-      secondaryHref: '/pages/login-only.html?role=staff',
+      secondaryHref: '/pages/login.html',
       image: "linear-gradient(180deg, rgba(6, 82, 51, 0.56), rgba(10, 106, 69, 0.72)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat",
     },
     {
@@ -840,3 +840,4 @@ if (heroSlider) {
 
 ensureDefaultAccounts();
 renderAll();
+

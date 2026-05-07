@@ -1,10 +1,7 @@
-﻿import { updateAuthLinks } from './api.js';
+import { updateAuthLinks } from './api.js';
+import { updateYear } from './utils.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   updateAuthLinks();
-
-  const yearEl = document.getElementById('year');
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
-  }
+  updateYear();
 });

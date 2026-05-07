@@ -73,6 +73,6 @@ export function updateAuthLinks() {
 export function enforceRole(role) {
   const user = auth.user;
   if (!user || (role && user.role !== role)) {
-    window.location.href = '/pages/login-only.html';
+    window.location.href = '/pages/login.html';
   }
 }

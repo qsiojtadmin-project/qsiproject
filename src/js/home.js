@@ -1,4 +1,5 @@
 import { request } from './api.js';
+import { escapeHtml } from './utils.js';
 
 const recommendedJobsList = document.getElementById('recommended-jobs-list');
 const adminDesignsList = document.getElementById('admin-designs-list');
@@ -8,12 +9,6 @@ const jobsPaginationText = document.getElementById('jobs-pagination-text');
 const topMatchesList = document.getElementById('top-matches-list');
 const latestOpeningsList = document.getElementById('latest-openings-list');
 const jobsKickerTyping = document.getElementById('jobs-kicker-typing');
-
-function escapeHtml(text = '') {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
 
 function getInitials(title = '') {
   return title
@@ -76,6 +71,39 @@ function startKickerTypingAnimation() {
 
   jobsKickerTyping.textContent = '';
   window.setTimeout(tick, 450);
+}
+
+function initJobCategoryChips() {
+  document.querySelectorAll('.jobs-chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.jobs-chip').forEach((item) => item.classList.remove('is-active'));
+      chip.classList.add('is-active');
+    });
+  });
+}
+
+function initInlineLoginMenu() {
+  const loginBtn = document.getElementById('login-toggle-btn');
+  const loginMenu = document.getElementById('login-dropdown-menu');
+  const loginForm = document.getElementById('inline-login-form');
+
+  if (!loginBtn || !loginMenu || !loginForm) return;
+
+  loginBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    loginMenu.style.display = loginMenu.style.display === 'block' ? 'none' : 'block';
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!loginBtn.contains(event.target) && !loginMenu.contains(event.target)) {
+      loginMenu.style.display = 'none';
+    }
+  });
+
+  loginForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    console.log('Login submitted:', document.getElementById('login-email')?.value || '');
+  });
 }
 
 function updateJobSummary(total, visible) {
@@ -241,3 +269,5 @@ homeJobFilter?.addEventListener('submit', async (event) => {
 loadRecommendedJobs();
 loadAdminDesigns();
 startKickerTypingAnimation();
+initJobCategoryChips();
+initInlineLoginMenu();

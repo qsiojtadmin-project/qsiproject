@@ -1,4 +1,5 @@
 import { auth, request } from './api.js';
+import { initPasswordToggles } from './utils.js';
 
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
@@ -6,21 +7,7 @@ const roleSelect = document.getElementById('role');
 const adminCodeInput = document.getElementById('admin_code');
 const adminCodeField = document.getElementById('admin-code-field');
 
-function wirePasswordToggle(button) {
-  const targetId = button.dataset.target;
-  const input = document.getElementById(targetId);
-  if (!input) return;
-
-  button.addEventListener('click', () => {
-    const isHidden = input.type === 'password';
-    input.type = isHidden ? 'text' : 'password';
-    button.classList.toggle('is-visible', isHidden);
-    button.setAttribute('aria-label', `${isHidden ? 'Hide' : 'Show'} password`);
-    button.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
-  });
-}
-
-document.querySelectorAll('[data-password-toggle]').forEach(wirePasswordToggle);
+initPasswordToggles();
 
 function getFeedbackEl(formType) {
   return document.getElementById(`${formType}-feedback`) || document.getElementById('feedback');
