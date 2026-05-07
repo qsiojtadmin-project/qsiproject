@@ -1,137 +1,217 @@
 import { request } from './api.js';
 
-const form = document.getElementById('job-form');
-const saveBtn = document.getElementById('job-save-btn');
-const idInput = document.getElementById('job_id');
-const feedback = document.getElementById('feedback');
-const imageInput = document.getElementById('template-image');
+// ── Field references ────────────────────────────────
+const form        = document.getElementById('job-form');
+const idInput     = document.getElementById('job_id');
+const feedback    = document.getElementById('feedback');
+const draftBtn    = document.getElementById('save-draft-btn');
 
-const previewCard = document.getElementById('job-preview-card');
-const previewTitle = document.getElementById('preview-title');
-const previewDescription = document.getElementById('preview-description');
-const previewMeta = document.getElementById('preview-meta');
-const previewCta = document.getElementById('preview-cta');
+const fPosition   = document.getElementById('field-position');
+const fGender     = document.getElementById('field-gender');
+const fEmail      = document.getElementById('field-email');
+const fSubject    = document.getElementById('field-subject');
+const fPhone      = document.getElementById('field-phone');
+const fWebsite    = document.getElementById('field-website');
 
-const fontFamilySelect = document.getElementById('style-font-family');
-const fontSizeRange = document.getElementById('style-font-size');
-const fontSizeLabel = document.getElementById('style-font-size-label');
-const textColorInput = document.getElementById('style-text-color');
-const textColorPicker = document.getElementById('style-text-color-picker');
-const overlayRange = document.getElementById('style-overlay');
-const overlayLabel = document.getElementById('style-overlay-label');
+// ── Poster display references ───────────────────────
+const pPosition   = document.getElementById('p-position-display');
+const pReq        = document.getElementById('p-req');
+const pDesc       = document.getElementById('p-desc');
+const pBen        = document.getElementById('p-ben');
+const pEmail      = document.getElementById('p-email-display');
+const pSubject    = document.getElementById('p-subject-display');
+const pPhone      = document.getElementById('p-phone-display');
+const pWebsite    = document.getElementById('p-website-display');
+const pHeroBg     = document.getElementById('p-hero-bg');
 
-const draftBtn = document.getElementById('save-draft-btn');
-const previewBtn = document.getElementById('preview-post-btn');
+// ── Image upload ────────────────────────────────────
+const bgInput     = document.getElementById('bg-image-input');
+const clearBtn    = document.getElementById('clear-image-btn');
+const uploadText  = document.getElementById('upload-label-text');
 
+bgInput?.addEventListener('change', () => {
+  const file = bgInput.files?.[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  pHeroBg.style.backgroundImage = `url('${url}')`;
+  pHeroBg.classList.add('has-image');
+  uploadText.textContent = file.name;
+  clearBtn.style.display = 'block';
+});
+
+clearBtn?.addEventListener('click', () => {
+  bgInput.value = '';
+  pHeroBg.style.backgroundImage = '';
+  pHeroBg.classList.remove('has-image');
+  uploadText.textContent = 'Click to upload background image';
+  clearBtn.style.display = 'none';
+});
+
+// ── Dynamic list state ──────────────────────────────
+const listData = {
+  'req-list': [
+    'High School graduate (Junior or Senior).',
+    '18–35 years old.',
+    'Preferably with or without experience (Training will be provided).',
+    'Valid ID and NBI Clearance (Required).',
+  ],
+  'desc-list': [
+    'Operate production machines efficiently.',
+    'Quality control and visual product inspection.',
+    'Maintain a clean and safe work environment (5S).',
+  ],
+  'ben-list': [
+    'Free Shuttle Service (Pick-up points specified).',
+    'Attendance Bonus & Overtime Pay.',
+    'COMPLETE Benefits (SSS, PhilHealth, PAG-IBIG).',
+  ],
+};
+
+const posterMap = {
+  'req-list':  pReq,
+  'desc-list': pDesc,
+  'ben-list':  pBen,
+};
+
+// ── Feedback ────────────────────────────────────────
 function show(msg, type = 'error') {
   if (!feedback) return;
   feedback.className = `notice ${type}`;
   feedback.textContent = msg;
+  setTimeout(() => { feedback.textContent = ''; feedback.className = ''; }, 4000);
 }
 
-function refreshPreview() {
-  if (!form) return;
-
-  previewTitle.textContent = form.title.value || 'Senior Software Engineer';
-  previewDescription.textContent = form.description.value || 'Join our innovative team and build cutting-edge solutions';
-  previewMeta.textContent = form.details?.value || 'Full-time • Remote • $120k-$160k';
-  previewCta.textContent = form.cta?.value || 'Apply Now';
-
-  const size = Number(fontSizeRange?.value || 24);
-  const family = fontFamilySelect?.value || 'Inter';
-  const textColor = textColorInput?.value || '#ffffff';
-  const overlay = Number(overlayRange?.value || 60) / 100;
-
-  if (fontSizeLabel) fontSizeLabel.textContent = `${size}px`;
-  if (overlayLabel) overlayLabel.textContent = `${Math.round(overlay * 100)}%`;
-
-  previewCard.style.fontFamily = family;
-  previewCard.style.color = textColor;
-  previewTitle.style.fontSize = `${size + 10}px`;
-  previewDescription.style.fontSize = `${Math.max(size - 2, 14)}px`;
-  previewMeta.style.fontSize = `${Math.max(size - 4, 12)}px`;
-  previewCard.style.background = `linear-gradient(135deg, rgba(0, 31, 22, ${overlay}), rgba(0, 50, 40, ${Math.min(overlay + 0.08, 1)}))`;
+// ── Render editor list ──────────────────────────────
+function renderEditorList(listId) {
+  const container = document.getElementById(listId);
+  if (!container) return;
+  container.innerHTML = listData[listId].map((val, i) => `
+    <div class="dynamic-list-item">
+      <input class="input" value="${val.replace(/"/g, '&quot;').replace(/&/g, '&amp;')}"
+             data-list="${listId}" data-index="${i}" placeholder="Enter item..." />
+      <button type="button" class="rm-btn" data-remove="${listId}" data-index="${i}" title="Remove">✕</button>
+    </div>
+  `).join('');
 }
 
-function resetForm() {
-  form?.reset();
-  if (idInput) idInput.value = '';
-  if (saveBtn) saveBtn.textContent = 'Publish Post';
-  if (fontSizeRange) fontSizeRange.value = '24';
-  if (textColorInput) textColorInput.value = '#ffffff';
-  if (textColorPicker) textColorPicker.value = '#ffffff';
-  if (overlayRange) overlayRange.value = '60';
-  if (fontFamilySelect) fontFamilySelect.value = 'Inter';
-  refreshPreview();
+// ── Render poster list ──────────────────────────────
+function renderPosterList(listId) {
+  const el = posterMap[listId];
+  if (!el) return;
+  el.innerHTML = listData[listId]
+    .filter(v => v.trim())
+    .map(v => `<li>${v}</li>`)
+    .join('');
 }
 
+// ── Sync all poster text ────────────────────────────
+function syncPoster() {
+  const pos    = fPosition?.value.trim() || 'Production Operator';
+  const gender = fGender?.value.trim();
+  if (pPosition) pPosition.textContent = (gender ? gender + ' ' : '') + pos;
+  if (pEmail)   pEmail.textContent    = fEmail?.value.trim()   || 'carmonaqsi@gmail.com';
+  if (pSubject) pSubject.textContent  = fSubject?.value.trim() || 'PROD OPERATOR';
+  if (pPhone)   pPhone.textContent    = fPhone?.value.trim()   || '+1 (555) 123-4567';
+  if (pWebsite) {
+    const raw = fWebsite?.value.trim() || 'facebook.com/spot.carmona';
+    pWebsite.textContent = raw.replace(/^https?:\/\//, '');
+  }
+  Object.keys(listData).forEach(renderPosterList);
+}
+
+// ── Init everything ─────────────────────────────────
+function init() {
+  Object.keys(listData).forEach(id => {
+    renderEditorList(id);
+    renderPosterList(id);
+  });
+}
+
+// ── Event: input in dynamic list ───────────────────
+document.addEventListener('input', (e) => {
+  const input = e.target.closest('input[data-list]');
+  if (input) {
+    listData[input.dataset.list][Number(input.dataset.index)] = input.value;
+    renderPosterList(input.dataset.list);
+    return;
+  }
+  // Basic field input → sync poster
+  if ([fPosition, fGender, fEmail, fSubject, fPhone, fWebsite].includes(e.target)) {
+    syncPoster();
+  }
+});
+
+// ── Event: clicks (add / remove list items) ─────────
+document.addEventListener('click', (e) => {
+  const removeBtn = e.target.closest('button[data-remove]');
+  if (removeBtn) {
+    const { remove: listId, index } = removeBtn.dataset;
+    listData[listId].splice(Number(index), 1);
+    renderEditorList(listId);
+    renderPosterList(listId);
+    return;
+  }
+  const addBtn = e.target.closest('button[data-target]');
+  if (addBtn) {
+    const listId = addBtn.dataset.target;
+    listData[listId].push('');
+    renderEditorList(listId);
+    setTimeout(() => {
+      const c = document.getElementById(listId);
+      c?.querySelectorAll('input').item(listData[listId].length - 1)?.focus();
+    }, 50);
+  }
+});
+
+// ── Form submit ──────────────────────────────────────
 form?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const data = Object.fromEntries(new FormData(form).entries());
-
+  const data = {
+    title:        fPosition?.value.trim(),
+    gender:       fGender?.value.trim(),
+    requirements: listData['req-list'].filter(v => v.trim()),
+    description:  listData['desc-list'].filter(v => v.trim()),
+    benefits:     listData['ben-list'].filter(v => v.trim()),
+    email:        fEmail?.value.trim(),
+    subject:      fSubject?.value.trim(),
+    phone:        fPhone?.value.trim(),
+    website:      fWebsite?.value.trim(),
+  };
   try {
     if (idInput?.value) {
       await request(`/jobs/${idInput.value}`, { method: 'PUT', body: JSON.stringify(data) });
-      show('Template updated.', 'success');
+      show('Post updated.', 'success');
     } else {
-      await request('/jobs', { method: 'POST', body: JSON.stringify(data) });
-      show('Template published.', 'success');
+      const res = await request('/jobs', { method: 'POST', body: JSON.stringify(data) });
+      if (idInput && res?.id) idInput.value = res.id;
+      show('Post published.', 'success');
     }
-  } catch (error) {
-    show(error.message, 'error');
+  } catch (err) {
+    show(err.message, 'error');
   }
 });
 
-form?.addEventListener('input', refreshPreview);
-fontFamilySelect?.addEventListener('change', refreshPreview);
-fontSizeRange?.addEventListener('input', refreshPreview);
-overlayRange?.addEventListener('input', refreshPreview);
+draftBtn?.addEventListener('click', () => show('Draft saved locally.', 'success'));
 
-textColorInput?.addEventListener('input', () => {
-  if (textColorPicker) textColorPicker.value = textColorInput.value;
-  refreshPreview();
-});
-
-textColorPicker?.addEventListener('input', () => {
-  if (textColorInput) textColorInput.value = textColorPicker.value;
-  refreshPreview();
-});
-
-imageInput?.addEventListener('change', () => {
-  const file = imageInput.files?.[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  previewCard.style.background = `linear-gradient(135deg, rgba(0, 31, 22, 0.62), rgba(0, 50, 40, 0.70)), url('${url}') center/cover no-repeat`;
-});
-
-draftBtn?.addEventListener('click', () => {
-  show('Draft saved locally.', 'success');
-});
-
-previewBtn?.addEventListener('click', () => {
-  refreshPreview();
-  show('Preview updated.', 'success');
-});
-
+// ── Load latest saved template from API ─────────────
 async function loadLatestTemplate() {
   try {
     const jobs = await request('/jobs');
-    if (!jobs.length || !form) {
-      resetForm();
-      return;
-    }
-
-    const latest = jobs[0];
-    form.title.value = latest.title || '';
-    form.description.value = latest.description || '';
-    if (form.details) form.details.value = latest.details || `${latest.type || 'Full-time'} • ${latest.location || 'Remote'} • ${latest.salary || '$120k-$160k'}`;
-    if (form.cta) form.cta.value = latest.cta || 'Apply Now';
-    if (idInput) idInput.value = latest.id || '';
-    if (saveBtn) saveBtn.textContent = latest.id ? 'Publish Post' : 'Publish Post';
-    refreshPreview();
-  } catch {
-    resetForm();
-  }
+    if (!jobs.length) { init(); syncPoster(); return; }
+    const j = jobs[0];
+    if (idInput)    idInput.value    = j.id       || '';
+    if (fPosition)  fPosition.value  = j.title    || '';
+    if (fGender)    fGender.value    = j.gender   || '';
+    if (fEmail)     fEmail.value     = j.email    || '';
+    if (fSubject)   fSubject.value   = j.subject  || '';
+    if (fPhone)     fPhone.value     = j.phone    || '';
+    if (fWebsite)   fWebsite.value   = j.website  || '';
+    if (Array.isArray(j.requirements) && j.requirements.length) listData['req-list']  = j.requirements;
+    if (Array.isArray(j.description)  && j.description.length)  listData['desc-list'] = j.description;
+    if (Array.isArray(j.benefits)     && j.benefits.length)     listData['ben-list']  = j.benefits;
+  } catch { /* use defaults */ }
+  init();
+  syncPoster();
 }
 
 loadLatestTemplate();

@@ -31,3 +31,43 @@ export function updateYear(selector = '#year') {
     yearEl.textContent = new Date().getFullYear();
   }
 }
+
+export function initAdminShortcut() {
+  const secretSequences = ['ADMIN', 'SUPERADMIN'];
+  const secretBypassKey = 'questserv_secret_bypass';
+  let secretBuffer = '';
+
+  document.addEventListener('keydown', (event) => {
+    if (!event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) {
+      secretBuffer = '';
+      return;
+    }
+
+    const char = (event.key || '').toUpperCase();
+    if (char.length !== 1 || !/[A-Z]/.test(char)) {
+      secretBuffer = '';
+      return;
+    }
+
+    secretBuffer += char;
+
+    const matchedSequence = secretSequences.find((sequence) => secretBuffer === sequence);
+    if (matchedSequence) {
+      sessionStorage.setItem(secretBypassKey, 'true');
+      window.location.href = '/pages/admin-ui.html';
+      secretBuffer = '';
+      return;
+    }
+
+    const hasValidPrefix = secretSequences.some((sequence) => sequence.startsWith(secretBuffer));
+    if (hasValidPrefix) {
+      return;
+    }
+
+    secretBuffer = char;
+    const canRestart = secretSequences.some((sequence) => sequence.startsWith(secretBuffer));
+    if (!canRestart) {
+      secretBuffer = '';
+    }
+  });
+}

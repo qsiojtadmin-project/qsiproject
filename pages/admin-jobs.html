@@ -5,6 +5,211 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Jobs | Questserv</title>
   <link rel="stylesheet" href="/src/styles/theme.css" />
+  <style>
+    /* ─── Layout ──────────────────────────────────────── */
+    .job-template-grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .job-editor-panel { overflow-y: auto; max-height: calc(100vh - 180px); }
+    .job-preview-panel { position: sticky; top: 80px; }
+
+    /* ─── Editor helpers ──────────────────────────────── */
+    .job-section-divider { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
+    .dynamic-list-field  { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
+    .dynamic-list-item   { display: flex; gap: 6px; align-items: center; }
+    .dynamic-list-item .input { flex: 1; font-size: 12.5px; padding: 5px 9px; }
+    .dynamic-list-item .rm-btn {
+      border: 1px solid #ddd; background: none; border-radius: 5px;
+      padding: 4px 8px; cursor: pointer; color: #999; font-size: 13px; line-height: 1;
+    }
+    .dynamic-list-item .rm-btn:hover { color: #c0392b; border-color: #c0392b; }
+    .add-list-btn {
+      border: 1.5px dashed #2d6a4f; background: none; color: #2d6a4f;
+      border-radius: 6px; padding: 4px 12px; font-size: 12px; cursor: pointer;
+    }
+    .add-list-btn:hover { background: #f0f8f4; }
+    .upload-zone {
+      border: 2px dashed #2d6a4f; border-radius: 8px; padding: 16px;
+      text-align: center; cursor: pointer; background: #f9fdfb;
+      transition: background .2s; display: block;
+    }
+    .upload-zone:hover { background: #edf7f1; }
+    .upload-zone p { margin: 6px 0 0; font-size: 12px; color: #666; }
+    .upload-zone .upload-icon { width: 28px; height: 28px; color: #2d6a4f; }
+    .upload-zone .browse-btn { margin-top: 8px; font-size: 12px; padding: 4px 12px; display: inline-block; }
+
+    /* ─── POSTER ──────────────────────────────────────── */
+    .poster-outer { display: flex; justify-content: center; padding: 4px 0 12px; }
+
+    #qs-poster {
+      width: 480px;
+      background: #fff;
+      font-family: 'Arial', 'Helvetica Neue', sans-serif;
+      box-shadow: 0 12px 48px rgba(0,0,0,.22);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── 1. Top header ── */
+    .p-header {
+      display: grid;
+      grid-template-columns: 47% 53%;
+      height: 90px;
+      position: relative;
+    }
+    .p-logo-half {
+      background: #fff;
+      display: flex; align-items: center;
+      padding: 0 0 0 14px;
+      z-index: 3;
+      position: relative;
+    }
+    .p-logo-inner { display: flex; align-items: center; gap: 9px; }
+    .p-hex-icon { width: 46px; height: 46px; flex-shrink: 0; }
+    .p-brand-name { font-size: 13.5px; font-weight: 900; color: #12301d; letter-spacing: .5px; line-height: 1; }
+    .p-brand-sub  { font-size: 8px; color: #12301d; letter-spacing: 1px; opacity: .75; margin-top: 2px; }
+
+    .p-badge-half {
+      background: #12301d;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; z-index: 2;
+    }
+    /* White diagonal wedge (the angled separator from logo side) */
+    .p-badge-half::before {
+      content: '';
+      position: absolute; left: -30px; top: 0;
+      width: 60px; height: 100%;
+      background: #fff;
+      transform: skewX(-10deg);
+      z-index: 1;
+    }
+    /* large rotated square accent top-right */
+    .p-badge-half::after {
+      content: '';
+      position: absolute; right: -18px; top: -18px;
+      width: 72px; height: 72px;
+      background: #1e4d2e;
+      transform: rotate(45deg);
+      z-index: 0;
+    }
+    /* Small diagonal stripe accents */
+    .p-badge-stripes {
+      position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none;
+    }
+    .p-badge-stripes span {
+      position: absolute; top: 0; height: 100%;
+      background: rgba(255,255,255,.07);
+      transform: skewX(-14deg);
+    }
+    .p-badge-stripes span:nth-child(1) { width: 30px; left: 18px; }
+    .p-badge-stripes span:nth-child(2) { width: 16px; left: 54px; }
+
+    .p-badge-text {
+      position: relative; z-index: 2;
+      text-align: center; color: #fff;
+      font-size: 28px; font-weight: 900;
+      letter-spacing: 3px; line-height: 1;
+      padding-right: 6px;
+      text-shadow: 1px 2px 6px rgba(0,0,0,.25);
+    }
+
+    /* ── 2. Hero ── */
+    .p-hero {
+      position: relative;
+      padding: 22px 72px 18px;
+      text-align: center;
+      background: #fff;
+      overflow: hidden;
+    }
+    /* Background image layer */
+    .p-hero-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: .1;
+      transition: opacity .3s;
+    }
+    .p-hero-bg.has-image { opacity: .15; }
+
+    /* Chevron decorations */
+    .p-chevron-left, .p-chevron-right {
+      position: absolute; top: 0; bottom: 0;
+      width: 58px;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 5px;
+      padding: 0 4px;
+    }
+    .p-chevron-left  { left: 0; }
+    .p-chevron-right { right: 0; transform: scaleX(-1); }
+
+    .p-chev {
+      display: block; height: 26px;
+      clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%, 25% 50%);
+      margin-left: -6px;
+    }
+    .p-chev-1 { background: #2d6a3f; }
+    .p-chev-2 { background: #12301d; margin-left: 2px; }
+
+    .p-hero-title {
+      font-size: 46px; font-weight: 900;
+      color: #12301d;
+      letter-spacing: 4px; margin: 0; line-height: 1;
+      font-style: italic;
+      position: relative; z-index: 1;
+      text-shadow: 1px 1px 0 rgba(0,0,0,.05);
+    }
+    .p-hero-sub {
+      font-size: 13px; color: #333;
+      margin: 8px 0 0;
+      position: relative; z-index: 1;
+    }
+
+    /* ── 3. Body ── */
+    .p-body {
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding: 14px 16px 10px;
+    }
+    .p-col { padding: 0 9px; }
+    .p-col:first-child { border-right: 1.5px solid #ddd; padding-left: 2px; }
+    .p-col:last-child  { padding-right: 2px; }
+
+    .p-sec-title {
+      font-size: 10.5px; font-weight: 900; color: #1a4a25;
+      text-transform: uppercase; letter-spacing: 1px;
+      margin: 0 0 6px;
+      font-style: italic;
+    }
+    .p-list {
+      list-style: none; margin: 0 0 12px; padding: 0;
+    }
+    .p-list li {
+      font-size: 9.5px; color: #1e1e1e; line-height: 1.6;
+      padding-left: 10px; position: relative; margin-bottom: 1px;
+    }
+    .p-list li::before { content: '•'; position: absolute; left: 0; color: #1a4a25; font-weight: 900; }
+
+    .p-submit-box {
+      background: #f2faf5; border-left: 3px solid #2d6a3f;
+      padding: 7px 8px; border-radius: 0 4px 4px 0; margin-bottom: 6px;
+    }
+    .p-submit-box p { margin: 0; font-size: 9.5px; color: #1e1e1e; line-height: 1.65; }
+    .p-submit-box strong { color: #12301d; }
+
+    /* ── 4. Footer ── */
+    .p-footer {
+      background: #0e0e0e;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 16px; margin-top: 6px;
+    }
+    .p-footer-item { display: flex; align-items: center; gap: 6px; color: #fff; }
+    .p-footer-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .p-footer-label { font-size: 7.5px; opacity: .65; display: block; }
+    .p-footer-val   { font-size: 9px; display: block; }
+    .p-footer-phone { font-size: 9.5px; }
+    .p-qr { width: 48px; height: 48px; background: #fff; border-radius: 3px; display: grid; place-items: center; }
+  </style>
 </head>
 <body>
   <header class="navbar admin-navbar">
@@ -17,15 +222,15 @@
         </span>
       </a>
       <div class="admin-head-search">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="text" placeholder="Search applicants, posts, users..." />
       </div>
       <div class="admin-head-actions">
         <button type="button" class="admin-head-icon" aria-label="Notifications">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V10a6 6 0 0 0-12 0v4.2a2 2 0 0 1-.6 1.4L4 17h5"></path><path d="M9 17a3 3 0 0 0 6 0"></path></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V10a6 6 0 0 0-12 0v4.2a2 2 0 0 1-.6 1.4L4 17h5"/><path d="M9 17a3 3 0 0 0 6 0"/></svg>
         </button>
         <button type="button" class="admin-head-icon" aria-label="Messages">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="m4 7 8 6 8-6"></path></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg>
         </button>
         <div class="admin-user-pill">
           <span class="admin-user-avatar">A</span>
@@ -39,123 +244,239 @@
     <aside class="sidebar" id="sidebar">
       <nav class="sidebar-nav" aria-label="Admin navigation">
         <a class="sidebar-link" href="/pages/admin-dashboard.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           <span>Dashboard</span>
         </a>
         <a class="sidebar-link" href="/pages/admin-applicants.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><path d="M20 8v6"></path><path d="M23 11h-6"></path></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="3"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>
           <span>Applicants</span>
         </a>
         <a class="sidebar-link is-disabled" href="javascript:void(0)">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><circle cx="18" cy="8" r="3"></circle></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="3"/><circle cx="18" cy="8" r="3"/></svg>
           <span>User Management</span>
         </a>
         <a class="sidebar-link active" href="/pages/admin-jobs.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
           <span>Job Hire Templates</span>
         </a>
         <a class="sidebar-link" href="/pages/admin-home-posts.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
           <span>Home Posts</span>
         </a>
         <a class="sidebar-link" href="/pages/admin-settings.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.76l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.6 1.6 0 0 0-1.76-.32 1.6 1.6 0 0 0-1 1.45V21a2 2 0 0 1-4 0v-.09a1.6 1.6 0 0 0-1-1.45 1.6 1.6 0 0 0-1.76.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .32-1.76 1.6 1.6 0 0 0-1.45-1H3a2 2 0 0 1 0-4h.09a1.6 1.6 0 0 0 1.45-1 1.6 1.6 0 0 0-.32-1.76l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.76.32h.01a1.6 1.6 0 0 0 1-1.45V3a2 2 0 1 1 4 0v.09a1.6 1.6 0 0 0 1 1.45 1.6 1.6 0 0 0 1.76-.32l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.32 1.76v.01a1.6 1.6 0 0 0 1.45 1H21a2 2 0 0 1 0 4h-.09a1.6 1.6 0 0 0-1.45 1Z"></path></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.76l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.6 1.6 0 0 0-1.76-.32 1.6 1.6 0 0 0-1 1.45V21a2 2 0 0 1-4 0v-.09a1.6 1.6 0 0 0-1-1.45 1.6 1.6 0 0 0-1.76.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .32-1.76 1.6 1.6 0 0 0-1.45-1H3a2 2 0 0 1 0-4h.09a1.6 1.6 0 0 0 1.45-1 1.6 1.6 0 0 0-.32-1.76l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.76.32h.01a1.6 1.6 0 0 0 1-1.45V3a2 2 0 1 1 4 0v.09a1.6 1.6 0 0 0 1 1.45 1.6 1.6 0 0 0 1.76-.32l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.32 1.76v.01a1.6 1.6 0 0 0 1.45 1H21a2 2 0 0 1 0 4h-.09a1.6 1.6 0 0 0-1.45 1Z"/></svg>
           <span>Settings</span>
         </a>
       </nav>
       <div class="sidebar-foot">
         <button id="nav-logout" class="btn sidebar-link sidebar-logout" type="button">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
           <span>Logout</span>
         </button>
       </div>
     </aside>
+
     <main class="admin-main">
       <button id="mobile-toggle" class="btn btn-secondary mobile-toggle">Menu</button>
       <h1 class="admin-title">Job Hire Templates</h1>
-      <p class="admin-subtitle">Create and publish hiring post templates</p>
+      <p class="admin-subtitle">Edit the poster content — the template layout and branding are fixed</p>
 
       <section class="job-template-grid">
+
+        <!-- ══ EDITOR PANEL ══════════════════════════════ -->
         <article class="panel job-editor-panel">
-          <h2 class="job-editor-title">Upload Image</h2>
-          <label class="job-upload-zone" for="template-image">
-            <input id="template-image" type="file" accept="image/*" hidden />
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4"></path><path d="m7 9 5-5 5 5"></path><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"></path></svg>
-            <p>Drag &amp; Drop your image here</p>
-            <span class="muted">or</span>
-            <span class="btn btn-primary">Browse Files</span>
-          </label>
-          <button type="button" class="btn btn-secondary job-change-image">Change Image</button>
-
-          <div class="job-section-divider"></div>
-          <h3>Image Editing Tools</h3>
-          <div class="job-tools-grid">
-            <button type="button" class="job-tool-btn">Crop</button>
-            <button type="button" class="job-tool-btn">Resize</button>
-            <button type="button" class="job-tool-btn">Brightness</button>
-            <button type="button" class="job-tool-btn">Contrast</button>
-            <button type="button" class="job-tool-btn full">Text Overlay</button>
-          </div>
-
-          <div class="job-section-divider"></div>
-          <h3>Job Content</h3>
           <div id="feedback"></div>
           <form id="job-form" class="job-content-form">
             <input type="hidden" id="job_id" />
-            <label>Job Title
-              <input class="input" name="title" placeholder="Senior Software Engineer" required />
+
+            <h3>Background Image</h3>
+            <label class="upload-zone" for="bg-image-input" id="upload-zone-label">
+              <input type="file" id="bg-image-input" accept="image/*" hidden />
+              <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/>
+              </svg>
+              <p id="upload-label-text">Click to upload background image</p>
+              <span class="btn btn-secondary browse-btn">Browse</span>
             </label>
-            <label>Description
-              <textarea class="textarea" name="description" placeholder="Join our innovative team and build cutting-edge solutions" required></textarea>
+            <button type="button" id="clear-image-btn" class="btn btn-secondary" style="margin-top:6px;font-size:12px;width:100%;display:none">✕ Remove Image</button>
+
+            <hr class="job-section-divider" />
+            <h3>Position</h3>
+            <label>Position Title
+              <input class="input" id="field-position" placeholder="Production Operator" required />
             </label>
-            <label>Hiring Details
-              <input class="input" name="details" placeholder="Full-time • Remote • $120k-$160k" />
-            </label>
-            <label>CTA Text
-              <input class="input" name="cta" placeholder="Apply Now" />
+            <label>Gender / Category
+              <input class="input" id="field-gender" placeholder="Male" />
             </label>
 
-            <div class="job-section-divider"></div>
-            <h3>Style Controls</h3>
-            <label>Font Style
-              <select class="select" name="fontFamily" id="style-font-family">
-                <option value="Inter">Inter</option>
-                <option value="Manrope">Manrope</option>
-                <option value="Arial">Arial</option>
-                <option value="Georgia">Georgia</option>
-              </select>
+            <hr class="job-section-divider" />
+            <h3>Requirements</h3>
+            <div class="dynamic-list-field" id="req-list"></div>
+            <button type="button" class="add-list-btn" data-target="req-list">+ Add Requirement</button>
+
+            <hr class="job-section-divider" />
+            <h3>Job Description</h3>
+            <div class="dynamic-list-field" id="desc-list"></div>
+            <button type="button" class="add-list-btn" data-target="desc-list">+ Add Duty</button>
+
+            <hr class="job-section-divider" />
+            <h3>Benefits</h3>
+            <div class="dynamic-list-field" id="ben-list"></div>
+            <button type="button" class="add-list-btn" data-target="ben-list">+ Add Benefit</button>
+
+            <hr class="job-section-divider" />
+            <h3>Submit Resume</h3>
+            <label>Email Address
+              <input class="input" id="field-email" placeholder="carmonaqsi@gmail.com" />
             </label>
-            <label>Font Size: <span id="style-font-size-label">24px</span>
-              <input type="range" id="style-font-size" min="16" max="42" value="24" />
-            </label>
-            <label>Text Color
-              <div class="job-color-row">
-                <input type="color" id="style-text-color-picker" value="#ffffff" />
-                <input class="input" name="textColor" id="style-text-color" value="#ffffff" />
-              </div>
-            </label>
-            <label>Background Overlay: <span id="style-overlay-label">60%</span>
-              <input type="range" id="style-overlay" min="0" max="100" value="60" />
+            <label>Email Subject
+              <input class="input" id="field-subject" placeholder="MALE PROD OPERATOR" />
             </label>
 
-            <div class="job-section-divider"></div>
-            <h3>Actions</h3>
-            <button id="save-draft-btn" class="btn btn-secondary job-action-btn" type="button">Save Draft</button>
-            <button id="preview-post-btn" class="btn btn-secondary job-action-btn" type="button">Preview Post</button>
-            <button id="job-save-btn" class="btn btn-primary job-action-btn job-publish-btn" type="submit">Publish Post</button>
+            <hr class="job-section-divider" />
+            <h3>Contact &amp; Links</h3>
+            <label>Phone Number
+              <input class="input" id="field-phone" placeholder="+1 (555) 123-4567" />
+            </label>
+            <label>Website / Facebook URL
+              <input class="input" id="field-website" placeholder="https://www.facebook.com/spot.carmona" />
+            </label>
+
+            <hr class="job-section-divider" />
+            <div style="display:flex;gap:8px">
+              <button id="save-draft-btn" class="btn btn-secondary" type="button" style="flex:1">Save Draft</button>
+              <button id="job-save-btn" class="btn btn-primary" type="submit" style="flex:1">Publish Post</button>
+            </div>
           </form>
         </article>
 
+        <!-- ══ LIVE PREVIEW ══════════════════════════════ -->
         <aside class="panel job-preview-panel">
-          <h3>Live Preview</h3>
-          <article class="job-preview-card" id="job-preview-card">
-            <h4 id="preview-title">Senior Software Engineer</h4>
-            <p id="preview-description">Join our innovative team and build cutting-edge solutions</p>
-            <p class="job-preview-meta" id="preview-meta">Full-time • Remote • $120k-$160k</p>
-            <button type="button" class="btn job-preview-btn" id="preview-cta">Apply Now</button>
-          </article>
-          <p class="job-preview-note muted">This preview shows how your hiring post will appear on social media and your company's homepage.</p>
+          <h3 style="margin-bottom:10px">Live Preview</h3>
+
+          <div class="poster-outer">
+            <div id="qs-poster">
+
+              <!-- 1. Header -->
+              <div class="p-header">
+                <div class="p-logo-half">
+                  <div class="p-logo-inner">
+                    <!-- Built-in QuestServ SVG logo -->
+                    <svg class="p-hex-icon" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+                      <polygon points="23,1 43,12 43,34 23,45 3,34 3,12" fill="#1a3a24"/>
+                      <polygon points="23,7 39,16 39,30 23,39 7,30 7,16" fill="#2d6a3f"/>
+                      <polygon points="23,13 33,19 33,27 23,33 13,27 13,19" fill="#1a3a24"/>
+                      <circle cx="23" cy="23" r="5" fill="#fff" opacity=".9"/>
+                      <circle cx="23" cy="23" r="2.5" fill="#2d6a3f"/>
+                      <line x1="26.5" y1="26.5" x2="30" y2="30" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <div>
+                      <div class="p-brand-name">QUESTSERV</div>
+                      <div class="p-brand-sub">SOLUTIONS INC.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-badge-half">
+                  <div class="p-badge-stripes"><span></span><span></span></div>
+                  <div class="p-badge-text">JOB<br>HIRING</div>
+                </div>
+              </div>
+
+              <!-- 2. Hero -->
+              <div class="p-hero">
+                <div class="p-hero-bg" id="p-hero-bg"></div>
+                <div class="p-chevron-left">
+                  <span class="p-chev p-chev-1"></span>
+                  <span class="p-chev p-chev-2"></span>
+                </div>
+                <div class="p-chevron-right">
+                  <span class="p-chev p-chev-1"></span>
+                  <span class="p-chev p-chev-2"></span>
+                </div>
+                <div class="p-hero-title">JOB HIRING</div>
+                <p class="p-hero-sub">For <strong id="p-position-display">Male Production Operator</strong> Position</p>
+              </div>
+
+              <!-- 3. Body -->
+              <div class="p-body">
+                <div class="p-col">
+                  <div class="p-sec-title">Requirements:</div>
+                  <ul class="p-list" id="p-req"></ul>
+                  <div class="p-sec-title">Benefits:</div>
+                  <ul class="p-list" id="p-ben"></ul>
+                </div>
+                <div class="p-col">
+                  <div class="p-sec-title">Job Description:</div>
+                  <ul class="p-list" id="p-desc"></ul>
+                  <div class="p-sec-title">Submit Resume:</div>
+                  <div class="p-submit-box">
+                    <p>Send to <strong id="p-email-display">carmonaqsi@gmail.com</strong>.<br>
+                    Put "<strong id="p-subject-display">MALE PROD OPERATOR</strong>" as the email subject.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Footer -->
+              <div class="p-footer">
+                <div class="p-footer-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 3.08 4.18 2 2 0 0 1 5.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L9.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  <span class="p-footer-phone" id="p-phone-display">+1 (555) 123-4567</span>
+                </div>
+                <div class="p-footer-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                  </svg>
+                  <div>
+                    <span class="p-footer-label">Visit Our Website</span>
+                    <span class="p-footer-val" id="p-website-display">facebook.com/spot.carmona</span>
+                  </div>
+                </div>
+                <!-- Static QR code SVG -->
+                <div class="p-qr">
+                  <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="40" fill="#fff"/>
+                    <rect x="2" y="2" width="12" height="12" rx="1" fill="#0e0e0e"/>
+                    <rect x="4" y="4" width="8" height="8" fill="#fff" rx=".5"/>
+                    <rect x="5.5" y="5.5" width="5" height="5" fill="#0e0e0e"/>
+                    <rect x="26" y="2" width="12" height="12" rx="1" fill="#0e0e0e"/>
+                    <rect x="28" y="4" width="8" height="8" fill="#fff" rx=".5"/>
+                    <rect x="29.5" y="5.5" width="5" height="5" fill="#0e0e0e"/>
+                    <rect x="2" y="26" width="12" height="12" rx="1" fill="#0e0e0e"/>
+                    <rect x="4" y="28" width="8" height="8" fill="#fff" rx=".5"/>
+                    <rect x="5.5" y="29.5" width="5" height="5" fill="#0e0e0e"/>
+                    <rect x="16" y="2" width="2" height="2" fill="#0e0e0e"/>
+                    <rect x="20" y="2" width="2" height="2" fill="#0e0e0e"/>
+                    <rect x="22" y="4" width="2" height="4" fill="#0e0e0e"/>
+                    <rect x="16" y="6" width="4" height="2" fill="#0e0e0e"/>
+                    <rect x="16" y="10" width="2" height="2" fill="#0e0e0e"/>
+                    <rect x="16" y="16" width="6" height="2" fill="#0e0e0e"/>
+                    <rect x="16" y="20" width="2" height="6" fill="#0e0e0e"/>
+                    <rect x="20" y="20" width="4" height="2" fill="#0e0e0e"/>
+                    <rect x="24" y="22" width="2" height="4" fill="#0e0e0e"/>
+                    <rect x="26" y="16" width="12" height="2" fill="#0e0e0e"/>
+                    <rect x="26" y="20" width="4" height="2" fill="#0e0e0e"/>
+                    <rect x="34" y="20" width="4" height="8" fill="#0e0e0e"/>
+                    <rect x="26" y="26" width="4" height="2" fill="#0e0e0e"/>
+                    <rect x="28" y="30" width="4" height="2" fill="#0e0e0e"/>
+                    <rect x="2" y="16" width="4" height="2" fill="#0e0e0e"/>
+                    <rect x="8" y="16" width="2" height="6" fill="#0e0e0e"/>
+                    <rect x="2" y="20" width="2" height="4" fill="#0e0e0e"/>
+                    <rect x="6" y="22" width="2" height="2" fill="#0e0e0e"/>
+                    <rect x="10" y="22" width="2" height="2" fill="#0e0e0e"/>
+                  </svg>
+                </div>
+              </div>
+
+            </div><!-- /#qs-poster -->
+          </div>
+
+          <p class="muted" style="font-size:11px;margin-top:8px;text-align:center">
+            Layout &amp; branding are locked — only text and background image change.
+          </p>
         </aside>
+
       </section>
     </main>
   </div>
@@ -164,6 +485,4 @@
   <script type="module" src="/src/js/admin-common.js"></script>
   <script type="module" src="/src/js/admin-jobs.js"></script>
 </body>
-</html>
-
-
+</html> 

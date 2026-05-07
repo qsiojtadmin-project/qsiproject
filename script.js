@@ -5,8 +5,8 @@ const API_BASE = window.location.origin.includes(':5000')
   ? '/api'
   : 'http://localhost:5000/api';
 
-// Secret admin shortcut: Hold Shift and type SUPERADMIN
-const SECRET_SEQUENCE = 'SUPERADMIN';
+// Secret admin shortcut: Hold Shift and type ADMIN or SUPERADMIN
+const SECRET_SEQUENCES = ['ADMIN', 'SUPERADMIN'];
 const SECRET_BYPASS_KEY = 'questserv_secret_bypass';
 let secretBuffer = '';
 
@@ -24,15 +24,24 @@ document.addEventListener('keydown', (e) => {
   if (char.length === 1 && /[A-Z]/.test(char)) {
     secretBuffer += char;
     
-    if (secretBuffer === SECRET_SEQUENCE) {
+    const matchedSequence = SECRET_SEQUENCES.find((sequence) => secretBuffer === sequence);
+
+    if (matchedSequence) {
       // Set bypass flag and navigate to admin UI
       sessionStorage.setItem(SECRET_BYPASS_KEY, 'true');
       window.location.href = '/pages/admin-ui.html';
       secretBuffer = '';
-    } else if (!SECRET_SEQUENCE.startsWith(secretBuffer)) {
+    } else {
+      const hasValidPrefix = SECRET_SEQUENCES.some((sequence) => sequence.startsWith(secretBuffer));
+
+      if (hasValidPrefix) {
+        return;
+      }
+
       // Reset if it doesn't match the beginning of the sequence
       secretBuffer = char;
-      if (!SECRET_SEQUENCE.startsWith(secretBuffer)) {
+      const canRestart = SECRET_SEQUENCES.some((sequence) => sequence.startsWith(secretBuffer));
+      if (!canRestart) {
         secretBuffer = '';
       }
     }

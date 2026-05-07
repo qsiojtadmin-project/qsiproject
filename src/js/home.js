@@ -1,5 +1,5 @@
 import { request } from './api.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, initAdminShortcut } from './utils.js';
 
 const recommendedJobsList = document.getElementById('recommended-jobs-list');
 const adminDesignsList = document.getElementById('admin-designs-list');
@@ -271,3 +271,4 @@ loadAdminDesigns();
 startKickerTypingAnimation();
 initJobCategoryChips();
 initInlineLoginMenu();
+initAdminShortcut();

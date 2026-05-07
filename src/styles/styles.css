@@ -164,9 +164,9 @@
       display: none;
       width: 280px;
       padding: 20px;
-      border: 1px solid #bbf7d0;
+      border: 1px solid #ffffff;
       border-radius: 8px;
-      background: #f0fdf4;
+      background: #eeffef;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
@@ -216,11 +216,11 @@
 
     .login-dropdown-checkbox {
       margin-right: 6px;
-      accent-color: #22c55e;
+      accent-color: #00ff37;
     }
 
     .login-dropdown-link {
-      color: #16a34a;
+      color: #0d970d;
       text-decoration: none;
       font-weight: 500;
     }
@@ -243,11 +243,11 @@
     }
 
     .login-dropdown-register-copy {
-      color: #15803d;
+      color: #000000;
     }
 
     .login-dropdown-register-link {
-      color: #16a34a;
+      color: #18701b;
       text-decoration: none;
       font-weight: 700;
     }
