@@ -45,31 +45,39 @@
       border-bottom: 1px solid #dfe9e3;
     }
 
+    .site-header .container {
+      max-width: none;
+      padding-left: 10px;
+      padding-right: 18px;
+    }
+
     .header-wrap {
       min-height: 78px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
     }
 
     .header-left-group {
       display: flex;
       align-items: center;
-      gap: 28px;
+      gap: 16px;
     }
 
     .site-brand {
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      margin-left: 0;
     }
 
     .site-brand-logo {
       display: block;
-      height: 56px;
+      height: 44px;
       width: auto;
+      margin-left: 0;
     }
 
     .brand-text {
@@ -77,21 +85,6 @@
       margin-left: 2px;
       line-height: 1;
       color: var(--primary);
-    }
-
-    .brand-title {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 1.92rem;
-      letter-spacing: 0.02em;
-      font-weight: 700;
-    }
-
-    .brand-subtitle {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 1.18rem;
-      letter-spacing: 0.02em;
-      font-weight: 600;
-      margin-top: 3px;
     }
 
     .site-nav {

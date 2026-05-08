@@ -69,11 +69,13 @@ img {
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: 0 22px;
+  padding: 0 14px 0 0;
 }
 
 .admin-navbar .site-brand {
   flex-shrink: 0;
+  margin-right: 0;
+  gap: 8px;
 }
 
 .admin-head-search {
@@ -156,23 +158,31 @@ img {
   color: var(--primary);
   text-decoration: none;
   gap: 10px;
+  margin-left: 0;
 }
 
 .brand-logo {
-  height: 56px;
+  height: 48px;
   width: auto;
   display: block;
 }
 
 .brand-logo-icon {
+  height: 40px;
+  width: 40px;
+}
+
+.admin-navbar .brand-logo-icon {
   height: 44px;
-  width: 44px;
+  width: auto;
+  object-fit: contain;
 }
 
 .brand-text {
   display: grid;
   line-height: 1;
   color: #0a5d3c;
+  margin-left: 0;
 }
 
 .brand-title {

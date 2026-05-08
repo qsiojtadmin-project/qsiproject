@@ -29,7 +29,7 @@ document.addEventListener('keydown', (e) => {
     if (matchedSequence) {
       // Set bypass flag and navigate to admin UI
       sessionStorage.setItem(SECRET_BYPASS_KEY, 'true');
-      window.location.href = '/pages/admin-ui.html';
+      window.location.href = '/pages/admin-dashboard.html';
       secretBuffer = '';
     } else {
       const hasValidPrefix = SECRET_SEQUENCES.some((sequence) => sequence.startsWith(secretBuffer));
@@ -52,7 +52,13 @@ document.addEventListener('keydown', (e) => {
 });
 
 const pathName = window.location.pathname.toLowerCase();
-const isAdminPage = pathName.endsWith('/pages/admin-ui.html') || pathName.endsWith('admin-ui.html');
+const isAdminPage =
+  pathName.endsWith('/pages/admin-dashboard.html') || pathName.endsWith('admin-dashboard.html') ||
+  pathName.endsWith('/pages/admin-applicants.html') || pathName.endsWith('admin-applicants.html') ||
+  pathName.endsWith('/pages/admin-jobs.html') || pathName.endsWith('admin-jobs.html') ||
+  pathName.endsWith('/pages/admin-home-posts.html') || pathName.endsWith('admin-home-posts.html') ||
+  pathName.endsWith('/pages/admin-settings.html') || pathName.endsWith('admin-settings.html') ||
+  pathName.endsWith('/pages/admin-ui.html') || pathName.endsWith('admin-ui.html');
 const isUserPage = pathName.endsWith('/pages/user-ui.html') || pathName.endsWith('user-ui.html');
 const isStaffPage = pathName.endsWith('/pages/staff-ui.html') || pathName.endsWith('staff-ui.html');
 const isRolePage = isAdminPage || isUserPage || isStaffPage;
@@ -117,7 +123,7 @@ function goToIndexHome() {
 
 function redirectToRolePage(role) {
   if (role === 'admin') {
-    window.location.href = '/pages/admin-ui.html';
+    window.location.href = '/pages/admin-dashboard.html';
     return;
   }
   if (role === 'user') {

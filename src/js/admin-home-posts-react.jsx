@@ -1,35 +1,53 @@
 const { useEffect, useMemo, useState } = React;
 
 const PAGE_SIZE = 8;
-const API_BASE = window.location.origin.includes(':5000')
-  ? '/api'
-  : 'http://localhost:5000/api';
+const API_BASE_CANDIDATES = window.location.origin.includes(':5000')
+  ? ['/api']
+  : ['http://localhost:5000/api', '/api'];
 
 function getToken() {
   return localStorage.getItem('token');
 }
 
 async function request(path, options = {}) {
-  const headers = options.headers || {};
   const isForm = options.body instanceof FormData;
+  let lastNetworkError = null;
 
-  if (!isForm) {
-    headers['Content-Type'] = 'application/json';
+  for (const base of API_BASE_CANDIDATES) {
+    const headers = { ...(options.headers || {}) };
+
+    if (!isForm) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    const token = getToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    try {
+      const res = await fetch(`${base}${path}`, { ...options, headers });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Request failed');
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof TypeError) {
+        lastNetworkError = error;
+        continue;
+      }
+      throw error;
+    }
   }
 
-  const token = getToken();
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+  if (lastNetworkError) {
+    throw new Error('Cannot connect to backend API. Start the backend server (node backend/server.js).');
   }
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data.message || 'Request failed');
-  }
-
-  return data;
+  throw new Error('Request failed');
 }
 
 function cn(...classes) {
@@ -62,7 +80,7 @@ function normalizePost(post) {
     statusKey: post.status === 'draft' ? 'draft' : 'published',
     createdAt: post.created_at || null,
     viewed: Number(post.views || post.view_count || 0),
-    previewImage: post.backgroundImageUrl || '/assets/logo.png',
+    previewImage: post.backgroundImageUrl || '/assets/logo1.png.png',
     company: post.company_name || post.company || '',
     gender: post.gender || post.gender_preference || '',
     website: post.website || post.websiteUrl || '',
@@ -222,7 +240,7 @@ function TemplateCard({ post, index, onEdit, onContextOpen }) {
               <div style={{ padding: '8px 10px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <img src="/assets/logo.png" alt="logo" style={{ width: 28, height: 28, objectFit: 'contain' }} />
+                    <img src="/assets/logo1.png.png" alt="logo" style={{ width: 28, height: 28, objectFit: 'contain' }} />
                     {post.company ? <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(15,23,42,0.85)' }}>{post.company}</div> : null}
                   </div>
                   {post.statusKey === 'draft' ? (

@@ -19,32 +19,54 @@
               700: '#175838',
             },
           },
-          boxShadow: {
-            card: '0 10px 28px rgba(16, 45, 30, 0.1)',
-            cardHover: '0 18px 44px rgba(16, 45, 30, 0.16)',
-          },
         },
       },
     };
   </script>
   <link rel="stylesheet" href="/src/styles/theme.css" />
   <style>
-    #home-posts-root {
-      margin-top: 1rem;
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      min-height: calc(100vh - 70px);
+      background-color: #f8fafc;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    .sidebar {
+      width: 260px !important;
+      min-width: 260px !important;
+      max-width: 260px !important;
+      position: sticky;
+      top: 70px;
+      height: calc(100vh - 70px);
+      transition: none !important;
+      z-index: 100;
+      background-color: #064e3b; /* Matches your dashboard theme */
+    }
+
+    .admin-main {
+      min-width: 0;
+      overflow-x: hidden;
+      padding: 2rem;
     }
 
     .home-posts-surface {
       border-radius: 20px;
       border: 1px solid #d7e7dc;
       background: linear-gradient(180deg, #f8fcfa 0%, #f4f9f6 100%);
-      padding: 1rem;
+      padding: 1.25rem;
       box-shadow: 0 12px 34px rgba(21, 66, 42, 0.08);
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 100%;
     }
 
-    @media (min-width: 768px) {
-      .home-posts-surface {
-        padding: 1.25rem;
-      }
+    @media (max-width: 980px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .sidebar { position: fixed; left: -260px; transition: transform 0.3s ease !important; }
+      .sidebar.open { transform: translateX(260px); }
     }
   </style>
 </head>
@@ -52,11 +74,7 @@
   <header class="navbar admin-navbar">
     <div class="container nav-wrap">
       <a href="/index.html" class="site-brand" aria-label="QuestServ home">
-        <img class="brand-logo brand-logo-icon" src="/assets/logo.png" alt="QuestServ logo" />
-        <span class="brand-text" aria-hidden="true">
-          <span class="brand-title">QUESTSERV</span>
-          <span class="brand-subtitle">SOLUTIONS INC.</span>
-        </span>
+        <img class="brand-logo brand-logo-icon" src="/assets/logo1.png.png" alt="QuestServ logo" />
       </a>
       <div class="admin-head-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
@@ -88,7 +106,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><path d="M20 8v6"></path><path d="M23 11h-6"></path></svg>
           <span>Applicants</span>
         </a>
-        <a class="sidebar-link is-disabled" href="javascript:void(0)">
+        <a class="sidebar-link" href="/pages/admin-ui.html">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><circle cx="18" cy="8" r="3"></circle></svg>
           <span>User Management</span>
         </a>
@@ -117,6 +135,7 @@
       <button id="mobile-toggle" class="btn btn-secondary mobile-toggle">Menu</button>
       <h1 class="admin-title">Home Posts</h1>
       <p class="admin-subtitle">View all saved hiring templates and published posts</p>
+      
       <section class="home-posts-surface">
         <div id="home-posts-root"></div>
       </section>

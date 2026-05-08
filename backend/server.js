@@ -64,6 +64,31 @@ function hasDb() {
   return Boolean(pool);
 }
 
+function isDbUnavailableError(error) {
+  if (!error) return false;
+
+  const knownCodes = new Set([
+    'ECONNREFUSED',
+    'ECONNRESET',
+    'ENOTFOUND',
+    'EHOSTUNREACH',
+    'ETIMEDOUT',
+    '57P01'
+  ]);
+
+  if (error.code && knownCodes.has(error.code)) {
+    return true;
+  }
+
+  const message = `${error.message || ''}`.toLowerCase();
+  return (
+    message.includes('failed to connect') ||
+    message.includes('connection terminated') ||
+    message.includes('the server closed the connection unexpectedly') ||
+    message.includes('connect econnrefused')
+  );
+}
+
 async function query(text, params = []) {
   if (!pool) {
     throw new Error('Database is not configured. Add DATABASE_URL or DB_* values to .env.');
@@ -160,7 +185,7 @@ function buildTemplatePayload(body = {}) {
 }
 
 async function listPublishedJobs(filters = {}) {
-  if (!hasDb()) {
+  const listFromLocal = () => {
     let jobs = readLocalJobs().filter((job) => job.status === 'published');
 
     if (filters.keyword) {
@@ -179,6 +204,10 @@ async function listPublishedJobs(filters = {}) {
     }
 
     return jobs.sort((a, b) => new Date(b.published_at || b.created_at || 0) - new Date(a.published_at || a.created_at || 0));
+  };
+
+  if (!hasDb()) {
+    return listFromLocal();
   }
 
   const clauses = [`status = 'published'`];
@@ -203,39 +232,70 @@ async function listPublishedJobs(filters = {}) {
     WHERE ${clauses.join(' AND ')}
     ORDER BY COALESCE(published_at, created_at) DESC, updated_at DESC
   `;
-  const { rows } = await query(sql, params);
-  return rows.map(normalizeTemplateRow);
+
+  try {
+    const { rows } = await query(sql, params);
+    return rows.map(normalizeTemplateRow);
+  } catch (error) {
+    if (isDbUnavailableError(error)) {
+      return listFromLocal();
+    }
+    throw error;
+  }
 }
 
 async function listAdminJobs() {
-  if (!hasDb()) {
+  const listFromLocal = () => {
     return readLocalJobs().sort((a, b) => new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0));
+  };
+
+  if (!hasDb()) {
+    return listFromLocal();
   }
 
-  const { rows } = await query(`
-    SELECT *
-    FROM job_templates
-    ORDER BY updated_at DESC, created_at DESC
-  `);
-  return rows.map(normalizeTemplateRow);
+  try {
+    const { rows } = await query(`
+      SELECT *
+      FROM job_templates
+      ORDER BY updated_at DESC, created_at DESC
+    `);
+    return rows.map(normalizeTemplateRow);
+  } catch (error) {
+    if (isDbUnavailableError(error)) {
+      return listFromLocal();
+    }
+    throw error;
+  }
 }
 
 async function getJobById(id, includeDraft = false) {
-  if (!hasDb()) {
+  const getFromLocal = () => {
     const job = readLocalJobs().find((item) => String(item.id) === String(id));
     if (!job) return null;
     if (!includeDraft && job.status !== 'published') return null;
     return job;
+  };
+
+  if (!hasDb()) {
+    return getFromLocal();
   }
 
   const params = [id];
   const where = includeDraft ? 'id = $1' : `id = $1 AND status = 'published'`;
-  const { rows } = await query(`SELECT * FROM job_templates WHERE ${where} LIMIT 1`, params);
-  return normalizeTemplateRow(rows[0]);
+
+  try {
+    const { rows } = await query(`SELECT * FROM job_templates WHERE ${where} LIMIT 1`, params);
+    return normalizeTemplateRow(rows[0]);
+  } catch (error) {
+    if (isDbUnavailableError(error)) {
+      return getFromLocal();
+    }
+    throw error;
+  }
 }
 
 async function saveJobTemplate(id, payload) {
-  if (!hasDb()) {
+  const saveToLocal = () => {
     const jobs = readLocalJobs();
     const existingIndex = id ? jobs.findIndex((item) => String(item.id) === String(id)) : -1;
     const now = new Date().toISOString();
@@ -291,6 +351,10 @@ async function saveJobTemplate(id, payload) {
     jobs.unshift(created);
     writeLocalJobs(jobs);
     return created;
+  };
+
+  if (!hasDb()) {
+    return saveToLocal();
   }
 
   const params = [
@@ -311,62 +375,69 @@ async function saveJobTemplate(id, payload) {
     payload.status
   ];
 
-  if (id) {
-    params.push(id);
+  try {
+    if (id) {
+      params.push(id);
+      const { rows } = await query(`
+        UPDATE job_templates
+        SET title = $1,
+            gender = $2,
+            requirements = $3::jsonb,
+            description_items = $4::jsonb,
+            description_text = $5,
+            benefits = $6::jsonb,
+            email = $7,
+            subject = $8,
+            phone = $9,
+            website = $10,
+            location = $11,
+            job_type = $12,
+            company_name = $13,
+            background_image_url = $14,
+            status = $15,
+            published_at = CASE
+              WHEN $15 = 'published' AND published_at IS NULL THEN NOW()
+              WHEN $15 = 'draft' THEN NULL
+              ELSE published_at
+            END,
+            updated_at = NOW()
+        WHERE id = $16
+        RETURNING *
+      `, params);
+      return normalizeTemplateRow(rows[0]);
+    }
+
     const { rows } = await query(`
-      UPDATE job_templates
-      SET title = $1,
-          gender = $2,
-          requirements = $3::jsonb,
-          description_items = $4::jsonb,
-          description_text = $5,
-          benefits = $6::jsonb,
-          email = $7,
-          subject = $8,
-          phone = $9,
-          website = $10,
-          location = $11,
-          job_type = $12,
-          company_name = $13,
-          background_image_url = $14,
-          status = $15,
-          published_at = CASE
-            WHEN $15 = 'published' AND published_at IS NULL THEN NOW()
-            WHEN $15 = 'draft' THEN NULL
-            ELSE published_at
-          END,
-          updated_at = NOW()
-      WHERE id = $16
+      INSERT INTO job_templates (
+        title,
+        gender,
+        requirements,
+        description_items,
+        description_text,
+        benefits,
+        email,
+        subject,
+        phone,
+        website,
+        location,
+        job_type,
+        company_name,
+        background_image_url,
+        status,
+        published_at
+      ) VALUES (
+        $1, $2, $3::jsonb, $4::jsonb, $5, $6::jsonb, $7, $8, $9, $10, $11, $12, $13, $14, $15,
+        CASE WHEN $15 = 'published' THEN NOW() ELSE NULL END
+      )
       RETURNING *
     `, params);
     return normalizeTemplateRow(rows[0]);
+  } catch (error) {
+    if (isDbUnavailableError(error)) {
+      return saveToLocal();
+    }
+    throw error;
   }
-
-  const { rows } = await query(`
-    INSERT INTO job_templates (
-      title,
-      gender,
-      requirements,
-      description_items,
-      description_text,
-      benefits,
-      email,
-      subject,
-      phone,
-      website,
-      location,
-      job_type,
-      company_name,
-      background_image_url,
-      status,
-      published_at
-    ) VALUES (
-      $1, $2, $3::jsonb, $4::jsonb, $5, $6::jsonb, $7, $8, $9, $10, $11, $12, $13, $14, $15,
-      CASE WHEN $15 = 'published' THEN NOW() ELSE NULL END
-    )
-    RETURNING *
-  `, params);
-  return normalizeTemplateRow(rows[0]);
 }
 
 function handleError(res, error) {
@@ -492,7 +563,7 @@ app.put('/api/jobs/:id', async (req, res) => {
 
 app.delete('/api/jobs/:id', async (req, res) => {
   try {
-    if (!hasDb()) {
+    const deleteFromLocal = () => {
       const jobs = readLocalJobs();
       const next = jobs.filter((job) => String(job.id) !== String(req.params.id));
       if (next.length === jobs.length) {
@@ -500,9 +571,22 @@ app.delete('/api/jobs/:id', async (req, res) => {
       }
       writeLocalJobs(next);
       return res.json({ message: 'Job template deleted' });
+    };
+
+    if (!hasDb()) {
+      return deleteFromLocal();
     }
 
-    const result = await query('DELETE FROM job_templates WHERE id = $1', [req.params.id]);
+    let result;
+    try {
+      result = await query('DELETE FROM job_templates WHERE id = $1', [req.params.id]);
+    } catch (error) {
+      if (isDbUnavailableError(error)) {
+        return deleteFromLocal();
+      }
+      throw error;
+    }
+
     if (!result.rowCount) {
       return res.status(404).json({ message: 'Job template not found' });
     }

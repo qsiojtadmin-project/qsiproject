@@ -1,6 +1,8 @@
-﻿export const API_BASE = window.location.origin.includes(':5000')
-  ? '/api'
-  : 'http://localhost:5000/api';
+﻿const API_BASE_CANDIDATES = window.location.origin.includes(':5000')
+  ? ['/api']
+  : ['http://localhost:5000/api', '/api'];
+
+export const API_BASE = API_BASE_CANDIDATES[0];
 
 export const auth = {
   get token() {
@@ -21,23 +23,42 @@ export const auth = {
 };
 
 export async function request(path, options = {}) {
-  const headers = options.headers || {};
   const isForm = options.body instanceof FormData;
+  let lastNetworkError = null;
 
-  if (!isForm) {
-    headers['Content-Type'] = 'application/json';
-  }
-  if (auth.token) {
-    headers.Authorization = `Bearer ${auth.token}`;
+  for (const base of API_BASE_CANDIDATES) {
+    const headers = { ...(options.headers || {}) };
+
+    if (!isForm) {
+      headers['Content-Type'] = 'application/json';
+    }
+    if (auth.token) {
+      headers.Authorization = `Bearer ${auth.token}`;
+    }
+
+    try {
+      const res = await fetch(`${base}${path}`, { ...options, headers });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Request failed');
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof TypeError) {
+        lastNetworkError = error;
+        continue;
+      }
+      throw error;
+    }
   }
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data.message || 'Request failed');
+  if (lastNetworkError) {
+    throw new Error('Cannot connect to backend API. Start the backend server (node backend/server.js).');
   }
-  return data;
+
+  throw new Error('Request failed');
 }
 
 export function updateAuthLinks() {

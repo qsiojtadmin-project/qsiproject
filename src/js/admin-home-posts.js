@@ -26,7 +26,7 @@ function renderPoster(row) {
         <div class="home-post-poster">
           <div class="home-post-poster-header">
             <div class="home-post-brand">
-              <img class="home-post-brand-logo" src="/assets/logo.png" alt="QuestServ logo" />
+              <img class="home-post-brand-logo" src="/assets/logo1.png.png" alt="QuestServ logo" />
               <div>
                 <div class="home-post-brand-title">QUESTSERV</div>
                 <div class="home-post-brand-sub">SOLUTIONS INC.</div>

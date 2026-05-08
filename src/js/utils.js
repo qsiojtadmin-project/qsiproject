@@ -54,7 +54,7 @@ export function initAdminShortcut() {
     const matchedSequence = secretSequences.find((sequence) => secretBuffer === sequence);
     if (matchedSequence) {
       sessionStorage.setItem(secretBypassKey, 'true');
-      window.location.href = '/pages/admin-ui.html';
+      window.location.href = '/pages/admin-dashboard.html';
       secretBuffer = '';
       return;
     }

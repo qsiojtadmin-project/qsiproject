@@ -3,18 +3,125 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin UI | QuestServ Solution Inc.</title>
+  <title>Admin User Management | Questserv</title>
   <link rel="stylesheet" href="/src/styles/theme.css" />
+  <style>
+    .um-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .um-stat {
+      background: #ffffff;
+      border: 1px solid #d6dde5;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+      padding: 14px 16px;
+    }
+
+    .um-stat-label {
+      color: #61768f;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .um-stat-value {
+      margin: 8px 0 0;
+      font-size: 1.65rem;
+      color: #0f1f3d;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .um-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .um-card {
+      border: 1px solid #d6dde5;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+      background: #ffffff;
+      padding: 18px;
+    }
+
+    .um-form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .um-feedback {
+      min-height: 22px;
+      font-size: 0.9rem;
+    }
+
+    .um-feedback.error {
+      color: #b91c1c;
+    }
+
+    .um-feedback.success {
+      color: #166534;
+    }
+
+    .role-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: #e7f8ef;
+      color: #0f766e;
+      text-transform: uppercase;
+    }
+
+    .role-pill.admin {
+      background: #e0ecff;
+      color: #1d4ed8;
+    }
+
+    .um-toolbar {
+      display: grid;
+      grid-template-columns: 1fr 190px;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .um-empty {
+      text-align: center;
+      color: #64748b;
+      padding: 20px;
+    }
+
+    .table-wrap table td:last-child,
+    .table-wrap table th:last-child {
+      text-align: right;
+    }
+
+    @media (max-width: 980px) {
+      .um-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .um-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .um-toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="navbar admin-navbar">
     <div class="container nav-wrap">
       <a href="/index.html" class="site-brand" aria-label="QuestServ home">
-        <img class="brand-logo brand-logo-icon" src="/assets/logo.png" alt="QuestServ logo" />
-        <span class="brand-text" aria-hidden="true">
-          <span class="brand-title">QUESTSERV</span>
-          <span class="brand-subtitle">SOLUTIONS INC.</span>
-        </span>
+        <img class="brand-logo brand-logo-icon" src="/assets/logo1.png.png" alt="QuestServ logo" />
       </a>
       <div class="admin-head-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
@@ -36,15 +143,19 @@
   </header>
 
   <div class="admin-layout">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <nav class="sidebar-nav" aria-label="Admin navigation">
-        <a class="sidebar-link active" href="/pages/admin-ui.html">
+        <a class="sidebar-link" href="/pages/admin-dashboard.html">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
           <span>Dashboard</span>
         </a>
         <a class="sidebar-link" href="/pages/admin-applicants.html">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><path d="M20 8v6"></path><path d="M23 11h-6"></path></svg>
           <span>Applicants</span>
+        </a>
+        <a class="sidebar-link active" href="/pages/admin-ui.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><circle cx="18" cy="8" r="3"></circle></svg>
+          <span>User Management</span>
         </a>
         <a class="sidebar-link" href="/pages/admin-jobs.html">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
@@ -60,7 +171,7 @@
         </a>
       </nav>
       <div class="sidebar-foot">
-        <button id="logout-btn" class="btn sidebar-link sidebar-logout" type="button">
+        <button id="nav-logout" class="btn sidebar-link sidebar-logout" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
           <span>Logout</span>
         </button>
@@ -68,113 +179,73 @@
     </aside>
 
     <main class="admin-main">
+      <button id="mobile-toggle" class="btn btn-secondary mobile-toggle">Menu</button>
       <p class="admin-badge">Admin Only</p>
-      <h1 class="admin-title">Admin Dashboard</h1>
-      <p class="admin-subtitle">Monitor recruitment activity and manage user accounts from one place.</p>
+      <h1 class="admin-title">User Management</h1>
+      <p class="admin-subtitle">Create user accounts and manage access roles.</p>
 
-      <article id="admin-dashboard" class="admin-dashboard-wrap">
-        <section class="admin-cards-grid">
-          <article class="admin-card">
-            <div class="admin-card-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="3"></circle><path d="M20 8v6"></path><path d="M23 11h-6"></path></svg>
-            </div>
-            <p class="muted">Total Applicants</p>
-            <h3 id="stat-total">0</h3>
-            <p class="admin-trend">+12% this week</p>
-          </article>
-          <article class="admin-card">
-            <div class="admin-card-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path><path d="M3 12h18"></path></svg>
-            </div>
-            <p class="muted">Active Job Posts</p>
-            <h3 id="stat-accounts">0</h3>
-            <p class="admin-trend">+3 new today</p>
-          </article>
-          <article class="admin-card">
-            <div class="admin-card-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h18"></path></svg>
-            </div>
-            <p class="muted">Interviews Scheduled</p>
-            <h3 id="stat-admins">0</h3>
-            <p class="admin-trend">Next: Tomorrow 10am</p>
-          </article>
-          <article class="admin-card">
-            <div class="admin-card-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 3 3 5-5"></path></svg>
-            </div>
-            <p class="muted">Hired Candidates</p>
-            <h3 id="stat-hired">0</h3>
-            <p class="admin-trend">+5 this month</p>
-          </article>
+      <section class="um-stats" aria-label="User management summary">
+        <article class="um-stat">
+          <p class="um-stat-label">Total Accounts</p>
+          <p id="um-total-users" class="um-stat-value">0</p>
+        </article>
+        <article class="um-stat">
+          <p class="um-stat-label">Admin Accounts</p>
+          <p id="um-admin-count" class="um-stat-value">0</p>
+        </article>
+        <article class="um-stat">
+          <p class="um-stat-label">User Accounts</p>
+          <p id="um-user-count" class="um-stat-value">0</p>
+        </article>
+      </section>
+
+      <div class="um-grid">
+        <section class="um-card">
+          <h2 style="margin-top:0">Create User</h2>
+          <p class="muted" style="margin-top:0">Only admin can create accounts.</p>
+          <div id="user-feedback" class="um-feedback" aria-live="polite"></div>
+          <form id="create-user-form" class="um-form">
+            <input class="input" id="name" name="name" placeholder="Full name" required />
+            <input class="input" id="email" name="email" type="email" placeholder="Email address" required />
+            <input class="input" id="password" name="password" type="password" placeholder="Password (min 6 chars)" required />
+            <select class="select" id="role" name="role">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button id="create-user-btn" class="btn btn-primary" type="submit">Create User</button>
+          </form>
         </section>
 
-        <section class="admin-bottom-grid">
-          <article class="panel admin-panel-table">
-            <h2>Recent Applicants</h2>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Date Applied</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="admin-table-body"></tbody>
-              </table>
-            </div>
-          </article>
-
-          <aside class="panel admin-panel-activity">
-            <h2>Recruitment Activity</h2>
-            <ul class="admin-activity-list">
-              <li>
-                <span class="dot"></span>
-                <div>
-                  <strong>New applicant submitted</strong>
-                  <span class="muted">5 minutes ago</span>
-                </div>
-              </li>
-              <li>
-                <span class="dot"></span>
-                <div>
-                  <strong>Resume reviewed</strong>
-                  <span class="muted">23 minutes ago</span>
-                </div>
-              </li>
-              <li>
-                <span class="dot"></span>
-                <div>
-                  <strong>Interview scheduled</strong>
-                  <span class="muted">1 hour ago</span>
-                </div>
-              </li>
-            </ul>
-          </aside>
-        </section>
-
-        <section class="panel admin-panel-table">
-          <h2>User Management</h2>
+        <section class="um-card">
+          <h2 style="margin-top:0">Accounts</h2>
+          <div class="um-toolbar">
+            <input class="input" id="user-search" type="text" placeholder="Search by name or email" />
+            <select class="select" id="user-role-filter">
+              <option value="all">All roles</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+          </div>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Type</th>
+                  <th>Role</th>
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody id="account-table-body"></tbody>
+              <tbody id="users-body"></tbody>
             </table>
           </div>
         </section>
-      </article>
+      </div>
     </main>
   </div>
 
-  <script src="../script.js"></script>
+  <script type="module" src="/src/js/common.js"></script>
+  <script type="module" src="/src/js/admin-common.js"></script>
+  <script type="module" src="/src/js/admin-user-management.js"></script>
 </body>
 </html>
