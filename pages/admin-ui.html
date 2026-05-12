@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Admin Workspace | QuestServ</title>
+	<meta name="description" content="Merged admin workspace for dashboard, applicants, user management, jobs, posts, and settings." />
+	<link rel="icon" type="image/x-icon" href="/assets/icon.ico?v=3" />
+	<link rel="shortcut icon" href="/assets/icon.ico?v=3" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+	<link rel="stylesheet" href="/src/styles/admin-ui.css" />
+</head>
+<body>
+	<header class="navbar admin-navbar">
+		<div class="container nav-wrap">
+			<a href="/index.html" class="site-brand" aria-label="QuestServ home">
+				<img class="site-brand-logo brand-logo-icon" src="/assets/logo1.png" alt="QuestServ logo" />
+			</a>
+
+			<div class="admin-head-search">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+				<input type="search" id="admin-search" placeholder="Search applicants, posts, users, jobs..." />
+			</div>
+
+			<div class="admin-head-actions">
+				<button type="button" class="admin-head-icon" aria-label="Notifications"><i class="fa-regular fa-bell"></i></button>
+				<button type="button" class="admin-head-icon" aria-label="Messages"><i class="fa-regular fa-envelope"></i></button>
+				<div class="admin-user-pill">
+					<span class="admin-user-avatar">A</span>
+					<span id="session-label">Admin</span>
+				</div>
+			</div>
+		</div>
+	</header>
+<body>
+    
+<div class="tabs-container">
+        <div class="tabs-header">
+            <div class="tab-buttons" id="tabButtons">
+                <!-- Pre-defined tabs will be added here by JavaScript -->
+            </div>
+        </div>
+
+</body>
+
+	<div class="admin-layout">
+		<aside class="sidebar" id="sidebar">
+			<nav class="sidebar-nav" aria-label="Admin navigation">
+				<a class="sidebar-link active" href="#dashboard"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+				<a class="sidebar-link" href="#applicants"><i class="fa-solid fa-users"></i><span>Applicants</span></a>
+				<a class="sidebar-link" href="#users"><i class="fa-solid fa-id-card"></i><span>User Management</span></a>
+				<a class="sidebar-link" href="#jobs"><i class="fa-solid fa-briefcase"></i><span>Job Hire Templates</span></a>
+				<a class="sidebar-link" href="#posts"><i class="fa-solid fa-house"></i><span>Home Posts</span></a>
+				<a class="sidebar-link" href="#settings"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+			</nav>
+
+			<div class="sidebar-foot">
+				<button id="nav-logout" class="btn sidebar-link sidebar-logout" type="button"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+			</div>
+		</aside>
+
+		<main class="admin-main">
+			<button id="mobile-toggle" class="btn btn-secondary mobile-toggle" type="button">Menu</button>
+
+			<section class="admin-section hero-panel admin-tab-panel is-active" id="dashboard" data-tab-panel>
+				<p class="admin-badge">Admin Only</p>
+				<div class="section-heading">
+					<div>
+						<h1 class="admin-title">Merged Admin Workspace</h1>
+						<p class="admin-subtitle">Dashboard, applicants, users, job templates, home posts, and settings in one page.</p>
+					</div>
+					<div class="section-actions">
+						<a class="btn btn-secondary" href="#applicants">Review Applicants</a>
+						<a class="btn btn-primary" href="#jobs">Create Job Template</a>
+					</div>
+				</div>
+
+				<section class="admin-cards-grid">
+					<article class="admin-card"><div class="admin-card-icon"><i class="fa-solid fa-users"></i></div><p class="muted">Total Applicants</p><h3 id="total-applicants">128</h3><p class="admin-trend">+12% this week</p></article>
+					<article class="admin-card"><div class="admin-card-icon"><i class="fa-solid fa-briefcase"></i></div><p class="muted">Active Job Posts</p><h3 id="open-jobs">14</h3><p class="admin-trend">+3 new today</p></article>
+					<article class="admin-card"><div class="admin-card-icon"><i class="fa-solid fa-bell-concierge"></i></div><p class="muted">Interviews Scheduled</p><h3 id="interviews-count">42</h3><p class="admin-trend">Next: Tomorrow 10am</p></article>
+					<article class="admin-card"><div class="admin-card-icon"><i class="fa-solid fa-circle-check"></i></div><p class="muted">Hired Candidates</p><h3 id="hired-count">36</h3><p class="admin-trend">+5 this month</p></article>
+				</section>
+
+				<section class="admin-bottom-grid">
+					<article class="panel admin-panel-table">
+						<h2>Recent Applicants</h2>
+						<div class="table-wrap">
+							<table>
+								<thead>
+									<tr><th>Name</th><th>Position</th><th>Date Applied</th><th>Status</th><th>Action</th></tr>
+								</thead>
+								<tbody id="recent-applicants-body">
+									<tr><td>Sarah Johnson</td><td>Senior Developer</td><td>2026-04-28</td><td><span class="status">Under Review</span></td><td><strong>View</strong></td></tr>
+									<tr><td>Michael Chen</td><td>Product Manager</td><td>2026-04-29</td><td><span class="status shortlisted">Shortlisted</span></td><td><strong>View</strong></td></tr>
+									<tr><td>Emily Davis</td><td>UX Designer</td><td>2026-05-01</td><td><span class="status interview">Interview</span></td><td><strong>View</strong></td></tr>
+								</tbody>
+							</table>
+						</div>
+					</article>
+
+					<aside class="panel admin-panel-activity">
+						<h2>Recruitment Activity</h2>
+						<ul class="admin-activity-list" id="messages-list">
+							<li><span class="dot"></span><div><strong>New applicant submitted</strong><span class="muted">Alex Martinez · 5 minutes ago</span></div></li>
+							<li><span class="dot"></span><div><strong>Resume reviewed</strong><span class="muted">Sarah Johnson · 23 minutes ago</span></div></li>
+							<li><span class="dot"></span><div><strong>Interview confirmed</strong><span class="muted">Emily Davis · 1 hour ago</span></div></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+
+			<section class="admin-section admin-tab-panel" id="applicants" data-tab-panel hidden>
+				<div class="section-heading">
+					<div>
+						<p class="section-kicker">Trial page merged</p>
+						<h2>Applicants</h2>
+						<p class="admin-subtitle">Search, filter, and sort applicants from one panel.</p>
+					</div>
+				</div>
+
+				<section class="applicant-toolbar panel">
+					<div class="applicant-filter-wrap">
+						<button class="btn applicant-filter-btn" id="toggle-filters" type="button" aria-expanded="true" aria-controls="applicant-filters-panel"><i class="fa-solid fa-filter"></i></button>
+						<section class="panel applicant-filters-panel" id="applicant-filters-panel">
+							<input class="input" id="search-applicants" type="text" placeholder="Search applicants..." />
+							<select class="select" id="position-filter"><option value="">All Positions</option><option value="Senior Developer">Senior Developer</option><option value="Product Manager">Product Manager</option><option value="UX Designer">UX Designer</option><option value="Data Analyst">Data Analyst</option></select>
+							<select class="select" id="status-filter"><option value="">All Status</option><option value="Under Review">Under Review</option><option value="Shortlisted">Shortlisted</option><option value="Interview">Interview</option><option value="Hired">Hired</option><option value="Rejected">Rejected</option></select>
+							<select class="select" id="sort-filter"><option value="newest">Sort By: Newest</option><option value="oldest">Sort By: Oldest</option><option value="name-asc">Sort By: Name A-Z</option><option value="name-desc">Sort By: Name Z-A</option><option value="status">Sort By: Status</option></select>
+						</section>
+					</div>
+				</section>
+
+				<section class="panel table-panel">
+					<div class="table-wrap">
+						<table>
+							<thead>
+								<tr><th>Name</th><th>Email</th><th>Resume</th><th>Position</th><th>Status</th></tr>
+							</thead>
+							<tbody id="applicants-body">
+								<tr><td>Sarah Johnson</td><td>sarah@email.com</td><td>sarah_resume.pdf</td><td>Senior Developer</td><td><span class="status">Under Review</span></td></tr>
+								<tr><td>Michael Chen</td><td>michael@email.com</td><td>michael_cv.pdf</td><td>Product Manager</td><td><span class="status shortlisted">Shortlisted</span></td></tr>
+								<tr><td>Emily Davis</td><td>emily@email.com</td><td>emily_resume.pdf</td><td>UX Designer</td><td><span class="status interview">Interview</span></td></tr>
+								<tr><td>James Wilson</td><td>james@email.com</td><td>james_cv.pdf</td><td>Data Analyst</td><td><span class="status">Under Review</span></td></tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+			</section>
+
+			<section class="admin-section admin-tab-panel" id="users" data-tab-panel hidden>
+				<div class="section-heading">
+					<div>
+						<p class="section-kicker">Trial page merged</p>
+						<h2>User Management</h2>
+						<p class="admin-subtitle">Create accounts and manage access roles in one place.</p>
+					</div>
+				</div>
+
+				<section class="um-stats" aria-label="User management summary">
+					<article class="um-stat"><p class="um-stat-label">Total Accounts</p><p id="um-total-users" class="um-stat-value">8</p></article>
+					<article class="um-stat"><p class="um-stat-label">Admin Accounts</p><p id="um-admin-count" class="um-stat-value">2</p></article>
+					<article class="um-stat"><p class="um-stat-label">User Accounts</p><p id="um-user-count" class="um-stat-value">6</p></article>
+				</section>
+
+				<div class="um-grid">
+					<section class="um-card">
+						<h2>Create User</h2>
+						<p class="muted">Only admins can create accounts.</p>
+						<div id="user-feedback" class="um-feedback" aria-live="polite"></div>
+						<form id="create-user-form" class="um-form">
+							<input class="input" id="name" name="name" placeholder="Full name" value="System Admin" required />
+							<input class="input" id="email" name="email" type="email" placeholder="Email address" value="system.admin@questserv.com" required />
+							<input class="input" id="password" name="password" type="password" placeholder="Password (min 6 chars)" value="Admin123" required />
+							<select class="select" id="role" name="role"><option value="user">User</option><option value="admin" selected>Admin</option></select>
+							<button id="create-user-btn" class="btn btn-primary" type="submit">Create User</button>
+						</form>
+					</section>
+
+					<section class="um-card">
+						<h2>Accounts</h2>
+						<div class="um-toolbar">
+							<input class="input" id="user-search" type="text" placeholder="Search by name or email" />
+							<select class="select" id="user-role-filter"><option value="all">All roles</option><option value="admin">Admin</option><option value="user">User</option></select>
+						</div>
+						<div class="table-wrap">
+							<table>
+								<thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead>
+								<tbody id="users-body">
+									<tr><td>Alice Rivera</td><td>alice@questserv.com</td><td><span class="role-pill admin">Admin</span></td><td><strong>Remove</strong></td></tr>
+									<tr><td>John Santos</td><td>john@questserv.com</td><td><span class="role-pill">User</span></td><td><strong>Remove</strong></td></tr>
+								</tbody>
+							</table>
+						</div>
+					</section>
+				</div>
+			</section>
+
+			<section class="admin-section admin-tab-panel" id="jobs" data-tab-panel hidden>
+				<div class="section-heading">
+					<div>
+						<p class="section-kicker">Trial page merged</p>
+						<h2>Job Hire Templates</h2>
+						<p class="admin-subtitle">Edit job poster content and preview the results side by side.</p>
+					</div>
+				</div>
+
+				<div class="job-template-grid">
+					<section class="panel job-editor-panel">
+						<form id="job-form" class="form-grid">
+							<input class="input" id="job_id" name="job_id" type="hidden" value="" />
+							<input class="input" id="field-position" name="position" placeholder="Position title" value="Production Operator" />
+							<input class="input" id="field-gender" name="gender" placeholder="Gender line" value="" />
+							<input class="input" id="field-email" name="email" type="email" placeholder="Email" value="carmonaqsi@gmail.com" />
+							<input class="input" id="field-subject" name="subject" placeholder="Email subject" value="JOB HIRING" />
+							<input class="input" id="field-phone" name="phone" placeholder="Phone" value="+1 (555) 123-4567" />
+							<input class="input" id="field-website" name="website" placeholder="Website" value="Visit our website" />
+							<textarea class="input" id="p-req" name="requirements" rows="4" placeholder="Requirements">High School graduate (Junior or Senior).\n18-35 years old.\nPreferably with or without experience (Training will be provided).\nValid ID and NBI Clearance (Required).</textarea>
+							<textarea class="input" id="p-desc" name="description" rows="4" placeholder="Job description">Operate production machines efficiently.\nQuality control and visual product inspection.\nMaintain a clean and safe work environment (5S).</textarea>
+							<textarea class="input" id="p-ben" name="benefits" rows="4" placeholder="Benefits">Free Shuttle Service (Pick-up points specified).\nAttendance Bonus and Overtime Pay.\nComplete benefits (SSS, PhilHealth, PAG-IBIG).</textarea>
+
+							<div class="job-actions-row">
+								<button id="save-draft-btn" class="btn btn-secondary" type="button">Save Draft</button>
+								<button id="job-save-btn" class="btn btn-primary" type="submit">Publish Job</button>
+							</div>
+							<div id="feedback" class="notice" aria-live="polite"></div>
+						</form>
+					</section>
+
+					<section class="panel job-preview-panel">
+						<div id="job-alert" class="job-alert-modal-wrap hidden"><div class="job-alert-modal"><h3 id="job-alert-title"></h3><p id="job-alert-message"></p><button id="job-alert-ok" class="btn btn-primary" type="button">OK</button></div></div>
+						<div class="poster-outer">
+							<article id="qs-poster">
+								<div class="p-header"><div class="p-logo-half"><div class="p-logo-inner"><img class="p-hex-icon" src="/assets/logo2.png" alt="QuestServ logo" /><div></div></div></div><div class="p-badge-half"><div class="p-badge-text">JOB<br />HIRING</div></div></div>
+								<div class="p-hero"><div id="p-hero-bg" class="p-hero-bg"></div><h2 class="p-hero-title">JOB<br />HIRING</h2><p class="p-hero-sub">For <strong id="p-position-display">Production Operator</strong> Position</p></div>
+								<div class="p-body"><div class="p-col"><h3 class="p-sec-title">Requirements:</h3><ul class="p-list" id="req-list"><li>High School graduate (Junior or Senior).</li><li>18-35 years old.</li><li>Preferably with or without experience (Training will be provided).</li><li>Valid ID and NBI Clearance (Required).</li></ul><h3 class="p-sec-title">Benefits:</h3><ul class="p-list" id="ben-list"><li>Free Shuttle Service (Pick-up points specified).</li><li>Attendance Bonus and Overtime Pay.</li><li>Complete benefits (SSS, PhilHealth, PAG-IBIG).</li></ul></div><div class="p-col"><h3 class="p-sec-title">Job Description:</h3><ul class="p-list" id="desc-list"><li>Operate production machines efficiently.</li><li>Quality control and visual product inspection.</li><li>Maintain a clean and safe work environment (5S).</li></ul><h3 class="p-sec-title">Submit Resume:</h3><div class="p-submit-box"><p>Send to <strong id="p-email-display">carmonaqsi@gmail.com</strong>.</p><p>Put "<strong id="p-subject-display">JOB HIRING</strong>" as the email subject.</p></div></div></div>
+								<div class="p-footer"><div class="p-footer-item" id="p-phone-display">+1 (555) 123-4567</div><div class="p-footer-item" id="p-website-display">Visit our website</div><div class="p-footer-qr">QR</div></div>
+							</article>
+						</div>
+					</section>
+				</div>
+			</section>
+
+			<section class="admin-section admin-tab-panel" id="posts" data-tab-panel hidden>
+				<div class="section-heading">
+					<div>
+						<p class="section-kicker">Trial page merged</p>
+						<h2>Home Posts</h2>
+						<p class="admin-subtitle">Saved hiring posters and published templates.</p>
+					</div>
+				</div>
+
+				<section class="panel home-posts-surface">
+					<div class="home-posts-grid" id="home-posts-root">
+						<article class="home-post-card-try">
+							<div class="home-post-poster-shell">
+								<div class="home-post-poster">
+									<div class="home-post-poster-header">
+										<div class="home-post-brand">
+											<img class="home-post-brand-logo" src="/assets/logo2.png" alt="QuestServ logo" />
+											<div>
+											</div>
+										</div>
+										<div class="home-post-badge-panel"><span>JOB</span><span>HIRING</span></div>
+									</div>
+
+									<div class="home-post-hero">
+										<div class="home-post-hero-bg has-image" style="background-image:url('/assets/logo2.png');"></div>
+										<div class="home-post-side-shape left"></div>
+										<div class="home-post-side-shape right"></div>
+										<h2 class="home-post-hero-title">JOB<br />HIRING</h2>
+										<p class="home-post-hero-sub">For <strong>Production Operator</strong> Position</p>
+									</div>
+
+									<div class="home-post-content-grid">
+										<div class="home-post-column">
+											<h3>Requirements:</h3>
+											<ul>
+												<li>High School graduate (Junior or Senior).</li>
+												<li>18-35 years old.</li>
+												<li>Preferably with or without experience (Training will be provided).</li>
+												<li>Valid ID and NBI Clearance (Required).</li>
+											</ul>
+											<h3>Benefits:</h3>
+											<ul>
+												<li>Free Shuttle Service (Pick-up points specified).</li>
+												<li>Attendance Bonus and Overtime Pay.</li>
+												<li>Complete benefits (SSS, PhilHealth, PAG-IBIG).</li>
+											</ul>
+										</div>
+										<div class="home-post-column">
+											<h3>Job Description:</h3>
+											<ul>
+												<li>Operate production machines efficiently.</li>
+												<li>Quality control and visual product inspection.</li>
+												<li>Maintain a clean and safe work environment (5S).</li>
+											</ul>
+											<h3>Submit Resume:</h3>
+											<div class="home-post-submit-box">
+												<p>Send to <strong>carmonaqsi@gmail.com</strong>.</p>
+												<p>Put "<strong>JOB HIRING</strong>" as the email subject.</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="home-post-poster-footer">
+										<div class="home-post-footer-item">+1 (555) 123-4567</div>
+										<div class="home-post-footer-item">Visit our website</div>
+										<div class="home-post-footer-qr">QR</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="home-post-summary">
+								<h3 class="home-post-summary-title">1</h3>
+								<p class="">Posted 5 hours ago · Published</p>
+							</div>
+						</article>
+
+						<article class="home-post-card-try">
+							<div class="home-post-poster-shell">
+								<div class="home-post-poster">
+									<div class="home-post-poster-header">
+										<div class="home-post-brand">
+											<img class="home-post-brand-logo" src="/assets/logo2.png" alt="QuestServ logo" />
+											<div>
+												
+											</div>
+										</div>
+										<div class="home-post-badge-panel"><span>JOB</span><span>HIRING</span></div>
+									</div>
+
+									<div class="home-post-hero">
+										<div class="home-post-hero-bg"></div>
+										<div class="home-post-side-shape left"></div>
+										<div class="home-post-side-shape right"></div>
+										<h2 class="home-post-hero-title">JOB<br />HIRING</h2>
+										<p class="home-post-hero-sub">For <strong>Warehuse helper </strong> Position</p>
+									</div>
+
+									<div class="home-post-content-grid">
+										<div class="home-post-column">
+											<h3>Requirements:</h3>
+											<ul><li>Willing to work on shifting schedules.</li><li>Physically fit and reliable.</li><li>Team player with good attendance.</li></ul>
+											<h3>Benefits:</h3>
+											<ul><li>Daily meal allowance.</li><li>Overtime pay.</li><li>Complete benefits package.</li></ul>
+										</div>
+										<div class="home-post-column">
+											<h3>Job Description:</h3>
+											<ul><li>Assist warehouse inventory movement.</li><li>Support loading and dispatch tasks.</li><li>Maintain clean storage areas.</li></ul>
+											<h3>Submit Resume:</h3>
+											<div class="home-post-submit-box">
+												<p>Send to <strong>jobs@questserv.com</strong>.</p>
+												<p>Use "<strong>WAREHOUSE HIRING</strong>" in the subject line.</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="home-post-poster-footer">
+										<div class="home-post-footer-item">+1 (555) 123-4567</div>
+										<div class="home-post-footer-item">Visit our website</div>
+										<div class="home-post-footer-qr">QR</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="home-post-summary">
+								<h3 class="">2</h3>
+								<p class="">Posted 1 day ago · Draft</p>
+							</div>
+						</article>
+
+
+
+					</div>
+				</section>
+			</section>
+
+			<section class="admin-section admin-tab-panel" id="settings" data-tab-panel hidden>
+				<div class="section-heading">
+					<div>
+						<p class="section-kicker">Trial page merged</p>
+						<h2>Settings</h2>
+						<p class="admin-subtitle">Update the admin profile and account password.</p>
+					</div>
+				</div>
+
+				<section class="panel settings-card">
+					<div id="settings-feedback" class="notice" aria-live="polite"></div>
+					<form id="settings-form" class="settings-grid">
+						<input class="input" name="name" placeholder="Full name" value="Admin User" required />
+						<input class="input" name="email" type="email" placeholder="Email" value="admin@questserv.com" required />
+						<input class="input" name="password" type="password" placeholder="New password (optional)" />
+						<button class="btn btn-primary" type="submit">Update Profile</button>
+					</form>
+				</section>
+			</section>
+		</main>
+	</div>
+
+	<script type="module" src="/src/js/admin-ui.js"></script>
+</body>
+</html>

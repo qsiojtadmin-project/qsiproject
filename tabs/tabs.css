@@ -1,0 +1,203 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: #f5f5f5;
+    padding: 20px;
+}
+
+.tabs-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+}
+
+.tabs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tab-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
+    overflow-x: auto;
+    min-height: 40px;
+}
+
+.add-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.add-tab-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.add-tab-btn.accounting {
+    background: #28a745;
+    color: white;
+}
+
+.add-tab-btn.accounting:hover {
+    background: #218838;
+}
+
+.add-tab-btn.settings {
+    background: #17a2b8;
+    color: white;
+}
+
+.add-tab-btn.settings:hover {
+    background: #138496;
+}
+
+.add-tab-btn.reports {
+    background: #ffc107;
+    color: #212529;
+}
+
+.add-tab-btn.reports:hover {
+    background: #e0a800;
+}
+
+.add-tab-btn.users {
+    background: #dc3545;
+    color: white;
+}
+
+.add-tab-btn.users:hover {
+    background: #c82333;
+}
+
+.tab-btn {
+    position: relative;
+    padding: 6px 28px 6px 10px;
+    background: #e9ecef;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab-btn:hover {
+    background: #dee2e6;
+}
+
+.tab-btn.active {
+    background: white;
+    color: #007bff;
+    box-shadow: 0 -2px 0 #007bff inset;
+}
+
+.tab-icon {
+    font-size: 12px;
+}
+
+.delete-tab {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    padding: 0 4px;
+    font-size: 12px;
+    color: #6c757d;
+    transition: color 0.2s ease;
+}
+
+.delete-tab:hover {
+    color: #dc3545;
+}
+
+.tab-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.tab-pane {
+    display: none;
+    height: 100%;
+    width: 100%;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.tab-content-area {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.tab-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #007bff;
+    font-size: 14px;
+}
+
+/* Scrollbar styling */
+.tab-buttons::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tab-buttons::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+
+.tab-buttons::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tabs-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .add-buttons {
+        justify-content: center;
+    }
+}
