@@ -2,6 +2,10 @@ const loginToggleBtn = document.getElementById('login-toggle-btn');
 const loginDropdownMenu = document.getElementById('login-dropdown-menu');
 const loginForm = document.getElementById('inline-login-form');
 const jobFilterForm = document.getElementById('home-job-filter');
+const filterDropdownForm = document.getElementById('filter-dropdown-form');
+const filterToggleBtn = document.getElementById('filter-toggle-btn');
+const filterDropdownMenu = document.getElementById('filter-dropdown-menu');
+const filterDropdownClose = document.querySelector('.filter-dropdown-close');
 const recommendedJobsList = document.getElementById('recommended-jobs-list');
 const jobsTotalCount = document.getElementById('jobs-total-count');
 const jobsPaginationText = document.getElementById('jobs-pagination-text');
@@ -40,6 +44,7 @@ const jobs = [
     title: 'Production Staff',
     company: 'QuestServ Solutions',
     type: 'Full-time',
+    salary: 18000,
     location: 'Cavite',
     posted: 'Just now',
     summary: 'Support daily operations for manufacturing and warehouse clients across key Metro Manila sites.',
@@ -48,6 +53,7 @@ const jobs = [
     title: 'Recruitment Coordinator',
     company: 'QuestServ Solutions',
     type: 'Hybrid',
+    salary: 22000,
     location: 'Mandaluyong',
     posted: '1 day ago',
     summary: 'Coordinate interviews, candidate screening, and hiring logistics for active client accounts.',
@@ -56,11 +62,13 @@ const jobs = [
     title: 'Client Success Associate',
     company: 'QuestServ Solutions',
     type: 'On-site',
+    salary: 19500,
     location: 'Taguig',
     posted: '2 days ago',
     summary: 'Work with partner companies and applicants to ensure smooth onboarding and placement support.',
   },
 ];
+
 
 function renderJobs(list) {
   if (!recommendedJobsList) return;
@@ -79,6 +87,7 @@ function renderJobs(list) {
           <p class="job-summary">${job.summary}</p>
           <div class="job-card-meta">
             <span><i class="fas fa-location-dot"></i> ${job.location}</span>
+            <span><i class="fas fa-money-bill-wave"></i> ₱${job.salary?.toLocaleString() || 'N/A'}</span>
             <span><i class="fas fa-clock"></i> ${job.posted}</span>
           </div>
         </article>
@@ -92,6 +101,69 @@ function renderJobs(list) {
 
   if (jobsPaginationText) {
     jobsPaginationText.textContent = `Showing ${list.length} results`;
+  }
+}
+
+function setFilterMenu(open) {
+  if (!filterDropdownMenu || !filterToggleBtn) return;
+  filterDropdownMenu.classList.toggle('is-open', open);
+  filterDropdownMenu.setAttribute('aria-hidden', String(!open));
+  filterToggleBtn.setAttribute('aria-expanded', String(open));
+}
+
+if (filterToggleBtn && filterDropdownMenu) {
+  filterToggleBtn.addEventListener('click', () => {
+    setFilterMenu(!filterDropdownMenu.classList.contains('is-open'));
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!filterDropdownMenu.classList.contains('is-open')) return;
+    if (filterDropdownMenu.contains(event.target) || filterToggleBtn.contains(event.target)) return;
+    setFilterMenu(false);
+  });
+}
+
+if (filterDropdownClose) {
+  filterDropdownClose.addEventListener('click', () => setFilterMenu(false));
+}
+
+function applyDropdownFilters() {
+  if (!filterDropdownForm) return;
+
+  const title = filterDropdownForm.title.value.trim().toLowerCase();
+  const salaryMin = Number(filterDropdownForm.salaryMin.value) || 0;
+  const salaryMax = Number(filterDropdownForm.salaryMax.value) || Infinity;
+  const jobType = filterDropdownForm.jobType.value;
+
+  const filteredJobs = jobs.filter((job) => {
+    const matchesTitle =
+      !title ||
+      job.title.toLowerCase().includes(title) ||
+      job.company.toLowerCase().includes(title) ||
+      job.summary.toLowerCase().includes(title);
+
+    const matchesSalary = job.salary >= salaryMin && job.salary <= salaryMax;
+    const matchesType = !jobType || job.type === jobType;
+
+    return matchesTitle && matchesSalary && matchesType;
+  });
+
+  renderJobs(filteredJobs);
+}
+
+if (filterDropdownForm) {
+  filterDropdownForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    applyDropdownFilters();
+    setFilterMenu(false);
+  });
+
+  const clearButton = filterDropdownForm.querySelector('.filter-clear-button');
+  if (clearButton) {
+    clearButton.addEventListener('click', () => {
+      filterDropdownForm.reset();
+      renderJobs(jobs);
+    });
   }
 }
 

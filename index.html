@@ -124,8 +124,48 @@
             <button class="jobs-chip" type="button">Product</button>
             <button class="jobs-chip" type="button">Operations</button>
           </div>
-        </section>
 
+          <div class="jobs-filter-row">
+            <button class="jobs-filter-button" id="filter-toggle-btn" type="button">
+              <i class="fas fa-filter"></i>
+              Filter
+              <span class="jobs-filter-chevron">▾</span>
+            </button>
+            <div id="filter-dropdown-menu" class="filter-dropdown-menu" aria-hidden="true">
+              <form id="filter-dropdown-form">
+                <div class="filter-dropdown-header">
+                  <span>Job Filter</span>
+                  <button type="button" class="filter-dropdown-close" aria-label="Close filter menu">×</button>
+                </div>
+                <label class="filter-dropdown-field">
+                  <span>Job title</span>
+                  <input type="text" name="title" placeholder="Search title" />
+                </label>
+                <label class="filter-dropdown-field">
+                  <span>Salary min</span>
+                  <input type="number" name="salaryMin" placeholder="₱ 0" min="0" />
+                </label>
+                <label class="filter-dropdown-field">
+                  <span>Salary max</span>
+                  <input type="number" name="salaryMax" placeholder="₱ 0" min="0" />
+                </label>
+                <label class="filter-dropdown-field">
+                  <span>Job type</span>
+                  <select name="jobType">
+                    <option value="">Any type</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="On-site">On-site</option>
+                  </select>
+                </label>
+                <div class="filter-dropdown-actions">
+                  <button class="filter-clear-button" type="button">Clear</button>
+                  <button class="btn filter-apply-button" type="submit">Apply</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
         <section class="jobs-board">
           <div class="jobs-board-main">
             <div class="jobs-board-head">
@@ -136,7 +176,6 @@
                 </div>
                 <p>Tailored opportunities matching your expertise</p>
               </div>
-              <button class="jobs-filter-button" type="button">Filter By</button>
             </div>
 
             <div id="recommended-jobs-list" class="jobs-listing-stack">
