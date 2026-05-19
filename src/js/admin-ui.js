@@ -10,8 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.getElementById('tabButtons');
     const toastContainer = document.getElementById('toast-container');
     const postContextMenu = document.getElementById('post-context-menu');
+    const applicantContextMenu = document.getElementById('applicant-context-menu');
     let homePostsCache = [];
     let activeContextPostId = null;
+    let activeApplicantId = null;
     let currentEditingPostId = null;
 
     function hasSupabaseConfig() {
@@ -132,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Rest of UI logic: applicants, users ---
     const navLogout = document.getElementById('nav-logout');
 
-    const applicantsData = [
+    let applicantsData = [
         { name: 'Sarah Johnson', email: 'sarah@email.com', resume: 'sarah_resume.pdf', title: 'Senior Developer', status: 'Under Review', date: '2026-04-28' },
         { name: 'Michael Chen', email: 'michael@email.com', resume: 'michael_cv.pdf', title: 'Product Manager', status: 'Shortlisted', date: '2026-04-29' },
         { name: 'Emily Davis', email: 'emily@email.com', resume: 'emily_resume.pdf', title: 'UX Designer', status: 'Interview', date: '2026-05-01' },
@@ -140,23 +142,94 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const usersData = [
+        { name: 'System Admin', email: 'system.admin@questserv.com', role: 'system-admin' },
         { name: 'Alice Rivera', email: 'alice@questserv.com', role: 'admin' },
         { name: 'John Santos', email: 'john@questserv.com', role: 'user' },
         { name: 'Monica Cruz', email: 'monica@questserv.com', role: 'user' },
     ];
 
+    function formatRoleLabel(role) {
+        return String(role || '')
+            .replace(/[-_]+/g, ' ')
+            .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function formatApplicantStatus(status) {
+        return String(status || '')
+            .replace(/[-_]+/g, ' ')
+            .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function getApplicantStatusClass(status) {
+        return String(status || '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-');
+    }
+
     function renderApplicants(rows = applicantsData) {
         const body = document.getElementById('applicants-body');
         if (!body) return;
-        body.innerHTML = rows.map((row) => `
-            <tr>
+        body.innerHTML = rows.map((row, idx) => `
+            <tr class="applicant-row" data-applicant-id="${idx}">
                 <td>${row.name}</td>
                 <td>${row.email}</td>
                 <td>${row.resume}</td>
                 <td>${row.title}</td>
-                <td><span class="status ${row.status.toLowerCase().replace(' ', '-')}">${row.status}</span></td>
+                <td><span class="status ${getApplicantStatusClass(row.status)}">${formatApplicantStatus(row.status)}</span></td>
             </tr>
         `).join('');
+    }
+
+    function openApplicantContextMenu(applicantId, x, y) {
+        if (!applicantContextMenu) return;
+        activeApplicantId = applicantId;
+        applicantContextMenu.classList.add('active');
+        applicantContextMenu.setAttribute('aria-hidden', 'false');
+
+        const menuWidth = 208;
+        const menuHeight = 148;
+        const left = Math.min(x, window.innerWidth - menuWidth - 16);
+        const top = Math.min(y, window.innerHeight - menuHeight - 16);
+        applicantContextMenu.style.left = `${Math.max(12, left)}px`;
+        applicantContextMenu.style.top = `${Math.max(12, top)}px`;
+    }
+
+    function closeApplicantContextMenu() {
+        if (!applicantContextMenu) return;
+        applicantContextMenu.classList.remove('active');
+        applicantContextMenu.setAttribute('aria-hidden', 'true');
+        activeApplicantId = null;
+    }
+
+    function getApplicantById(applicantId) {
+        const index = Number.parseInt(applicantId, 10);
+        if (!Number.isFinite(index)) return null;
+        return applicantsData[index] || null;
+    }
+
+    function viewApplicantProfile(applicantId) {
+        const applicant = getApplicantById(applicantId);
+        if (!applicant) return;
+        closeApplicantContextMenu();
+        showToast(`Profile: ${applicant.name} - ${applicant.title}`);
+    }
+
+    function archiveApplicant(applicantId) {
+        const applicant = getApplicantById(applicantId);
+        if (!applicant) return;
+        applicant.status = 'Archived';
+        renderApplicants();
+        closeApplicantContextMenu();
+        showToast(`${applicant.name} archived.`);
+    }
+
+    function startApplicant(applicantId) {
+        const applicant = getApplicantById(applicantId);
+        if (!applicant) return;
+        applicant.status = 'Started';
+        renderApplicants();
+        closeApplicantContextMenu();
+        showToast(`${applicant.name} started.`);
     }
 
     function renderUsers(rows = usersData) {
@@ -164,9 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!body) return;
         body.innerHTML = rows.map((user, idx) => `
             <tr>
-                <td data-label="Name">${user.name}</td>
+                <td data-label="Name">${String(user.name || '').toUpperCase()}</td>
                 <td data-label="Email">${user.email}</td>
-                <td data-label="Role"><span class="role-pill ${user.role}">${user.role}</span></td>
+                <td data-label="Role"><span class="role-pill ${user.role}">${formatRoleLabel(user.role)}</span></td>
                 <td data-label="Action"><button class="action-btn" data-index="${idx}" title="Remove user">Remove</button></td>
             </tr>
         `).join('');
@@ -960,11 +1033,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (action !== 'delete') closePostContextMenu();
     });
 
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('#post-context-menu')) closePostContextMenu();
+    document.getElementById('applicants-body')?.addEventListener('contextmenu', (e) => {
+        const row = e.target.closest('[data-applicant-id]');
+        if (!row) return;
+        e.preventDefault();
+        openApplicantContextMenu(row.dataset.applicantId, e.clientX, e.clientY);
     });
 
-    document.addEventListener('scroll', closePostContextMenu, true);
+    applicantContextMenu?.addEventListener('click', (e) => {
+        const item = e.target.closest('[data-action]');
+        if (!item || activeApplicantId === null) return;
+
+        const action = item.dataset.action;
+        if (action === 'view') viewApplicantProfile(activeApplicantId);
+        if (action === 'archive') archiveApplicant(activeApplicantId);
+        if (action === 'start') startApplicant(activeApplicantId);
+        if (action !== 'archive' && action !== 'start') closeApplicantContextMenu();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#post-context-menu')) closePostContextMenu();
+        if (!e.target.closest('#applicant-context-menu')) closeApplicantContextMenu();
+    });
+
+    document.addEventListener('scroll', () => {
+        closePostContextMenu();
+        closeApplicantContextMenu();
+    }, true);
 
     // Init Logic
     loadHomePosts();
