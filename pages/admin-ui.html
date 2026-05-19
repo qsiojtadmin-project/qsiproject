@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Admin Workspace | QuestServ</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+	<link rel="stylesheet" href="/src/styles/admin-ui.css" />
+</head>
+<body>
+	<header class="navbar">
+		<div class="nav-wrap">
+			<button type="button" id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle sidebar">
+				<i class="fa-solid fa-bars-staggered"></i>
+			</button>
+			
+			<a href="/" class="site-brand">
+				<img class="site-brand-logo" src="/assets/logo1.png" alt="QuestServ logo" onError="this.src='/assets/logo1.png'"/>
+			</a>
+
+			<div class="admin-head-search">
+				<i class="fa-solid fa-magnifying-glass"></i>
+				<input type="search" id="admin-search" placeholder="Search applicants, posts, users..." />
+			</div>
+
+			<div class="admin-head-actions">
+				<button type="button" class="head-btn" aria-label="Notifications"><i class="fa-regular fa-bell"></i></button>
+				<button type="button" class="head-btn" aria-label="Messages"><i class="fa-regular fa-envelope"></i></button>
+				<div class="user-profile">
+					<div class="avatar">A</div>
+					<div class="user-info">
+						<span class="user-name">Admin</span>
+						<span class="user-role">Superuser</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<div class="admin-layout" id="admin-layout">
+		<aside class="sidebar" id="sidebar">
+			<nav class="sidebar-nav">
+				<a class="sidebar-link" href="#dashboard" data-tab="dashboard"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+				<a class="sidebar-link" href="#applicants" data-tab="applicants"><i class="fa-solid fa-users"></i><span>Applicants</span></a>
+				<a class="sidebar-link" href="#users" data-tab="users"><i class="fa-solid fa-id-card"></i><span>Users</span></a>
+				<a class="sidebar-link active" href="#jobs" data-tab="jobs"><i class="fa-solid fa-briefcase"></i><span>Job Templates</span></a>
+				<a class="sidebar-link" href="#posts" data-tab="posts"><i class="fa-solid fa-house"></i><span>Home Posts</span></a>
+				<a class="sidebar-link" href="#settings" data-tab="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+			</nav>
+
+			<div class="sidebar-foot">
+				<button class="logout-btn" id="nav-logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
+			</div>
+		</aside>
+
+		<main class="admin-main">
+			<div class="tab-bar-container">
+				<div class="tab-buttons" id="tabButtons"></div>
+			</div>
+
+			<div class="content-viewport">
+				<!-- DASHBOARD -->
+				<section class="admin-section" id="dashboard-panel" data-tab-panel>
+					<div class="section-header">
+						<h1>Admin Dashboard</h1>
+						<div class="header-actions">
+							<button class="btn btn-secondary">Report</button>
+							<button class="btn btn-primary">Create Job</button>
+						</div>
+					</div>
+
+					<div class="stats-grid">
+						<div class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+							<div class="stat-val">128</div>
+							<div class="stat-label">Total Applicants</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
+							<div class="stat-val" id="active-jobs-count">14</div>
+							<div class="stat-label">Active Jobs</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+							<div class="stat-val">42</div>
+							<div class="stat-label">Interviews</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-handshake"></i></div>
+							<div class="stat-val">36</div>
+							<div class="stat-label">Total Hires</div>
+						</div>
+					</div>
+				</section>
+				
+				<!-- JOB TEMPLATE BUILDER -->
+				<section class="admin-section is-active" id="jobs-panel" data-tab-panel>
+					<div class="section-header">
+						<div>
+							<h1>Job Template Builder</h1>
+							<p style="color: var(--text-muted); margin-top: 4px;">Premium Recruitment Poster Management</p>
+						</div>
+					</div>
+
+					<div class="builder-layout">
+						<div class="builder-main-col">
+							<form id="job-form">
+								<div class="builder-card">
+									<h3><i class="fa-solid fa-circle-info"></i> Job Information</h3>
+									<div class="form-grid">
+										<div class="form-group">
+											<label>Position Title</label>
+											<input type="text" id="field-position" placeholder="e.g. Senior Product Operator" required>
+										</div>
+										<div class="form-group">
+											<label>Job Category</label>
+											<select id="field-category">
+												<option value="Production">Production</option>
+												<option value="Engineering">Engineering</option>
+												<option value="Logistics">Logistics</option>
+												<option value="Management">Management</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label>Employment Type</label>
+											<select id="field-type">
+												<option value="Full-time">Full-time</option>
+												<option value="Part-time">Part-time</option>
+												<option value="Contract">Contract</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label>Work Setup</label>
+											<select id="field-setup">
+												<option value="Onsite">Onsite</option>
+												<option value="Hybrid">Hybrid</option>
+												<option value="Remote">Remote</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label>Salary Range</label>
+											<input type="text" id="field-salary" placeholder="e.g. $50k - $70k">
+										</div>
+										<div class="form-group">
+											<label>Location</label>
+											<input type="text" id="field-location" placeholder="e.g. Carmona, Cavite">
+										</div>
+									</div>
+								</div>
+									<br><br>
+								<div class="builder-card">
+									<h3><i class="fa-solid fa-address-book"></i> Contact Info</h3>
+									<div class="form-grid form-grid-3">
+										<div class="form-group">
+											<label>Email</label>
+											<input type="email" id="field-email" placeholder="hr@questserv.com">
+										</div>
+										<div class="form-group">
+											<label>Phone</label>
+											<input type="text" id="field-phone" placeholder="+63 000 000 0000">
+										</div>
+										<div class="form-group">
+											<label>Website</label>
+											<input type="text" id="field-website" placeholder="www.questserv.com">
+										</div>
+										<input type="hidden" id="field-subject" value="JOB HIRING">
+									</div>
+								</div>
+								<br><br>
+								<div class="builder-card">
+									<h3><i class="fa-solid fa-pen-to-square"></i> Job Description</h3>
+									<div class="form-group full">
+										<label>Responsibilities</label>
+										<textarea id="p-desc" placeholder="List responsibilities (one per line)..."></textarea>
+										<div class="char-counter">0 / 1000</div>
+									</div>
+									<div class="form-group full" style="margin-top: 16px;">
+										<label>Requirements</label>
+										<textarea id="p-req" placeholder="List requirements (one per line)..."></textarea>
+										<div class="char-counter">0 / 1000</div>
+									</div>
+									<div class="form-group full" style="margin-top: 16px;">
+										<label>Benefits</label>
+										<textarea id="p-ben" placeholder="List benefits (one per line)..."></textarea>
+										<div class="char-counter">0 / 1000</div>
+									</div>
+								</div>
+								<br><br>
+								<div class="builder-card">
+									<h3><i class="fa-solid fa-images"></i> Media Assets</h3>
+									<div class="form-grid">
+										<div class="form-group full">
+											<label>Template Background</label>
+											<div class="upload-zone" id="background-trigger">
+												<i class="fa-solid fa-image"></i>
+												<p>Upload Background</p>
+												<span>Shows on the poster only after you choose an image</span>
+											</div>
+											<input type="file" id="background-input" hidden accept="image/*">
+										</div>
+									</div>
+									<img id="p-bg-preview" alt="" hidden>
+								</div>
+								<br><br>
+								<div class="builder-card">
+									<h3><i class="fa-solid fa-sliders"></i> Publish Settings</h3>
+									<div class="form-grid">
+										<div class="form-group" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+											<input type="checkbox" id="field-featured" style="width: 20px; height: 20px;">
+											<label style="margin-bottom: 0;">Featured Post</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="sticky-builder-actions">
+									<button type="button" class="btn btn-outline" id="save-draft-btn">Save Draft</button>
+									<button type="button" class="btn btn-outline" id="view-template-btn">View Template</button>
+									<button type="submit" class="btn btn-primary">Publish Template</button>
+								</div>
+							</form>
+						</div>
+
+					</div>
+				</section>
+
+				<section class="admin-section" id="posts-panel" data-tab-panel>
+					<div class="section-header">
+						<h1>Home Posts Feed</h1>
+						<div class="header-actions">
+							<button class="btn btn-outline" id="clear-posts"><i class="fa-solid fa-trash"></i> Reset Feed</button>
+						</div>
+					</div>
+					<div class="posts-grid" id="home-posts-container"></div>
+				</section>
+
+				<section class="admin-section" id="applicants-panel" data-tab-panel>
+					<div class="section-header"><h1>Applicants</h1></div>
+					<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Resume</th><th>Title</th><th>Status</th></tr></thead><tbody id="applicants-body"></tbody></table>
+				</section>
+
+				<section class="admin-section" id="users-panel" data-tab-panel>
+					<div class="section-header"><h1>Users</h1></div>
+					<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody id="users-body"></tbody></table>
+				</section>
+
+				<section class="admin-section" id="settings-panel" data-tab-panel>
+					<div class="section-header"><h1>Settings</h1></div>
+					<div class="placeholder-content"><h2>Settings</h2><p>Admin platform configuration.</p></div>
+				</section>
+
+				<section class="admin-section" id="placeholder-panel">
+					<div class="placeholder-content"><h2>Section Loading</h2><p>Please wait...</p></div>
+				</section>
+			</div>
+		</main>
+	</div>
+
+	<div class="toast-container" id="toast-container"></div>
+
+	<div class="post-context-menu" id="post-context-menu" aria-hidden="true">
+		<button type="button" class="post-menu-item" data-action="view"><i class="fa-regular fa-eye"></i><span>View</span></button>
+		<button type="button" class="post-menu-item" data-action="edit"><i class="fa-regular fa-pen-to-square"></i><span>Edit</span></button>
+		<button type="button" class="post-menu-item danger" data-action="delete"><i class="fa-regular fa-trash-can"></i><span>Delete</span></button>
+	</div>
+
+	<!-- CONFIRM PUBLISH MODAL -->
+	<div class="modal-overlay" id="confirm-publish-modal">
+		<div class="modal-card">
+			<div class="modal-icon"><i class="fa-solid fa-paper-plane"></i></div>
+			<h2>Post Template</h2>
+			<p>Are you sure about this template?</p>
+			<div class="modal-btns">
+				<button class="btn btn-outline" id="close-modal">No</button>
+				<button class="btn btn-primary" id="final-publish-btn">Confirm</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- SUCCESS MODAL -->
+	<div class="success-modal-overlay" id="success-modal">
+		<div class="success-modal-card">
+			<div class="checkmark-wrapper">
+				<div class="checkmark-circle"></div>
+				<i class="fa-solid fa-check checkmark-icon"></i>
+			</div>
+			<h2>Congrats!</h2>
+			<p id="success-modal-msg">, Your account is created!</p>
+			<button class="btn-success-ok" id="success-modal-ok">OK</button>
+		</div>
+	</div>
+
+	<!-- ═══════════════════════════════════════════════════
+	     VIEW TEMPLATE MODAL — Full A4 Poster Popup
+	     ═══════════════════════════════════════════════════ -->
+	<div class="vt-overlay" id="vt-modal" role="dialog" aria-modal="true" aria-label="View Job Template">
+
+		<div class="vt-shell">
+			<!-- A4 Poster Pane -->
+			<div class="vt-poster-wrap" id="vt-poster-wrap">
+				<div class="vt-poster" id="vt-poster">
+					<div class="vt-bg" id="vt-bg" hidden></div>
+
+					<!-- Watermark -->
+					<div class="vt-watermark" id="vt-watermark">QUESTSERV SOLUTIONS</div>
+
+					<!-- Top Row: Logo + Hiring Banner -->
+					<div class="vt-top">
+						<div class="vt-brand">
+							<img class="vt-logo" id="vt-logo" src="/assets/logo1.png" alt="QuestServ logo" onerror="this.src='/assets/logo1.png'">
+							<div class="vt-brand-text">
+							</div>
+						</div>
+						<div class="vt-hire-badge">
+							<span class="we-are">WE ARE</span>
+							<span class="hiring">HIRING</span>
+						</div>
+					</div>
+
+					<!-- Hero: Job Title -->
+					<div class="vt-hero">
+						<h1 class="vt-hero-title" id="vt-title">PRODUCTION OPERATOR</h1>
+						<p class="vt-hero-sub">For position</p>
+					</div>
+
+					<!-- Two-Column Body -->
+					<div class="vt-body">
+						<!-- LEFT column -->
+						<div class="vt-col">
+							<div class="vt-sec">
+								<h6 class="vt-sec-title">Requirements</h6>
+								<ul class="vt-sec-list" id="vt-req-list">
+									<li>Update this content...</li>
+								</ul>
+							</div>
+							<div class="vt-sec">
+								<h6 class="vt-sec-title">Benefits</h6>
+								<ul class="vt-sec-list" id="vt-ben-list">
+									<li>Update this content...</li>
+								</ul>
+							</div>
+						</div>
+
+						<!-- Vertical divider -->
+						<div class="vt-divider"></div>
+
+						<!-- RIGHT column -->
+						<div class="vt-col">
+							<div class="vt-sec">
+								<h6 class="vt-sec-title">Job Description</h6>
+								<ul class="vt-sec-list" id="vt-desc-list">
+									<li>Update this content...</li>
+								</ul>
+							</div>
+							<div class="vt-sec">
+								<h6 class="vt-sec-title">Submit Resume</h6>
+								<ul class="vt-sec-list" id="vt-contact-list">
+									<li>Send your resume to:</li>
+									<li><span class="vt-email-hl" id="vt-email">hr@questserv.com</span></li>
+									<li id="vt-phone-li">+1 (555) 123-4567</li>
+									<li id="vt-subject-li">Subject line: Application – Position</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<!-- Footer Bar -->
+					<div class="vt-footer">
+						<div class="vt-footer-info">
+							<span class="hl" id="vt-footer-phone">+1 (555) 123-4567</span>
+							<span id="vt-footer-web">www.questserv.com</span>
+							<span id="vt-footer-email">hr@questserv.com</span>
+						</div>
+						<div class="vt-qr" id="vt-qr">
+							<img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=www.questserv.com" alt="QR code">
+						</div>
+					</div>
+
+				</div><!-- /vt-poster -->
+			</div><!-- /vt-poster-wrap -->
+
+			<!-- Side Actions -->
+			<div class="vt-actions-panel">
+				<button class="vt-action-btn close-btn" id="vt-close-btn" aria-label="Close">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+				<button class="vt-action-btn select-btn" id="vt-select-btn" aria-label="Post template to home posts">
+					<i class="fa-solid fa-paper-plane"></i>
+					<span class="tooltip">Post Template</span>
+				</button>
+				<button class="vt-action-btn print-btn" id="vt-print-btn" aria-label="Print / Save as PDF">
+					<i class="fa-solid fa-print"></i>
+					<span class="tooltip">Print / Save PDF</span>
+				</button>
+			</div>
+		</div><!-- /vt-shell -->
+
+	</div>
+	<!-- /VIEW TEMPLATE MODAL -->
+
+	<script>
+		window.__SUPABASE_URL__ = 'https://ilbneblzkvzebuklyzgn.supabase.co';
+		window.__SUPABASE_ANON_KEY__ = 'sb_publishable_UIrAwPGGHGwPavXFV23FwQ_Z1ywfnAg';
+	</script>
+	<script type="module" src="/src/js/admin-ui.js"></script>
+</body>
+</html>

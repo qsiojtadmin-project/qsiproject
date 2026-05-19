@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuestServ Solution Inc. | Hiring Portal</title>
+  <meta name="description" content="QuestServ Solution Inc. hiring portal for job seekers and partner employers." />
+  <link rel="icon" type="image/x-icon" href="assets/icon.ico?v=3" />
+  <link rel="shortcut icon" href="assets/icon.ico?v=3" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="src/styles/styles.css" />
+</head>
+<body>
+  <header class="site-header" id="home">
+    <div class="container header-wrap">
+      <a href="#home" class="site-brand" aria-label="QuestServ home">
+        <img class="site-brand-logo" src="assets/logo1.png" alt="QuestServ logo" />
+      </a>
+
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#jobs">Jobs</a>
+        <a href="#contact">Contact</a>
+        <a href="pages/jobs.html">Find Salaries</a>
+        <a href="pages/apply.html">Apply now</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="login-toggle-btn" class="header-login-button" type="button">Login</button>
+        <a href="pages/employers.html" class="header-post-btn">Post a Job</a>
+      </div>
+    </div>
+
+    <div id="login-dropdown-menu" class="login-dropdown-menu" aria-hidden="true">
+      <h4 class="login-dropdown-title">Sign into your account</h4>
+      <form id="inline-login-form">
+        <div class="login-dropdown-field">
+          <label for="login-email" class="login-dropdown-label">Email Address</label>
+          <input type="email" id="login-email" class="login-dropdown-input" placeholder="name@example.com" required />
+        </div>
+
+        <div class="login-dropdown-field">
+          <label for="login-password" class="login-dropdown-label">Password</label>
+          <input type="password" id="login-password" class="login-dropdown-input" placeholder="password" required />
+        </div>
+
+        <div class="login-dropdown-meta">
+          <label class="login-dropdown-check">
+            <input type="checkbox" class="login-dropdown-checkbox" /> Remember me
+          </label>
+          <a href="#contact" class="login-dropdown-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn login-dropdown-submit">Login</button>
+        <div class="login-dropdown-register">
+          <span class="login-dropdown-register-copy">Don't have an account?</span>
+          <a href="pages/register-account.html" class="login-dropdown-register-link">Register now</a>
+        </div>
+      </form>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-section">
+      <div class="hero-geo" aria-hidden="true"></div>
+      <div class="container">
+        <div class="hero-content">
+          <p class="hero-kicker">QuestServ Solution Inc.</p>
+          <h1>Your Trusted Manpower Partner in the Philippines</h1>
+          <p>Connecting skilled workers with top companies in Metro Manila, Cavite, and beyond. Be part of our growing team today.</p>
+
+          <div class="hero-buttons">
+            <a href="#jobs" class="btn-hero-white">View Job Openings <span class="btn-icon">💼</span></a>
+            <a href="pages/employers.html" class="btn-hero-outline">Partner With Us <span class="btn-icon">🤝</span></a>
+          </div>
+
+          <div class="hero-badges">
+            <div class="hero-badge hero-badge-gold">
+              <div class="hero-badge-icon"><i class="fas fa-check-circle"></i></div>
+              SEC Registered Business
+            </div>
+            <div class="hero-badge hero-badge-green">
+              <div class="hero-badge-icon"><i class="fas fa-map-marker-alt"></i></div>
+              Taguig | Mandaluyong | Cavite
+            </div>
+            <div class="hero-badge hero-badge-chart">
+              <div class="hero-badge-icon"><i class="fas fa-chart-line"></i></div>
+              Industrial &amp; Production Specialists
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="jobs-landing" id="jobs">
+      <div class="container jobs-shell">
+        <section class="jobs-hero-panel">
+          <div class="jobs-hero-copy">
+            <h2>Available Positions</h2>
+            <p>Discover your next career move with QuestServ. We are looking for talented individuals to help us build the future of enterprise intelligence.</p>
+          </div>
+
+          <form id="home-job-filter" class="jobs-search-bar" onsubmit="return false;">
+            <label class="jobs-search-field" aria-label="Search role">
+              <span class="jobs-search-icon"></span>
+              <input type="text" name="keyword" placeholder="Find Your Dream Role" />
+            </label>
+            <label class="jobs-search-field" aria-label="Search location">
+              <span class="jobs-search-icon jobs-search-icon-location"></span>
+              <input type="text" name="location" placeholder="Location" />
+            </label>
+            <button class="jobs-search-button" type="submit">Search Jobs</button>
+          </form>
+
+          <div class="jobs-filter-row">
+            <button class="jobs-filter-button" id="filter-toggle-btn" type="button">
+              <i class="fas fa-filter"></i>
+              Filter
+              <span class="jobs-filter-chevron">▾</span>
+            </button>
+            <div id="filter-dropdown-menu" class="filter-dropdown-menu" aria-hidden="true">
+              <form id="filter-dropdown-form">
+                <div class="filter-dropdown-header">
+                  <span>Job Filter</span>
+                  <button type="button" class="filter-dropdown-close" aria-label="Close filter menu">×</button>
+                </div>
+                <label class="filter-dropdown-field">
+                  <span>Job title</span>
+                  <input type="text" name="title" placeholder="Search title" />
+                </label>
+                <label class="filter-dropdown-field">
+                  <span>Salary min</span>
+                  <input type="number" name="salaryMin" placeholder="₱ 0" min="0" />
+                </label>
+                <label class="filter-dropdown-field">
+                  <span>Salary max</span>
+                  <input type="number" name="salaryMax" placeholder="₱ 0" min="0" />
+                </label>
+                <label class="filter-dropdown-field">
+                  <span>Job type</span>
+                  <select name="jobType">
+                    <option value="">Any type</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="On-site">On-site</option>
+                  </select>
+                </label>
+                <div class="filter-dropdown-actions">
+                  <button class="filter-clear-button" type="button">Clear</button>
+                  <button class="btn filter-apply-button" type="submit">Apply</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+        <section class="jobs-board">
+          <div class="jobs-board-main">
+            <div class="jobs-board-head">
+              <div>
+                <div class="jobs-section-heading">
+                  <h2>Recommended Jobs</h2>
+                  <span id="jobs-total-count" class="jobs-total-pill">3 Total</span>
+                </div>
+                <p>Tailored opportunities matching your expertise</p>
+              </div>
+            </div>
+
+            <div id="recommended-jobs-list" class="jobs-listing-stack">
+              <article class="job-card">
+                <div class="job-card-top">
+                  <div>
+                    <h3>Production Staff</h3>
+                    <p>QuestServ Solutions</p>
+                  </div>
+                  <span class="job-pill">Full-time</span>
+                </div>
+                <p class="job-summary">Support daily operations for manufacturing and warehouse clients across key Metro Manila sites.</p>
+                <div class="job-card-meta">
+                  <span><i class="fas fa-location-dot"></i> Cavite</span>
+                  <span><i class="fas fa-clock"></i> Just now</span>
+                </div>
+              </article>
+
+              <article class="job-card">
+                <div class="job-card-top">
+                  <div>
+                    <h3>Recruitment Coordinator</h3>
+                    <p>QuestServ Solutions</p>
+                  </div>
+                  <span class="job-pill">Hybrid</span>
+                </div>
+                <p class="job-summary">Coordinate interviews, candidate screening, and hiring logistics for active client accounts.</p>
+                <div class="job-card-meta">
+                  <span><i class="fas fa-location-dot"></i> Mandaluyong</span>
+                  <span><i class="fas fa-clock"></i> 1 day ago</span>
+                </div>
+              </article>
+
+              <article class="job-card">
+                <div class="job-card-top">
+                  <div>
+                    <h3>Client Success Associate</h3>
+                    <p>QuestServ Solutions</p>
+                  </div>
+                  <span class="job-pill">On-site</span>
+                </div>
+                <p class="job-summary">Work with partner companies and applicants to ensure smooth onboarding and placement support.</p>
+                <div class="job-card-meta">
+                  <span><i class="fas fa-location-dot"></i> Taguig</span>
+                  <span><i class="fas fa-clock"></i> 2 days ago</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="jobs-pagination">
+              <p id="jobs-pagination-text">Showing 3 results</p>
+              <div class="jobs-pagination-controls">
+                <button class="jobs-page-button" type="button">&#8249;</button>
+                <button class="jobs-page-button is-current" type="button">1</button>
+                <button class="jobs-page-button" type="button">2</button>
+                <button class="jobs-page-button" type="button">3</button>
+                <button class="jobs-page-button jobs-page-dots" type="button">...</button>
+                <button class="jobs-page-button" type="button">&#8250;</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="jobs-board-side">
+            <section class="jobs-side-card jobs-profile-card">
+              <div class="jobs-profile-head">
+                <div class="jobs-profile-avatar">Q</div>
+                <div>
+                  <h3>Welcome back, applicant!</h3>
+                  <p>Build your profile and apply faster.</p>
+                </div>
+              </div>
+              <div class="jobs-progress-copy">
+                <span>Profile Completion</span>
+                <strong>85%</strong>
+              </div>
+              <div class="jobs-progress-bar"><span></span></div>
+              <a href="pages/apply.html" class="jobs-side-action">Manage Applications</a>
+            </section>
+
+            <section class="jobs-side-card">
+              <div class="jobs-side-title-row">
+                <h3>Top Matches for You</h3>
+              </div>
+              <div class="jobs-mini-list">
+                <article class="jobs-mini-item"><div><strong>Warehouse Helper</strong><span>Cavite</span></div><em>Urgent</em></article>
+                <article class="jobs-mini-item"><div><strong>QA Checker</strong><span>Taguig</span></div><em>Hiring</em></article>
+                <article class="jobs-mini-item"><div><strong>HR Assistant</strong><span>Mandaluyong</span></div><em>Open</em></article>
+              </div>
+              <a href="pages/jobs.html" class="jobs-mini-link">View all listings</a>
+            </section>
+
+            <section class="jobs-side-card jobs-alert-card">
+              <div class="jobs-side-title-row">
+                <h3>Job Alerts</h3>
+              </div>
+              <p>Get notified instantly when new roles match your profile.</p>
+              <div class="jobs-alert-form">
+                <input type="email" placeholder="Email Address" />
+                <button class="jobs-alert-button" type="button">Turn on Alerts</button>
+              </div>
+            </section>
+          </aside>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3 class="footer-title">About Company</h3>
+          <p class="footer-about-copy">We're dedicated to connecting reliable talent with growing businesses across the Philippines.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="footer-title">Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="#home">About Us</a></li>
+            <li><a href="#jobs">Jobs</a></li>
+            <li><a href="pages/employers.html">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="pages/register-account.html">Register</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-title">Support</h3>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="pages/register.html">Admin</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 QuestServ Solution Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="src/js/script.js"></script>
+</body>
+</html>
