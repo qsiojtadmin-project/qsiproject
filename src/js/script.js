@@ -36,6 +36,7 @@ if (loginForm) {
   loginForm.addEventListener('submit', (event) => {
     event.preventDefault();
     setLoginMenu(false);
+    window.location.href = 'pages/user-dashboard.html';
   });
 }
 

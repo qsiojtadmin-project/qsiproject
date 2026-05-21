@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuestServ | User Dashboard</title>
+  <meta name="description" content="User dashboard for QuestServ applicants." />
+  <link rel="icon" type="image/x-icon" href="../assets/icon.ico?v=3" />
+  <link rel="shortcut icon" href="../assets/icon.ico?v=3" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../src/styles/styles.css" />
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="container header-wrap header-container">
+      <a href="../index.html#home" class="site-brand" aria-label="QuestServ home">
+        <img class="site-brand-logo" src="../assets/logo1.png" alt="QuestServ logo" />
+      </a>
+
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a>
+        <a href="../index.html#jobs">Jobs</a>
+        <a href="../index.html#contact">Contact</a>
+        <a href="../pages/jobs.html">Find Salaries</a>
+        <a href="../pages/apply.html">Apply now</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="header-login-button" type="button">Account</button>
+        <a href="../pages/employers.html" class="header-post-btn">Post a Job</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="user-page">
+    <section class="user-hero">
+      <div class="container user-hero-inner">
+        <div>
+          <p class="user-kicker">Welcome back</p>
+          <h1>Your applicant dashboard</h1>
+          <p>Track your applications, finish your profile, and unlock new opportunities faster.</p>
+        </div>
+        <div class="user-hero-actions">
+          <a class="btn" href="../pages/apply.html">Complete profile</a>
+          <a class="btn user-btn-ghost" href="../pages/jobs.html">Explore jobs</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="user-section">
+      <div class="container user-grid">
+        <article class="user-card user-card-primary">
+          <div class="user-card-head">
+            <div>
+              <h2>Profile completion</h2>
+              <p>Finish the remaining steps to boost your matches.</p>
+            </div>
+            <span class="user-pill">85%</span>
+          </div>
+          <div class="user-progress">
+            <span></span>
+          </div>
+          <ul class="user-checklist">
+            <li><i class="fas fa-check"></i> Resume uploaded</li>
+            <li><i class="fas fa-check"></i> Skills verified</li>
+            <li><i class="fas fa-circle"></i> Add government IDs</li>
+          </ul>
+          <a class="btn" href="../pages/apply.html">Finish profile</a>
+        </article>
+
+        <article class="user-card">
+          <div class="user-card-head">
+            <div>
+              <h2>Application status</h2>
+              <p>Latest applications you submitted.</p>
+            </div>
+          </div>
+          <div class="user-list">
+            <div class="user-list-item">
+              <div>
+                <strong>Production Staff</strong>
+                <span>QuestServ Solutions</span>
+              </div>
+              <span class="user-tag">In review</span>
+            </div>
+            <div class="user-list-item">
+              <div>
+                <strong>Recruitment Coordinator</strong>
+                <span>QuestServ Solutions</span>
+              </div>
+              <span class="user-tag user-tag-warn">Interview</span>
+            </div>
+            <div class="user-list-item">
+              <div>
+                <strong>Client Success Associate</strong>
+                <span>QuestServ Solutions</span>
+              </div>
+              <span class="user-tag user-tag-neutral">Submitted</span>
+            </div>
+          </div>
+          <a class="user-link" href="../pages/apply.html">View all applications</a>
+        </article>
+
+        <article class="user-card">
+          <div class="user-card-head">
+            <div>
+              <h2>Saved jobs</h2>
+              <p>Keep your favorite roles in one place.</p>
+            </div>
+          </div>
+          <div class="user-list">
+            <div class="user-list-item">
+              <div>
+                <strong>Warehouse Helper</strong>
+                <span>Cavite</span>
+              </div>
+              <button class="user-apply-btn" type="button">Apply</button>
+            </div>
+            <div class="user-list-item">
+              <div>
+                <strong>QA Checker</strong>
+                <span>Taguig</span>
+              </div>
+              <button class="user-apply-btn" type="button">Apply</button>
+            </div>
+            <div class="user-list-item">
+              <div>
+                <strong>HR Assistant</strong>
+                <span>Mandaluyong</span>
+              </div>
+              <button class="user-apply-btn" type="button">Apply</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="user-card user-card-accent">
+          <div class="user-card-head">
+            <div>
+              <h2>Quick actions</h2>
+              <p>Stay on top of your profile and alerts.</p>
+            </div>
+          </div>
+          <div class="user-action-stack">
+            <button class="user-action">Update resume</button>
+            <button class="user-action">Turn on job alerts</button>
+            <button class="user-action">Schedule interview</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3 class="footer-title">About Company</h3>
+          <p class="footer-about-copy">We're dedicated to connecting reliable talent with growing businesses across the Philippines.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="footer-title">Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="../index.html#home">About Us</a></li>
+            <li><a href="../index.html#jobs">Jobs</a></li>
+            <li><a href="../pages/employers.html">Services</a></li>
+            <li><a href="../index.html#contact">Contact</a></li>
+            <li><a href="../pages/register-account.html">Register</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-title">Support</h3>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="../pages/register.html">Admin</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 QuestServ Solution Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
