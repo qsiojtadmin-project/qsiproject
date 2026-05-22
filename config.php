@@ -28,6 +28,20 @@ $connectionOptions = array(
     // No Uid/PWD needed - using Windows Authentication
 );
 
+// Check if sqlsrv extension is loaded
+if (!extension_loaded('sqlsrv')) {
+    die("<div style='color: red; padding: 15px; border: 2px solid red; background: #ffeeee; font-family: Arial;'>
+        <h3>X SQL Server Extension Missing</h3>
+        <p><strong>Error:</strong> The 'sqlsrv' PHP extension is not installed or enabled.</p>
+        <hr>
+        <strong>Solution:</strong><br>
+        1. Install Microsoft Drivers for PHP for SQL Server<br>
+        2. Extract and copy php_sqlsrv.dll to your PHP extensions folder<br>
+        3. Add 'extension=php_sqlsrv.dll' to your php.ini<br>
+        4. Restart your web server<br>
+        </div>");
+}
+
 // Establish connection
 $conn = sqlsrv_connect($serverName, $connectionOptions);
 
@@ -45,7 +59,7 @@ if ($conn === false) {
         <hr>
         <strong>Possible Solutions:</strong><br> Make sure SQL Server Browser service is running<br> Check if database 'dtbnk' exists in SQL Server<br> Verify your Windows account has access to the database<br> Enable TCP/IP protocol in SQL Server Configuration Manager<br> <hr>
         <strong>Technical Details:</strong><br>
-        <pre>" . print_r(sqlsrv_errors(), true) . "</pre>
+        <pre>" . (function_exists('sqlsrv_errors') ? print_r(sqlsrv_errors(), true) : print_r(error_get_last(), true)) . "</pre>
         </div>");
 }
 

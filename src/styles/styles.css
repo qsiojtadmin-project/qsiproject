@@ -315,8 +315,8 @@ a {
 .hero-section {
   position: relative;
   overflow: hidden;
-  padding: 96px 0 110px;
-  min-height: 520px;
+  padding: 72px 0 76px;
+  min-height: 430px;
   display: flex;
   align-items: center;
   background: radial-gradient(circle at 15% 20%, rgba(127, 227, 164, 0.26), transparent 40%),
@@ -358,11 +358,41 @@ a {
   clip-path: polygon(100% 0, 0 0, 100% 100%);
 }
 
-.hero-content {
+.hero-layout {
   position: relative;
   z-index: 2;
-  max-width: 700px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 540px);
+  align-items: center;
+  gap: 44px;
+}
+
+.hero-content {
+  position: relative;
+  max-width: 600px;
   animation: hero-rise 700ms ease both;
+}
+
+.hero-media {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-media-frame {
+  width: min(100%, 530px);
+  aspect-ratio: 1.62 / 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.hero-media-frame img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .hero-kicker {
@@ -372,16 +402,16 @@ a {
 .hero-content h1 {
   margin: 0;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.6rem, 5vw, 3.8rem);
-  line-height: 1.1;
+  font-size: clamp(2.15rem, 4.3vw, 3.2rem);
+  line-height: 1.04;
   color: #ffffff;
 }
 
 .hero-content > p {
-  margin: 0 0 36px;
-  max-width: 480px;
-  font-size: 1.05rem;
-  line-height: 1.6;
+  margin: 0 0 26px;
+  max-width: 430px;
+  font-size: 0.96rem;
+  line-height: 1.55;
   color: rgba(255, 255, 255, 0.82);
 }
 
@@ -395,7 +425,7 @@ a {
 }
 
 .hero-buttons {
-  margin-bottom: 52px;
+  margin-bottom: 30px;
 }
 
 .btn-hero-white,
@@ -403,10 +433,11 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 28px;
+  padding: 12px 22px;
   border-radius: 999px;
   font-weight: 800;
   text-decoration: none;
+  font-size: 0.96rem;
 }
 
 .btn-hero-white {
@@ -431,26 +462,26 @@ a {
 }
 
 .hero-badges {
-  gap: 16px;
+  gap: 12px;
 }
 
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 18px;
+  padding: 10px 14px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 500;
   animation: badge-fade 800ms ease both;
 }
 
 .hero-badge-icon {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -470,6 +501,287 @@ a {
 
 .hero-badge-chart .hero-badge-icon {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.home-poster {
+  padding: 24px 0 12px;
+  background: radial-gradient(circle at 18% 12%, rgba(127, 227, 164, 0.12), transparent 50%),
+    linear-gradient(180deg, #f8fbf9 0%, #ffffff 100%);
+}
+
+.home-poster-stage {
+  display: flex;
+  justify-content: center;
+}
+
+.home-poster-loading {
+  width: min(100%, 380px);
+  padding: 28px 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(10, 93, 60, 0.1);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(9, 45, 32, 0.12);
+}
+
+.home-poster-loading h2 {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  color: #0d1a12;
+}
+
+.home-poster-loading p {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.home-poster-card {
+  width: min(100%, 380px);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 14px 32px rgba(9, 45, 32, 0.1);
+  border: 1px solid rgba(10, 93, 60, 0.1);
+  background: #fff;
+}
+
+.home-poster-card .vt-poster {
+  font-family: 'Manrope', sans-serif;
+  width: 100%;
+  background: #fff;
+  color: #111;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+}
+
+.home-poster-card .vt-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.home-poster-card .vt-watermark {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.8rem, 11vw, 4.2rem);
+  font-weight: 900;
+  color: rgba(10, 93, 60, 0.04);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: -0.02em;
+  z-index: 0;
+}
+
+.home-poster-card .vt-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 18px 10px;
+  z-index: 1;
+}
+
+.home-poster-card .vt-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-poster-card .vt-logo {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.home-poster-card .vt-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.home-poster-card .vt-hire-badge {
+  background: #0f6a45;
+  color: #fff;
+  padding: 6px 16px 8px 22px;
+  clip-path: polygon(18% 0, 100% 0, 100% 100%, 0% 100%);
+  margin-right: -18px;
+  display: grid;
+  gap: 2px;
+  justify-items: end;
+}
+
+.home-poster-card .vt-hire-badge .we-are {
+  font-size: 0.46rem;
+  letter-spacing: 0.24em;
+  font-weight: 700;
+}
+
+.home-poster-card .vt-hire-badge .hiring {
+  font-size: 0.92rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  border: 1.5px solid #fff;
+  padding: 2px 8px;
+  line-height: 1.2;
+}
+
+.home-poster-card .vt-hero {
+  text-align: center;
+  padding: 2px 18px 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.home-poster-card .vt-hero-title {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.15rem, 4vw, 1.95rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #0d1a12;
+  line-height: 1.05;
+}
+
+.home-poster-card .vt-hero-sub {
+  margin: 4px 0 0;
+  font-style: italic;
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 0.64rem;
+  color: #2a4a35;
+}
+
+.home-poster-card .vt-body {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 12px;
+  padding: 0 18px 14px;
+  flex: 1;
+  z-index: 1;
+}
+
+.home-poster-card .vt-divider {
+  width: 1px;
+  background: #cdd9d3;
+}
+
+.home-poster-card .vt-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-poster-card .vt-sec {
+  position: relative;
+  padding-left: 11px;
+}
+
+.home-poster-card .vt-sec::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 4px;
+  height: 24px;
+  background: #5ce08d;
+  border-radius: 2px;
+}
+
+.home-poster-card .vt-sec-title {
+  margin: 0 0 6px;
+  font-size: 0.56rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #0d1a12;
+}
+
+.home-poster-card .vt-sec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.54rem;
+  color: #3c4a43;
+  line-height: 1.45;
+}
+
+.home-poster-card .vt-sec-list li {
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+  margin-bottom: 2px;
+}
+
+.home-poster-card .vt-sec-list li::before {
+  content: '\2022';
+  color: #0f6a45;
+  font-weight: 900;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.home-poster-card .vt-email-hl {
+  font-weight: 800;
+  color: #0d1a12;
+}
+
+.home-poster-card .vt-footer {
+  background: #0c0c0c;
+  color: #fff;
+  padding: 10px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  z-index: 1;
+  margin-top: auto;
+  font-size: 0.46rem;
+  font-weight: 700;
+}
+
+.home-poster-card .vt-footer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.home-poster-card .vt-footer-info span {
+  opacity: 0.85;
+}
+
+.home-poster-card .vt-footer-info .hl {
+  opacity: 1;
+  color: #5ce08d;
+}
+
+.home-poster-card .vt-qr {
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  padding: 2px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.home-poster-card .vt-qr img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .jobs-landing {
@@ -1323,6 +1635,11 @@ a {
     width: min(100% - 24px, 1180px);
   }
 
+  .hero-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
   .hero-section {
     padding: 68px 0 64px;
   }
@@ -1350,4 +1667,314 @@ a {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .home-poster-card .vt-top,
+  .home-poster-card .vt-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .home-poster-card .vt-hire-badge {
+    margin-right: 0;
+  }
+
+  .home-poster-card .vt-body {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 16px 16px;
+  }
+
+  .home-poster-card .vt-divider {
+    display: none;
+  }
+
+  .home-poster-card .vt-top,
+  .home-poster-card .vt-hero,
+  .home-poster-card .vt-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
+
+@media (max-width: 560px) {
+  .container {
+    width: 100%;
+    padding: 0 14px;
+  }
+
+  .header-container {
+    padding: 0 14px;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(10px);
+  }
+
+  .header-wrap {
+    min-height: auto;
+    gap: 12px;
+    padding: 10px 0 12px;
+    align-items: center;
+  }
+
+  .site-brand {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .site-brand-logo {
+    height: 54px;
+  }
+
+  .site-nav {
+    order: 2;
+    width: calc(100% + 28px);
+    margin: 0 -14px;
+    padding: 0 14px 6px;
+    gap: 18px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    border-bottom: 1px solid rgba(10, 93, 60, 0.08);
+  }
+
+  .site-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav a {
+    flex: 0 0 auto;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .header-actions {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .header-login-button,
+  .header-post-btn {
+    min-height: 42px;
+    flex: 1 1 0;
+    justify-content: center;
+    padding: 0 12px;
+    font-size: 0.9rem;
+  }
+
+  .login-dropdown-menu {
+    top: calc(100% + 8px);
+    right: 14px;
+    left: 14px;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .hero-section {
+    min-height: auto;
+    padding: 42px 0 44px;
+  }
+
+  .hero-section::before {
+    width: 240px;
+    height: 240px;
+    left: -120px;
+    top: -70px;
+  }
+
+  .hero-section::after {
+    width: 180px;
+    height: 180px;
+    right: -80px;
+    bottom: -70px;
+  }
+
+  .hero-geo {
+    width: 120px;
+    height: 120px;
+    opacity: 0.5;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .hero-media {
+    order: -1;
+  }
+
+  .hero-media-frame {
+    width: min(100%, 320px);
+    aspect-ratio: 1.52 / 1;
+    border-radius: 50%;
+    border-width: 6px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(2rem, 10vw, 2.7rem);
+    line-height: 1.05;
+    max-width: 9ch;
+  }
+
+  .hero-content > p {
+    margin: 0 0 22px;
+    max-width: none;
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+
+  .hero-buttons {
+    margin-bottom: 28px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-hero-white,
+  .btn-hero-outline {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 18px;
+  }
+
+  .hero-badges {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .hero-badge {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.84rem;
+  }
+
+  .home-poster {
+    padding: 18px 0 6px;
+  }
+
+  .home-poster-stage {
+    justify-content: center;
+  }
+
+  .home-poster-card,
+  .home-poster-loading {
+    width: min(100%, 340px);
+  }
+
+  .home-poster-card {
+    border-radius: 16px;
+  }
+
+  .home-poster-card .vt-poster {
+    min-height: 494px;
+  }
+
+  .jobs-shell {
+    padding: 0 14px;
+  }
+
+  .jobs-hero-panel {
+    padding: 34px 16px 20px;
+    text-align: left;
+    border-radius: 20px 20px 0 0;
+    transform: none;
+  }
+
+  .jobs-hero-copy h2 {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+    line-height: 0.98;
+  }
+
+  .jobs-hero-copy p {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin-top: 14px;
+  }
+
+  .jobs-search-bar {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .jobs-search-field {
+    min-height: 52px;
+    padding: 0 15px;
+  }
+
+  .jobs-search-button {
+    max-width: none;
+    min-width: 0;
+    min-height: 52px;
+  }
+
+  .jobs-filter-row {
+    margin-top: 18px;
+  }
+
+  .jobs-filter-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .filter-dropdown-menu {
+    left: 0;
+    right: 0;
+    min-width: 0;
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .jobs-board-main,
+  .jobs-side-card {
+    padding: 20px 16px;
+  }
+
+  .jobs-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .jobs-listing-stack {
+    gap: 14px;
+  }
+
+  .job-card {
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
+
+  .job-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .job-pill {
+    margin-top: 8px;
+  }
+
+  .jobs-board-side {
+    display: grid;
+    gap: 14px;
+  }
+
+  .footer-grid > div {
+    padding: 20px 18px;
+    border-radius: 18px;
+  }
+
+  .footer-bottom .container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+

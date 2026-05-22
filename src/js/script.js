@@ -7,11 +7,174 @@ const filterToggleBtn = document.getElementById('filter-toggle-btn');
 const filterDropdownMenu = document.getElementById('filter-dropdown-menu');
 const filterDropdownClose = document.querySelector('.filter-dropdown-close');
 const recommendedJobsList = document.getElementById('recommended-jobs-list');
+const homeRecommendedJobsList = document.getElementById('home-recommended-jobs-list');
 const jobsTotalCount = document.getElementById('jobs-total-count');
+const homeJobsTotalCount = document.getElementById('home-jobs-total-count');
 const jobsPaginationText = document.getElementById('jobs-pagination-text');
+const homePosterRoot = document.getElementById('home-poster-root');
+
+const SUPABASE_CONFIG = {
+  url: window.__SUPABASE_URL__ || 'https://ilbneblzkvzebuklyzgn.supabase.co',
+  anonKey: window.__SUPABASE_ANON_KEY__ || '',
+};
 
 const SECRET_SEQUENCES = ['ADMIN', 'SUPERADMIN'];
 let secretBuffer = '';
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getSupabaseHeaders() {
+  return {
+    apikey: SUPABASE_CONFIG.anonKey,
+    Authorization: `Bearer ${SUPABASE_CONFIG.anonKey}`,
+  };
+}
+
+function normalizeJobTemplate(row = {}) {
+  return {
+    id: row.id || '',
+    title: row.title || 'Untitled Draft',
+    email: row.email || 'hr@questserv.com',
+    phone: row.phone || '+1 (555) 123-4567',
+    website: row.website || 'www.questserv.com',
+    location: row.location || '',
+    backgroundImageUrl: row.background_image_url || row.backgroundImageUrl || '',
+    requirements: Array.isArray(row.requirements) ? row.requirements : [],
+    benefits: Array.isArray(row.benefits) ? row.benefits : [],
+    description: Array.isArray(row.description_items)
+      ? row.description_items
+      : Array.isArray(row.description)
+        ? row.description
+        : `${row.description_text || ''}`.split('\n').map((line) => line.trim()).filter(Boolean),
+  };
+}
+
+function buildPosterList(value, fallback) {
+  const lines = (Array.isArray(value) ? value : `${value || ''}`.split('\n'))
+    .map((line) => String(line).trim())
+    .filter(Boolean)
+    .slice(0, 4);
+
+  if (!lines.length) {
+    return `<li>${escapeHtml(fallback)}</li>`;
+  }
+
+  return lines.map((line) => `<li>${escapeHtml(line)}</li>`).join('');
+}
+
+function renderHomePoster(post) {
+  if (!homePosterRoot) return;
+
+  const title = post?.title || 'Untitled Draft';
+  const email = post?.email || 'hr@questserv.com';
+  const phone = post?.phone || '+1 (555) 123-4567';
+  const website = post?.website || 'www.questserv.com';
+  const background = post?.backgroundImageUrl
+    ? `<div class="vt-bg" style="background-image: url('${escapeHtml(post.backgroundImageUrl)}')"></div>`
+    : '';
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(website)}`;
+
+  homePosterRoot.innerHTML = `
+    <div class="home-poster-card">
+      <div class="vt-poster">
+        ${background}
+        <div class="vt-watermark">QUESTSERV SOLUTIONS</div>
+        <div class="vt-top">
+          <div class="vt-brand">
+            <img class="vt-logo" src="assets/logo1.png" alt="QuestServ logo">
+            <div class="vt-brand-text"></div>
+          </div>
+          <div class="vt-hire-badge">
+            <span class="we-are">WE ARE</span>
+            <span class="hiring">HIRING</span>
+          </div>
+        </div>
+        <div class="vt-hero">
+          <h2 id="home-poster-title" class="vt-hero-title">${escapeHtml(title.toUpperCase())}</h2>
+          <p class="vt-hero-sub">For position</p>
+        </div>
+        <div class="vt-body">
+          <div class="vt-col">
+            <div class="vt-sec">
+              <h3 class="vt-sec-title">Requirements</h3>
+              <ul class="vt-sec-list">${buildPosterList(post?.requirements, 'Update this content...')}</ul>
+            </div>
+            <div class="vt-sec">
+              <h3 class="vt-sec-title">Benefits</h3>
+              <ul class="vt-sec-list">${buildPosterList(post?.benefits, 'Update this content...')}</ul>
+            </div>
+          </div>
+          <div class="vt-divider"></div>
+          <div class="vt-col">
+            <div class="vt-sec">
+              <h3 class="vt-sec-title">Job Description</h3>
+              <ul class="vt-sec-list">${buildPosterList(post?.description, 'Update this content...')}</ul>
+            </div>
+            <div class="vt-sec">
+              <h3 class="vt-sec-title">Submit Resume</h3>
+              <ul class="vt-sec-list">
+                <li>Send your resume to:</li>
+                <li><span class="vt-email-hl">${escapeHtml(email)}</span></li>
+                <li>${escapeHtml(phone)}</li>
+                <li>Subject line: Application - ${escapeHtml(title)}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="vt-footer">
+          <div class="vt-footer-info">
+            <span class="hl">${escapeHtml(phone)}</span>
+            <span>${escapeHtml(website)}</span>
+            <span>${escapeHtml(email)}</span>
+          </div>
+          <div class="vt-qr">
+            <img src="${qrUrl}" alt="QR code">
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadHomePoster() {
+  if (!homePosterRoot) return;
+
+  const fallbackPoster = {
+    title: 'Untitled Draft',
+    email: 'qsjotadmin@gmail.com',
+    phone: '09999999999',
+    website: 'www.questserv.com',
+    requirements: ['Example', 'Example', 'Example'],
+    benefits: ['Example', 'Example', 'Example'],
+    description: ['Example', 'Example', 'Example'],
+  };
+
+  if (!SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey) {
+    renderHomePoster(fallbackPoster);
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_CONFIG.url}/rest/v1/job_templates?status=eq.published&select=*&order=published_at.desc.nullslast,updated_at.desc&limit=1`,
+      { headers: getSupabaseHeaders() },
+    );
+    if (!response.ok) throw new Error('Failed to load poster');
+
+    const rows = await response.json();
+    renderHomePoster(rows.length ? normalizeJobTemplate(rows[0]) : fallbackPoster);
+  } catch (error) {
+    console.error(error);
+    renderHomePoster(fallbackPoster);
+  }
+}
 
 function setLoginMenu(open) {
   if (!loginDropdownMenu || !loginToggleBtn) return;
@@ -72,9 +235,7 @@ const jobs = [
 
 
 function renderJobs(list) {
-  if (!recommendedJobsList) return;
-
-  recommendedJobsList.innerHTML = list
+  const jobMarkup = list
     .map(
       (job) => `
         <article class="job-card">
@@ -96,8 +257,20 @@ function renderJobs(list) {
     )
     .join('');
 
+  if (recommendedJobsList) {
+    recommendedJobsList.innerHTML = jobMarkup;
+  }
+
+  if (homeRecommendedJobsList) {
+    homeRecommendedJobsList.innerHTML = jobMarkup;
+  }
+
   if (jobsTotalCount) {
     jobsTotalCount.textContent = `${list.length} Total`;
+  }
+
+  if (homeJobsTotalCount) {
+    homeJobsTotalCount.textContent = `${list.length} Total`;
   }
 
   if (jobsPaginationText) {
@@ -204,3 +377,4 @@ document.addEventListener('keydown', (event) => {
 });
 
 renderJobs(jobs);
+loadHomePoster();

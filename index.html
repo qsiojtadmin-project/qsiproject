@@ -64,32 +64,50 @@
   </header>
 
   <main>
-    <section class="hero-section">
+<section class="hero-section">
       <div class="hero-geo" aria-hidden="true"></div>
       <div class="container">
-        <div class="hero-content">
-          <p class="hero-kicker">QuestServ Solution Inc.</p>
-          <h1>Your Trusted Manpower Partner in the Philippines</h1>
-          <p>Connecting skilled workers with top companies in Metro Manila, Cavite, and beyond. Be part of our growing team today.</p>
+        <div class="hero-layout">
+          <div class="hero-content">
+            <p class="hero-kicker">QuestServ Solution Inc.</p>
+            <h1>Your Trusted Manpower Partner in the Philippines</h1>
+            <p>Connecting skilled workers with top companies in Metro Manila, Cavite, and beyond. Be part of our growing team today.</p>
 
-          <div class="hero-buttons">
-            <a href="#jobs" class="btn-hero-white">View Job Openings <span class="btn-icon">💼</span></a>
-            <a href="pages/employers.html" class="btn-hero-outline">Partner With Us <span class="btn-icon">🤝</span></a>
+            <div class="hero-buttons">
+              <a href="#jobs" class="btn-hero-white">View Job Openings <span class="btn-icon">💼</span></a>
+              <a href="pages/employers.html" class="btn-hero-outline">Partner With Us <span class="btn-icon">🤝</span></a>
+            </div>
+
+            <div class="hero-badges">
+              <div class="hero-badge hero-badge-gold">
+                <div class="hero-badge-icon"><i class="fas fa-check-circle"></i></div>
+                SEC Registered Business
+              </div>
+              <div class="hero-badge hero-badge-green">
+                <div class="hero-badge-icon"><i class="fas fa-map-marker-alt"></i></div>
+                Taguig | Mandaluyong | Cavite
+              </div>
+              <div class="hero-badge hero-badge-chart">
+                <div class="hero-badge-icon"><i class="fas fa-chart-line"></i></div>
+                Industrial &amp; Production Specialists
+              </div>
+            </div>
           </div>
+          <div class="hero-media">
+            <div class="hero-media-frame">
+              <img src="assets/background1.png" alt="QuestServ Solutions building" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-          <div class="hero-badges">
-            <div class="hero-badge hero-badge-gold">
-              <div class="hero-badge-icon"><i class="fas fa-check-circle"></i></div>
-              SEC Registered Business
-            </div>
-            <div class="hero-badge hero-badge-green">
-              <div class="hero-badge-icon"><i class="fas fa-map-marker-alt"></i></div>
-              Taguig | Mandaluyong | Cavite
-            </div>
-            <div class="hero-badge hero-badge-chart">
-              <div class="hero-badge-icon"><i class="fas fa-chart-line"></i></div>
-              Industrial &amp; Production Specialists
-            </div>
+<section class="home-poster" aria-labelledby="home-poster-title">
+      <div class="container">
+        <div id="home-poster-root" class="home-poster-stage" aria-live="polite">
+          <div class="home-poster-loading">
+            <h2 id="home-poster-title">Loading hiring template...</h2>
+            <p>The latest published poster will appear here.</p>
           </div>
         </div>
       </div>
@@ -318,6 +336,10 @@
     </div>
   </footer>
 
+  <script>
+    window.__SUPABASE_URL__ = 'https://ilbneblzkvzebuklyzgn.supabase.co';
+    window.__SUPABASE_ANON_KEY__ = 'sb_publishable_UIrAwPGGHGwPavXFV23FwQ_Z1ywfnAg';
+  </script>
   <script type="module" src="src/js/script.js"></script>
 </body>
 </html>
