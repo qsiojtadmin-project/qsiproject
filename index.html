@@ -39,7 +39,7 @@
       <h4 class="login-dropdown-title">Sign into your account</h4>
       <form id="inline-login-form">
         <div class="login-dropdown-field">
-          <label for="login-email" class="login-dropdown-label">Email Address</label>
+          <label for="login-email" class="login-dropdown-label">Username/Email Address</label>
           <input type="email" id="login-email" class="login-dropdown-input" placeholder="name@example.com" required />
         </div>
 
@@ -343,7 +343,7 @@
         </div>
 
         <div>
-          <h3 class="footer-title">Support</h3>
+          <h3 class="footer-title">Support</h3> 
           <ul class="footer-links">
             <li><a href="#">Help Center</a></li>
             <li><a href="#">Privacy Policy</a></li>
@@ -360,7 +360,10 @@
     </div>
   </footer>
 
-  <script src="src/js/supabase-config.js"></script>
+  <script>
+    window.__SUPABASE_URL__ = 'https://ilbneblzkvzebuklyzgn.supabase.co';
+    window.__SUPABASE_ANON_KEY__ = 'sb_publishable_UIrAwPGGHGwPavXFV23FwQ_Z1ywfnAg';
+  </script>
   <script type="module" src="src/js/script.js"></script>
 </body>
 </html>

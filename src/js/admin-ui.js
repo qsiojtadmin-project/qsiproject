@@ -237,6 +237,56 @@ document.addEventListener('DOMContentLoaded', () => {
         const combined = [first, middle, last].filter(Boolean).join(' ').trim();
         return combined || row?.full_name || row?.fullName || row?.name || row?.username || row?.email || 'Admin';
     }
+// --- Dynamic User Profile Fetching ---
+    function renderCurrentUserProfile() {
+        const profileEl = document.querySelector('.user-profile');
+        if (!profileEl) return;
+
+        const sessionRaw = localStorage.getItem('qs_admin_session') || sessionStorage.getItem('qs_admin_session_temp');
+        
+        // If no session exists (e.g., local UI testing), keep it visible so you can see the design
+        if (!sessionRaw) {
+            profileEl.style.display = 'flex';
+            return;
+        }
+
+        try {
+            const session = JSON.parse(sessionRaw);
+            const user = session.admin || session.user || session;
+            
+            // Extract role from Supabase metadata
+            const metaRole = user?.user_metadata?.role || user?.user_metadata?.role_type || user?.app_metadata?.role;
+            
+            // 👇 CHANGED: Prioritize the database column "role_type" BEFORE the default Supabase "user.role"
+            const rawRole = metaRole || user.role_type || user.roleType || user.role || 'admin';
+            
+            let roleSlug = getRoleSlug(rawRole);
+            
+            // Supabase defaults users to 'authenticated', we treat them as admin for UI dev if not specified
+            if (roleSlug === 'authenticated') {
+                roleSlug = 'admin'; 
+            }
+
+            // Check if role is system-admin or admin
+            if (ADMIN_ROLE_ALLOWLIST.has(roleSlug)) {
+                const name = getUserDisplayName(user?.user_metadata || user) || 'Admin';
+                
+                // Display "System Admin" if roleSlug matches, else "Admin"
+                const roleDisplay = roleSlug === 'system-admin' ? 'System Admin' : 'Admin';
+                
+                profileEl.querySelector('.avatar').textContent = name.charAt(0).toUpperCase();
+                profileEl.querySelector('.user-name').textContent = name;
+                profileEl.querySelector('.user-role').textContent = roleDisplay;
+                profileEl.style.display = 'flex';
+            } else {
+                // ONLY hide the profile if we confirm a non-admin is actively logged in
+                profileEl.style.display = 'none';
+            }
+        } catch (e) {
+            // If error parsing, leave it visible for safety
+            profileEl.style.display = 'flex';
+        }
+    }
 
     function normalizeAdminUser(row) {
         const roleRaw = row?.role_type || row?.role || row?.roleType || '';
@@ -1304,4 +1354,5 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUsers();
     syncPreview();
     loadHomePosts();
+    renderCurrentUserProfile();
 });
