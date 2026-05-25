@@ -23,6 +23,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 82px;
 }
 
 body {
@@ -1049,14 +1050,17 @@ select {
 .jobs-profile-avatar {
   width: 56px;
   height: 56px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--primary), #2eab6d);
-  color: #ffffff;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.jobs-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .jobs-progress-copy {
@@ -1164,6 +1168,143 @@ select {
   border-color: transparent;
 }
 
+.about-section {
+  padding: 34px 0 48px;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(88, 220, 142, 0.14), transparent 24%),
+    linear-gradient(180deg, #ffffff 0%, #f4f8f5 100%);
+}
+
+.about-shell {
+  display: grid;
+  gap: 24px;
+}
+
+.about-copy {
+  max-width: 760px;
+}
+
+.about-kicker {
+  margin: 0 0 10px;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.about-copy h2 {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.02;
+}
+
+.about-lead {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.about-card {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid rgba(8, 44, 29, 0.08);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 250, 247, 0.96));
+  box-shadow: var(--shadow-md);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
+}
+
+.about-card::before,
+.about-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  transition: transform 260ms ease, opacity 260ms ease;
+}
+
+.about-card::before {
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(88, 220, 142, 0.14), transparent 42%),
+    radial-gradient(circle at top right, rgba(15, 90, 62, 0.08), transparent 34%);
+  opacity: 0;
+}
+
+.about-card::after {
+  top: 0;
+  left: 24px;
+  width: 68px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transform: scaleX(0.35);
+  transform-origin: left;
+  opacity: 0.7;
+}
+
+.about-card h3 {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  position: relative;
+  z-index: 1;
+  transition: transform 220ms ease, color 220ms ease;
+}
+
+.about-card p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.65;
+  position: relative;
+  z-index: 1;
+  transition: transform 220ms ease, color 220ms ease;
+}
+
+.about-card:hover,
+.about-card:focus-within {
+  transform: translateY(-8px);
+  border-color: rgba(88, 220, 142, 0.34);
+  box-shadow: 0 22px 46px rgba(10, 66, 45, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(236, 248, 241, 0.98));
+}
+
+.about-card:hover::before,
+.about-card:focus-within::before {
+  opacity: 1;
+}
+
+.about-card:hover::after,
+.about-card:focus-within::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.about-card:hover h3,
+.about-card:focus-within h3 {
+  transform: translateY(-2px);
+  color: var(--primary-dark);
+}
+
+.about-card:hover p,
+.about-card:focus-within p {
+  transform: translateY(-1px);
+  color: #425449;
+}
+
 .footer {
   margin-top: auto;
   background: linear-gradient(180deg, #0c1e16 0%, #08110d 100%);
@@ -1223,6 +1364,7 @@ select {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 16px 0;
   color: rgba(255, 255, 255, 0.76);
+  text-align: center;
 }
 
 .footer-bottom p {
@@ -1420,6 +1562,7 @@ select {
 
   .hero-layout,
   .jobs-board,
+  .about-grid,
   .user-hero-inner,
   .user-grid,
   .footer-grid {

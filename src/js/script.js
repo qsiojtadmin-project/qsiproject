@@ -68,7 +68,7 @@ function buildPosterList(value, fallback) {
 
   return lines.map((line) => `<li>${escapeHtml(line)}</li>`).join('');
 }
-
+/*
 function renderHomePoster(post) {
   if (!homePosterRoot) return;
 
@@ -141,7 +141,7 @@ function renderHomePoster(post) {
       </div>
     </div>
   `;
-}
+}*/
 
 async function loadHomePoster() {
   if (!homePosterRoot) return;
