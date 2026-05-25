@@ -871,6 +871,87 @@ body {
 
 .head-btn:hover { color: var(--primary); border-color: var(--primary); }
 
+.notification-wrap {
+	position: relative;
+}
+
+.notify-badge {
+	position: absolute;
+	top: -4px;
+	right: -4px;
+	min-width: 16px;
+	padding: 2px 5px;
+	border-radius: 999px;
+	background: var(--danger);
+	color: #fff;
+	font-size: 0.6rem;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+}
+
+.notify-panel {
+	position: absolute;
+	right: 0;
+	top: calc(100% + 10px);
+	width: 280px;
+	background: #fff;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	box-shadow: var(--shadow-md);
+	padding: 10px;
+	display: none;
+	z-index: 110;
+}
+
+.notify-panel.is-open { display: block; }
+
+.notify-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: var(--text);
+}
+
+.notify-clear {
+	border: none;
+	background: transparent;
+	font-size: 0.7rem;
+	color: var(--text-muted);
+	cursor: pointer;
+}
+
+.notify-list {
+	margin-top: 8px;
+	display: grid;
+	gap: 8px;
+	max-height: 240px;
+	overflow: auto;
+}
+
+.notify-item {
+	background: #f7faf8;
+	border: 1px solid #e6efe9;
+	border-radius: 10px;
+	padding: 8px;
+	font-size: 0.74rem;
+	color: var(--text);
+}
+
+.notify-item small {
+	display: block;
+	margin-top: 4px;
+	color: var(--text-muted);
+}
+
+.notify-empty {
+	font-size: 0.74rem;
+	color: var(--text-muted);
+	padding: 6px 2px;
+}
+
 .user-profile {
 	display: flex;
 	align-items: center;

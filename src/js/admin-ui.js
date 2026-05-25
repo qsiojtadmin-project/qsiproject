@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const toastContainer = document.getElementById('toast-container');
     const postContextMenu = document.getElementById('post-context-menu');
     const applicantContextMenu = document.getElementById('applicant-context-menu');
+    const notificationToggle = document.getElementById('notification-toggle');
+    const notifyPanel = document.getElementById('notify-panel');
+    const notifyList = document.getElementById('notify-list');
+    const notifyBadge = document.getElementById('notify-badge');
+    const notifyClear = document.getElementById('notify-clear');
+    const FORGOT_REQUESTS_KEY = 'qs_forgot_requests';
     let homePostsCache = [];
     let activeContextPostId = null;
     let activeApplicantId = null;
@@ -130,6 +136,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     sidebarLinks.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); switchTab(link.dataset.tab); }));
     switchTab('dashboard');
+
+    function getForgotRequests() {
+        try {
+            const raw = localStorage.getItem(FORGOT_REQUESTS_KEY) || '[]';
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function formatRequestTime(value) {
+        if (!value) return '';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '';
+        return date.toLocaleString();
+    }
+
+    function renderNotifications() {
+        if (!notifyList || !notifyBadge) return;
+        const items = getForgotRequests();
+        const count = items.length;
+        notifyBadge.hidden = count === 0;
+        notifyBadge.textContent = count > 9 ? '9+' : String(count);
+
+        if (!items.length) {
+            notifyList.innerHTML = '<p class="notify-empty">No requests yet.</p>';
+            return;
+        }
+
+        notifyList.innerHTML = items.map((item) => {
+            const email = String(item?.email || '').trim();
+            const time = formatRequestTime(item?.requested_at);
+            const timeMarkup = time ? `<small>${time}</small>` : '';
+            return `<div class="notify-item"><strong>${email || 'Unknown email'}</strong>${timeMarkup}</div>`;
+        }).join('');
+    }
+
+    function setNotificationsOpen(open) {
+        if (!notifyPanel || !notificationToggle) return;
+        notifyPanel.classList.toggle('is-open', open);
+        notifyPanel.setAttribute('aria-hidden', String(!open));
+        notificationToggle.setAttribute('aria-expanded', String(open));
+    }
+
+    notificationToggle?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        setNotificationsOpen(!notifyPanel.classList.contains('is-open'));
+    });
+
+    notifyClear?.addEventListener('click', () => {
+        localStorage.removeItem(FORGOT_REQUESTS_KEY);
+        renderNotifications();
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!notifyPanel?.classList.contains('is-open')) return;
+        if (notifyPanel.contains(event.target) || notificationToggle?.contains(event.target)) return;
+        setNotificationsOpen(false);
+    });
+
+    window.addEventListener('storage', (event) => {
+        if (event.key === FORGOT_REQUESTS_KEY) renderNotifications();
+    });
+
+    renderNotifications();
 
     // --- Rest of UI logic: applicants, users ---
     const navLogout = document.getElementById('nav-logout');
