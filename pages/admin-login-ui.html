@@ -148,6 +148,40 @@
       font-style: italic;
     }
 
+    .forgot-panel {
+      display: none;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .forgot-panel.is-open {
+      display: grid;
+    }
+
+    .forgot-panel input {
+      width: 100%;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    .forgot-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .forgot-actions button {
+      flex: 1;
+      height: 30px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: #f6f9fb;
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+
     .login-button {
       width: 80px;
       height: 32px;
@@ -196,7 +230,15 @@
           <input type="checkbox" id="remember-me" />
           <span>Remember me</span>
         </label>
-        <a class="forgot-link" href="#">Forgot Password?</a>
+        <a class="forgot-link" href="#" id="forgot-password-link">Forgot Password?</a>
+      </div>
+
+      <div class="forgot-panel" id="forgot-panel">
+        <input type="email" id="forgot-email" placeholder="Enter your email" autocomplete="email" />
+        <div class="forgot-actions">
+          <button type="button" id="forgot-cancel">Cancel</button>
+          <button type="button" id="forgot-submit">Open Gmail</button>
+        </div>
       </div>
 
       <button type="submit" class="login-button">LOGIN</button>
@@ -209,6 +251,7 @@
     const SESSION_KEY = 'qs_admin_session';
     const ADMIN_PAGE = 'admin-ui.html';
     const SESSION_STORAGE_KEY = 'qs_admin_session_temp';
+    const FORGOT_REQUESTS_KEY = 'qs_forgot_requests';
     const SUPABASE_URL = window.__SUPABASE_URL__ || '';
     const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || '';
     const ADMIN_ROLE_VALUES = new Set(['admin', 'system-admin', 'superadmin']);
@@ -262,6 +305,11 @@
     const passwordToggle = document.getElementById('password-toggle');
     const errorText = document.getElementById('login-error');
     const rememberMeInput = document.getElementById('remember-me');
+    const forgotLink = document.getElementById('forgot-password-link');
+    const forgotPanel = document.getElementById('forgot-panel');
+    const forgotEmailInput = document.getElementById('forgot-email');
+    const forgotCancel = document.getElementById('forgot-cancel');
+    const forgotSubmit = document.getElementById('forgot-submit');
 
     function normalizeAdminIdentifier(value) {
       const trimmed = String(value || '').trim().toLowerCase();
@@ -325,6 +373,51 @@
     passwordToggle?.addEventListener('click', () => {
       setPasswordVisibility(passwordInput.type === 'password');
       passwordInput.focus();
+    });
+
+    function setForgotPanel(open) {
+      if (!forgotPanel) return;
+      forgotPanel.classList.toggle('is-open', open);
+      if (open) forgotEmailInput?.focus();
+    }
+
+    function storeForgotRequest(email) {
+      const payload = {
+        email: String(email || '').trim(),
+        requested_at: new Date().toISOString(),
+      };
+
+      try {
+        const raw = localStorage.getItem(FORGOT_REQUESTS_KEY) || '[]';
+        const existing = JSON.parse(raw);
+        const list = Array.isArray(existing) ? existing : [];
+        list.unshift(payload);
+        localStorage.setItem(FORGOT_REQUESTS_KEY, JSON.stringify(list.slice(0, 50)));
+      } catch (e) {
+        localStorage.setItem(FORGOT_REQUESTS_KEY, JSON.stringify([payload]));
+      }
+    }
+
+    forgotLink?.addEventListener('click', (event) => {
+      event.preventDefault();
+      setForgotPanel(!forgotPanel.classList.contains('is-open'));
+    });
+
+    forgotCancel?.addEventListener('click', () => setForgotPanel(false));
+
+    forgotSubmit?.addEventListener('click', () => {
+      const email = String(forgotEmailInput?.value || '').trim();
+      if (!email) {
+        errorText.textContent = 'Enter your email to continue.';
+        return;
+      }
+
+      storeForgotRequest(email);
+      const subject = encodeURIComponent('Password Reset Request');
+      const body = encodeURIComponent(`Hello,\n\nPlease help me reset the password for: ${email}\n\nThank you.`);
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`;
+      window.open(gmailUrl, '_blank', 'noopener');
+      setForgotPanel(false);
     });
 
     async function fetchAdminRowByIdentifier(identifier) {
