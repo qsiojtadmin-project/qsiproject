@@ -1,3 +1,15 @@
 {
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "<SUPABASE_DB_HOST>",
+            "port": 6543,
+            "driver": "PostgreSQL",
+            "database": "postgres",
+            "username": "<DB_USER>",
+            "name": "supabase"
+        }
+    ]
 }

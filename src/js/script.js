@@ -362,7 +362,7 @@ document.addEventListener('keydown', (event) => {
   secretBuffer += char;
 
   if (SECRET_SEQUENCES.includes(secretBuffer)) {
-    window.location.href = '/pages/admin-ui.html';
+    window.location.href = 'pages/admin-login-ui.html';
     secretBuffer = '';
     return;
   }

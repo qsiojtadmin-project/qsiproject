@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login | QuestServ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --text: #424b57;
+      --muted: #adb7c2;
+      --line: #d8e1e8;
+      --accent: #22b36f;
+      --shadow: 0 18px 40px rgba(31, 45, 61, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Manrope", sans-serif;
+    }
+
+    .login-card {
+      width: min(100%, 320px);
+      padding: 34px 30px 28px;
+      border-radius: 10px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .login-title {
+      margin: 0;
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .login-form {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      height: 38px;
+      padding: 0 12px 0 34px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      outline: none;
+      color: var(--text);
+      font-size: 0.8rem;
+    }
+
+    .input-wrap input::placeholder {
+      color: var(--muted);
+    }
+
+    .input-wrap input:focus {
+      border-color: #bcc9d4;
+      box-shadow: 0 0 0 3px rgba(216, 225, 232, 0.45);
+    }
+
+    .password-wrap input {
+      padding-right: 42px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    .password-toggle:hover {
+      color: var(--text);
+    }
+
+    .password-toggle:focus-visible {
+      outline: 2px solid rgba(34, 179, 111, 0.35);
+      outline-offset: 2px;
+      border-radius: 999px;
+    }
+
+    .login-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 2px;
+      font-size: 0.72rem;
+    }
+
+    .remember-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #8f9ba8;
+      cursor: pointer;
+    }
+
+    .remember-row input {
+      margin: 0;
+      width: 12px;
+      height: 12px;
+      accent-color: #c4ced8;
+    }
+
+    .forgot-link {
+      color: #b0bac4;
+      text-decoration: none;
+      font-style: italic;
+    }
+
+    .login-button {
+      width: 80px;
+      height: 32px;
+      border: 0;
+      border-radius: 4px;
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+    }
+
+    .login-button:hover {
+      opacity: 0.92;
+    }
+
+    .login-error {
+      margin: 0;
+      min-height: 1.2em;
+      color: #c0392b;
+      font-size: 0.72rem;
+    }
+  </style>
+</head>
+<body>
+  <section class="login-card">
+    <h1 class="login-title">Login</h1>
+
+    <form id="admin-login-form" class="login-form" novalidate>
+      <div class="input-wrap">
+        <i class="fa-solid fa-user"></i>
+        <input type="text" id="admin-username" name="username" placeholder="Username" autocomplete="username" required />
+      </div>
+
+      <div class="input-wrap password-wrap">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="admin-password" name="password" placeholder="Password" autocomplete="current-password" required />
+        <button type="button" class="password-toggle" id="password-toggle" aria-label="Show password" aria-pressed="false">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+
+      <div class="login-meta">
+        <label class="remember-row">
+          <input type="checkbox" id="remember-me" />
+          <span>Remember me</span>
+        </label>
+        <a class="forgot-link" href="#">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="login-button">LOGIN</button>
+      <p id="login-error" class="login-error" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <script src="/src/js/supabase-config.js"></script>
+  <script>
+    const SESSION_KEY = 'qs_admin_session';
+    const ADMIN_PAGE = 'admin-ui.html';
+    const SESSION_STORAGE_KEY = 'qs_admin_session_temp';
+    const SUPABASE_URL = window.__SUPABASE_URL__ || '';
+    const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || '';
+    const ADMIN_ROLE_VALUES = new Set(['admin', 'system-admin', 'superadmin']);
+
+    function clearStoredSession() {
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    }
+
+    async function isSessionValid(serializedSession) {
+      if (!serializedSession) return false;
+      let parsed = null;
+      try {
+        parsed = JSON.parse(serializedSession);
+      } catch (e) {
+        return false;
+      }
+
+      const token = parsed?.access_token || '';
+      if (!token) return false;
+
+      try {
+        const resp = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        return resp.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    (async () => {
+      const savedSession = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_STORAGE_KEY);
+      if (!savedSession) return;
+
+      const valid = await isSessionValid(savedSession);
+      if (valid) {
+        window.location.replace(ADMIN_PAGE);
+      } else {
+        clearStoredSession();
+      }
+    })();
+
+    const form = document.getElementById('admin-login-form');
+    const usernameInput = document.getElementById('admin-username');
+    const passwordInput = document.getElementById('admin-password');
+    const passwordToggle = document.getElementById('password-toggle');
+    const errorText = document.getElementById('login-error');
+    const rememberMeInput = document.getElementById('remember-me');
+
+    function normalizeAdminIdentifier(value) {
+      const trimmed = String(value || '').trim().toLowerCase();
+      if (!trimmed) return '';
+      if (trimmed.includes('@')) return trimmed;
+      const configuredEmail = String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim().toLowerCase();
+      return configuredEmail || trimmed;
+    }
+
+    function getLoginLookupValues(value) {
+      const rawValue = String(value || '').trim().toLowerCase();
+      const normalizedValue = normalizeAdminIdentifier(value);
+      return Array.from(new Set([rawValue, normalizedValue].filter(Boolean)));
+    }
+
+    function getSupabaseHeaders() {
+      return {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      };
+    }
+
+    function getAdminDisplayName(adminRecord, fallbackEmail = '') {
+      const firstName = String(adminRecord?.First_Name || '').trim();
+      const middleName = String(adminRecord?.Middle_Name || '').trim();
+      const lastName = String(adminRecord?.Last_Name || '').trim();
+
+      if (firstName || middleName || lastName) {
+        return [firstName, middleName, lastName].filter(Boolean).join(' ').trim();
+      }
+
+      return adminRecord?.full_name || adminRecord?.name || adminRecord?.display_name || adminRecord?.username || adminRecord?.user_name || adminRecord?.admin_username || fallbackEmail || 'Admin';
+    }
+
+    function getAdminPasswordValue(adminRecord) {
+      return adminRecord?.Password ?? adminRecord?.password ?? adminRecord?.admin_password ?? adminRecord?.passcode ?? adminRecord?.secret ?? '';
+    }
+
+    function getAdminRole(adminRecord, authUser) {
+      return adminRecord?.role || authUser?.app_metadata?.role || authUser?.user_metadata?.role || 'admin';
+    }
+
+    function isAdminRole(role) {
+      return ADMIN_ROLE_VALUES.has(String(role || '').trim().toLowerCase());
+    }
+
+    
+
+    function setPasswordVisibility(visible) {
+      if (!passwordInput || !passwordToggle) return;
+      passwordInput.type = visible ? 'text' : 'password';
+      passwordToggle.setAttribute('aria-pressed', String(visible));
+      passwordToggle.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
+      passwordToggle.innerHTML = visible
+        ? '<i class="fa-solid fa-eye-slash"></i>'
+        : '<i class="fa-solid fa-eye"></i>';
+    }
+
+    passwordToggle?.addEventListener('click', () => {
+      setPasswordVisibility(passwordInput.type === 'password');
+      passwordInput.focus();
+    });
+
+    async function fetchAdminRowByIdentifier(identifier) {
+      const lookupColumns = ['email', 'username'];
+      const lookupValues = getLoginLookupValues(identifier);
+
+      for (const lookupValue of lookupValues) {
+        for (const column of lookupColumns) {
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/admins?select=*&${column}=eq.${encodeURIComponent(lookupValue)}&limit=1`, {
+            headers: getSupabaseHeaders(),
+          });
+          if ([400, 401, 403].includes(response.status)) {
+            continue;
+          }
+
+          if (!response.ok) {
+            const body = await response.text().catch(() => '');
+            throw new Error('Unable to read the admins table.');
+          }
+
+          const rows = await response.json().catch(() => []);
+          if (Array.isArray(rows) && rows.length > 0) {
+            return rows[0];
+          }
+        }
+      }
+
+      return null;
+    }
+
+    async function signInWithSupabaseAuth(email, password) {
+      const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const text = await response.text().catch(() => '');
+      const data = (() => {
+        try { return JSON.parse(text || '{}'); } catch(e) { return {}; }
+      })();
+      if (!response.ok) {
+        throw new Error(data.error_description || data.error || data.msg || 'Invalid username or password.');
+      }
+      return data;
+    }
+
+    async function callAdminLoginFunction(fnUrl, identifier, password) {
+      // Try the configured function URL first. If that fails (network/CORS/not deployed),
+      // attempt a fallback to the project's /functions/v1/admin-login endpoint using the
+      // Supabase REST host and anon key.
+      const attempts = [];
+      if (fnUrl) attempts.push({ url: fnUrl, headers: { 'Content-Type': 'application/json' } });
+
+      // fallback: call via main supabase project domain /functions/v1/admin-login
+      try {
+        const SUPABASE_URL = window.__SUPABASE_URL__;
+        const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__;
+        if (SUPABASE_URL) {
+          const fallbackUrl = SUPABASE_URL.replace(/\/$/, '') + '/functions/v1/admin-login';
+          attempts.push({ url: fallbackUrl, headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } });
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      let lastError = null;
+      for (const attempt of attempts) {
+        try {
+          const resp = await fetch(attempt.url, {
+            method: 'POST',
+            headers: attempt.headers,
+            body: JSON.stringify({ identifier, password }),
+          });
+
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) {
+            // if server responded with an error, return that error message
+            lastError = new Error(data.error || data.message || `Login function returned ${resp.status}`);
+            continue;
+          }
+          return data;
+        } catch (err) {
+          // network error / CORS / DNS / not deployed
+          lastError = err;
+          continue;
+        }
+      }
+
+      // No attempts succeeded — throw the last error with helpful context
+      if (lastError) {
+        // Normalize message for display
+        const msg = lastError.message || String(lastError);
+        throw new Error(msg.includes('Failed to fetch') ? 'Failed to fetch — check function URL, deployment and CORS (see browser console / network tab)' : msg);
+      }
+      throw new Error('Login function failed (no reachable endpoints)');
+    }
+
+    function createSessionPayload({ authData = null, adminRecord = null, identifier = '' }) {
+      const authUser = authData?.user || null;
+      const resolvedRole = getAdminRole(adminRecord, authUser);
+      const resolvedEmail = adminRecord?.email || authUser?.email || identifier;
+
+      return JSON.stringify({
+        access_token: authData?.access_token || '',
+        refresh_token: authData?.refresh_token || '',
+        expires_at: authData?.expires_at || null,
+        admin: {
+          id: adminRecord?.id || authUser?.id || '',
+          email: resolvedEmail,
+          name: getAdminDisplayName(adminRecord, resolvedEmail),
+          username: adminRecord?.username || adminRecord?.user_name || adminRecord?.admin_username || '',
+          role: resolvedRole,
+        },
+        user: {
+          id: authUser?.id || adminRecord?.id || '',
+          email: resolvedEmail,
+          name: getAdminDisplayName(adminRecord, resolvedEmail),
+          role: resolvedRole,
+        },
+      });
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorText.textContent = '';
+
+      // Prevent stale sessions from bypassing login
+      clearStoredSession();
+
+      const rawIdentifierInput = String(usernameInput.value || '').trim();
+      const identifier = normalizeAdminIdentifier(rawIdentifierInput);
+      const password = passwordInput.value;
+
+      if (!rawIdentifierInput || !password) {
+        errorText.textContent = 'Enter your username and password.';
+        return;
+      }
+
+      const hasDefaultAdminEmail = Boolean(String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim());
+
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        errorText.textContent = 'Supabase configuration is missing.';
+        return;
+      }
+
+      const submitButton = form.querySelector('.login-button');
+      submitButton.disabled = true;
+      submitButton.textContent = 'LOADING';
+
+      try {
+        // If an admin login function is configured, call it (secure server-side verification)
+        if (window.__ADMIN_LOGIN_FN__) {
+          const fnRes = await callAdminLoginFunction(window.__ADMIN_LOGIN_FN__, rawIdentifierInput, password);
+          if (fnRes?.ok && fnRes?.session?.admin) {
+            const sessionPayload = createSessionPayload({ authData: null, adminRecord: fnRes.session.admin, identifier: fnRes.session.admin.email || rawIdentifierInput });
+
+            if (rememberMeInput.checked) {
+              localStorage.setItem(SESSION_KEY, sessionPayload);
+              sessionStorage.removeItem(SESSION_STORAGE_KEY);
+            } else {
+              sessionStorage.setItem(SESSION_STORAGE_KEY, sessionPayload);
+              localStorage.removeItem(SESSION_KEY);
+            }
+
+            window.location.href = ADMIN_PAGE;
+            return;
+          }
+          throw new Error('Invalid login credentials');
+        }
+
+        const adminRecord = await fetchAdminRowByIdentifier(rawIdentifierInput);
+        const storedPassword = getAdminPasswordValue(adminRecord);
+        const passwordMatchesAdminTable = Boolean(adminRecord && storedPassword && String(storedPassword) === password);
+
+        if (adminRecord && !isAdminRole(getAdminRole(adminRecord))) {
+          throw new Error('This account does not have admin access.');
+        }
+
+        // If the admins table is readable and password matches, allow login without Auth.
+        if (adminRecord && passwordMatchesAdminTable) {
+          const sessionPayload = createSessionPayload({ authData: null, adminRecord, identifier: adminRecord.email || rawIdentifierInput });
+
+          if (rememberMeInput.checked) {
+            localStorage.setItem(SESSION_KEY, sessionPayload);
+            sessionStorage.removeItem(SESSION_STORAGE_KEY);
+          } else {
+            sessionStorage.setItem(SESSION_STORAGE_KEY, sessionPayload);
+            localStorage.removeItem(SESSION_KEY);
+          }
+
+          window.location.href = ADMIN_PAGE;
+          return;
+        }
+
+        const normalizedIdentifier = normalizeAdminIdentifier(identifier);
+        const authEmail = adminRecord?.email || (identifier.includes('@') ? identifier : normalizedIdentifier);
+        if (!authEmail || !authEmail.includes('@')) {
+          if (!hasDefaultAdminEmail) {
+            throw new Error('Enter your admin email or set __ADMIN_DEFAULT_EMAIL__ in supabase-config.js.');
+          }
+          throw new Error('No admin record matched this username.');
+        }
+
+        const authData = await signInWithSupabaseAuth(authEmail, password);
+        const verifiedAdminRecord = adminRecord || await fetchAdminRowByIdentifier(authData.user?.email || authEmail);
+
+        // If the admins table is protected by RLS, verifiedAdminRecord can be null. Allow
+        // login as long as auth succeeds, but keep role checks if metadata or table data exists.
+        if (verifiedAdminRecord && !isAdminRole(getAdminRole(verifiedAdminRecord, authData.user))) {
+          throw new Error('This account does not have admin access.');
+        }
+
+        const sessionPayload = createSessionPayload({ authData, adminRecord: verifiedAdminRecord, identifier: authEmail });
+
+        if (rememberMeInput.checked) {
+          localStorage.setItem(SESSION_KEY, sessionPayload);
+          sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        } else {
+          sessionStorage.setItem(SESSION_STORAGE_KEY, sessionPayload);
+          localStorage.removeItem(SESSION_KEY);
+        }
+
+        window.location.href = ADMIN_PAGE;
+      } catch (error) {
+        errorText.textContent = error.message || 'Login failed.';
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'LOGIN';
+      }
+    });
+  </script>
+</body>
+</html>

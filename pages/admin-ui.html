@@ -10,6 +10,12 @@
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 	<link rel="stylesheet" href="/src/styles/admin-ui.css" />
+	<script>
+		const savedAdminSession = localStorage.getItem('qs_admin_session') || sessionStorage.getItem('qs_admin_session_temp');
+		if (!savedAdminSession) {
+			window.location.replace('/pages/admin-login-ui.html');
+		}
+	</script>
 </head>
 <body>
 	<header class="navbar">
@@ -407,9 +413,56 @@
 	</div>
 	<!-- /VIEW TEMPLATE MODAL -->
 
+	<script src="/src/js/supabase-config.js"></script>
 	<script>
-		window.__SUPABASE_URL__ = 'https://ilbneblzkvzebuklyzgn.supabase.co';
-		window.__SUPABASE_ANON_KEY__ = 'sb_publishable_UIrAwPGGHGwPavXFV23FwQ_Z1ywfnAg';
+		(async () => {
+			const SESSION_KEY = 'qs_admin_session';
+			const SESSION_STORAGE_KEY = 'qs_admin_session_temp';
+			const savedAdminSession = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_STORAGE_KEY);
+			if (!savedAdminSession) return;
+
+			let parsed = null;
+			try {
+				parsed = JSON.parse(savedAdminSession);
+			} catch (e) {
+				parsed = null;
+			}
+
+			const token = parsed?.access_token || '';
+			const hasLocalAdmin = Boolean(parsed?.admin?.id || parsed?.user?.id);
+			if (!token) {
+				if (hasLocalAdmin) return;
+				localStorage.removeItem(SESSION_KEY);
+				sessionStorage.removeItem(SESSION_STORAGE_KEY);
+				window.location.replace('/pages/admin-login-ui.html');
+				return;
+			}
+
+			const supabaseUrl = String(window.__SUPABASE_URL__ || '').trim();
+			const supabaseAnonKey = String(window.__SUPABASE_ANON_KEY__ || '').trim();
+			if (!supabaseUrl || !supabaseAnonKey) {
+				return;
+			}
+
+			try {
+				const resp = await fetch(`${supabaseUrl}/auth/v1/user`, {
+					headers: {
+						apikey: supabaseAnonKey,
+						Authorization: `Bearer ${token}`,
+						'Content-Type': 'application/json',
+					},
+				});
+				if (!resp.ok) {
+					localStorage.removeItem(SESSION_KEY);
+					sessionStorage.removeItem(SESSION_STORAGE_KEY);
+					window.location.replace('/pages/admin-login-ui.html');
+				}
+			} catch (e) {
+				localStorage.removeItem(SESSION_KEY);
+				sessionStorage.removeItem(SESSION_STORAGE_KEY);
+				window.location.replace('/pages/admin-login-ui.html');
+			}
+		})();
 	</script>
 	<script type="module" src="/src/js/admin-ui.js"></script>
 </body>

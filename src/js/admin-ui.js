@@ -256,7 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (navLogout) navLogout.addEventListener('click', () => { window.location.href = '/index.html'; });
+    if (navLogout) navLogout.addEventListener('click', () => {
+        localStorage.removeItem('qs_admin_session');
+        sessionStorage.removeItem('qs_admin_session_temp');
+        window.location.href = '/index.html';
+    });
 
     // --- ENHANCED JOB BUILDER LOGIC ---
     function syncPreview() {
