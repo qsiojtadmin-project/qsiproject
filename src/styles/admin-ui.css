@@ -940,6 +940,12 @@ body {
 	color: var(--text);
 }
 
+.notify-reason {
+	margin-top: 4px;
+	font-size: 0.7rem;
+	color: var(--text-muted);
+}
+
 .notify-item small {
 	display: block;
 	margin-top: 4px;
@@ -1106,6 +1112,8 @@ body {
 	font-size: 0.95rem;
 	border-bottom: 2px solid var(--border);
 	color: var(--text);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
 }
 .admin-table tbody td {
 	padding: 14px 18px;
@@ -1227,6 +1235,7 @@ body {
 	padding: 18px;
 	box-shadow: var(--shadow-sm);
 }
+
 
 .builder-card h3 {
 	font-family: 'Space Grotesk', sans-serif;

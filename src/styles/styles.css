@@ -70,15 +70,15 @@ select {
   top: 0;
   z-index: 50;
   background: rgba(255, 255, 255, 0.98);
-  border-bottom: 1px solid rgba(8, 44, 29, 0.12);
   backdrop-filter: blur(14px);
 }
-
 .header-wrap {
   min-height: 80px;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
+  border-bottom: 3px solid; /* Set the thickness here */
+  border-image: linear-gradient(to right, #0A3C24, #4BD37B) 1;
   gap: 18px;
 }
 

@@ -381,9 +381,10 @@
       if (open) forgotEmailInput?.focus();
     }
 
-    function storeForgotRequest(email) {
+    function storeForgotRequest(email, reason = 'Cannot login') {
       const payload = {
         email: String(email || '').trim(),
+        reason: String(reason || 'Cannot login').trim(),
         requested_at: new Date().toISOString(),
       };
 

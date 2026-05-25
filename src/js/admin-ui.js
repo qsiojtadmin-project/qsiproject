@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
         url: window.__SUPABASE_URL__ || 'https://ilbneblzkvzebuklyzgn.supabase.co',
         anonKey: window.__SUPABASE_ANON_KEY__ || ''
     };
+    const origin = window.location.origin && window.location.origin !== 'null'
+        ? window.location.origin
+        : '';
+    const API_BASE = origin.includes(':5000')
+        ? 'http://localhost:5000/api'
+        : (origin ? `${origin}/api` : '/api');
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const adminLayout = document.getElementById('admin-layout');
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
@@ -168,9 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         notifyList.innerHTML = items.map((item) => {
             const email = String(item?.email || '').trim();
+            const reason = String(item?.reason || 'Cannot login').trim();
             const time = formatRequestTime(item?.requested_at);
+            const reasonMarkup = reason ? `<div class="notify-reason">${reason}</div>` : '';
             const timeMarkup = time ? `<small>${time}</small>` : '';
-            return `<div class="notify-item"><strong>${email || 'Unknown email'}</strong>${timeMarkup}</div>`;
+            return `<div class="notify-item"><strong>${email || 'Unknown email'}</strong>${reasonMarkup}${timeMarkup}</div>`;
         }).join('');
     }
 
@@ -206,19 +214,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Rest of UI logic: applicants, users ---
     const navLogout = document.getElementById('nav-logout');
 
-    let applicantsData = [
-        { name: 'Sarah Johnson', email: 'sarah@email.com', resume: 'sarah_resume.pdf', title: 'Senior Developer', status: 'Under Review', date: '2026-04-28' },
-        { name: 'Michael Chen', email: 'michael@email.com', resume: 'michael_cv.pdf', title: 'Product Manager', status: 'Shortlisted', date: '2026-04-29' },
-        { name: 'Emily Davis', email: 'emily@email.com', resume: 'emily_resume.pdf', title: 'UX Designer', status: 'Interview', date: '2026-05-01' },
-        { name: 'James Wilson', email: 'james@email.com', resume: 'james_cv.pdf', title: 'Data Analyst', status: 'Under Review', date: '2026-05-02' },
-    ];
+    let applicantsData = [];
 
-    const usersData = [
+    const ADMIN_ROLE_ALLOWLIST = new Set(['system-admin', 'admin']);
+    let usersData = [
         { name: 'System Admin', email: 'system.admin@questserv.com', role: 'system-admin' },
         { name: 'Alice Rivera', email: 'alice@questserv.com', role: 'admin' },
-        { name: 'John Santos', email: 'john@questserv.com', role: 'user' },
-        { name: 'Monica Cruz', email: 'monica@questserv.com', role: 'user' },
     ];
+
+    function getRoleSlug(role) {
+        return String(role || '')
+            .trim()
+            .toLowerCase()
+            .replace(/[\s_]+/g, '-')
+            .replace(/[^a-z0-9-]/g, '');
+    }
+
+    function getUserDisplayName(row) {
+        const first = String(row?.First_Name || row?.first_name || row?.firstName || '').trim();
+        const middle = String(row?.Middle_Name || row?.middle_name || row?.middleName || '').trim();
+        const last = String(row?.Last_Name || row?.last_name || row?.lastName || '').trim();
+        const combined = [first, middle, last].filter(Boolean).join(' ').trim();
+        return combined || row?.full_name || row?.fullName || row?.name || row?.username || row?.email || 'Admin';
+    }
+
+    function normalizeAdminUser(row) {
+        const roleRaw = row?.role_type || row?.role || row?.roleType || '';
+        const role = getRoleSlug(roleRaw || 'admin');
+        return {
+            id: row?.id || row?.user_id || row?.userId || '',
+            name: getUserDisplayName(row),
+            email: row?.email || row?.Email || row?.user_email || '',
+            role
+        };
+    }
+
+    function filterAdminUsers(rows) {
+        return rows.filter((row) => ADMIN_ROLE_ALLOWLIST.has(getRoleSlug(row?.role || row?.role_type || row?.roleType)));
+    }
 
     function formatRoleLabel(role) {
         return String(role || '')
@@ -238,6 +271,26 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/[^a-z0-9]+/g, '-');
     }
 
+    function getApplicantName(row) {
+        const full = String(row?.full_name || row?.fullName || '').trim();
+        if (full) return full;
+        const first = String(row?.first_name || row?.firstName || '').trim();
+        const last = String(row?.last_name || row?.lastName || '').trim();
+        const combined = `${first} ${last}`.trim();
+        return combined || row?.name || row?.email || 'Applicant';
+    }
+
+    function normalizeApplicant(row) {
+        return {
+            name: getApplicantName(row),
+            email: row?.email || row?.user_email || '',
+            resume: row?.resume || row?.resume_url || row?.resume_link || row?.resume_file || row?.cv || 'N/A',
+            title: row?.position || row?.job_title || row?.title || row?.applied_position || 'Applicant',
+            status: row?.status || 'Under Review',
+            date: row?.created_at || row?.createdAt || ''
+        };
+    }
+
     function renderApplicants(rows = applicantsData) {
         const body = document.getElementById('applicants-body');
         if (!body) return;
@@ -250,6 +303,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="status ${getApplicantStatusClass(row.status)}">${formatApplicantStatus(row.status)}</span></td>
             </tr>
         `).join('');
+    }
+
+    async function loadApplicants() {
+        const endpoints = [
+            `${API_BASE}/applicants`,
+            `${API_BASE}/auth/applicants`,
+            `${API_BASE}/auth/users`,
+            `${API_BASE}/users`
+        ];
+
+        for (const url of endpoints) {
+            try {
+                const resp = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+                if (!resp.ok) continue;
+                const data = await resp.json();
+                const list = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data?.data)
+                        ? data.data
+                        : Array.isArray(data?.users)
+                            ? data.users
+                            : Array.isArray(data?.applicants)
+                                ? data.applicants
+                                : null;
+
+                if (!list) continue;
+                applicantsData = list.map(normalizeApplicant);
+                renderApplicants();
+                return;
+            } catch (error) {
+                continue;
+            }
+        }
     }
 
     function openApplicantContextMenu(applicantId, x, y) {
@@ -307,25 +393,50 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderUsers(rows = usersData) {
         const body = document.getElementById('users-body');
         if (!body) return;
-        body.innerHTML = rows.map((user, idx) => `
+        const filtered = filterAdminUsers(rows);
+        body.innerHTML = filtered.map((user) => {
+            const roleSlug = getRoleSlug(user.role) || 'admin';
+            const roleLabel = formatRoleLabel(roleSlug);
+            return `
             <tr>
                 <td data-label="Name">${String(user.name || '').toUpperCase()}</td>
                 <td data-label="Email">${user.email}</td>
-                <td data-label="Role"><span class="role-pill ${user.role}">${formatRoleLabel(user.role)}</span></td>
-                <td data-label="Action"><button class="action-btn" data-index="${idx}" title="Remove user">Remove</button></td>
+                <td data-label="Role"><span class="role-pill ${roleSlug}">${roleLabel}</span></td>
+                <td data-label="Action"><button class="action-btn" data-email="${user.email}" title="Remove user">Remove</button></td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
 
         // attach simple removal handlers (works on local demo data)
         body.querySelectorAll('.action-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const i = parseInt(btn.dataset.index, 10);
-                if (!Number.isFinite(i)) return;
-                rows.splice(i, 1);
-                renderUsers(rows);
+                const email = String(btn.dataset.email || '').trim().toLowerCase();
+                if (!email) return;
+                usersData = usersData.filter((user) => String(user.email || '').trim().toLowerCase() !== email);
+                renderUsers(usersData);
                 showToast && showToast('User removed');
             });
         });
+    }
+
+    async function loadUsers() {
+        if (!hasSupabaseConfig()) {
+            renderUsers(usersData);
+            return;
+        }
+
+        try {
+            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admins?select=*`, {
+                headers: getSupabaseHeaders()
+            });
+            if (!resp.ok) return;
+            const rows = await resp.json().catch(() => []);
+            if (!Array.isArray(rows)) return;
+            usersData = rows.map(normalizeAdminUser);
+            renderUsers(usersData);
+        } catch (error) {
+            return;
+        }
     }
 
     if (navLogout) navLogout.addEventListener('click', () => {
@@ -1187,5 +1298,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('hashchange', () => setActiveTab(window.location.hash.replace('#', '') || 'dashboard'));
     if (window.location.hash) setActiveTab(window.location.hash.replace('#', ''));
 
-    renderApplicants(); renderUsers(); syncPreview(); loadHomePosts();
+    renderApplicants();
+    loadApplicants();
+    renderUsers();
+    loadUsers();
+    syncPreview();
+    loadHomePosts();
 });
