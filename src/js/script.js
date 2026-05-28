@@ -13,6 +13,28 @@ const homeJobsTotalCount = document.getElementById('home-jobs-total-count');
 const jobsPaginationText = document.getElementById('jobs-pagination-text');
 const homePosterRoot = document.getElementById('home-poster-root');
 
+
+
+
+
+
+const passwordInput = document.getElementById('login-password');
+const togglePasswordBtn = document.getElementById('toggle-password');
+
+if (togglePasswordBtn && passwordInput) {
+ togglePasswordBtn.addEventListener('click', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+    const isPassword = passwordInput.type === 'password';
+
+    passwordInput.type = isPassword ? 'text' : 'password';
+
+    togglePasswordBtn.innerHTML = isPassword
+      ? '<i class="fa-regular fa-eye-slash"></i>'
+      : '<i class="fa-regular fa-eye"></i>';
+  });
+}
+
 const SUPABASE_CONFIG = {
   url: window.__SUPABASE_URL__ || 'https://ilbneblzkvzebuklyzgn.supabase.co',
   anonKey: window.__SUPABASE_ANON_KEY__ || '',
@@ -21,6 +43,8 @@ const SUPABASE_CONFIG = {
 const SECRET_SEQUENCES = ['ADMIN', 'SUPERADMIN'];
 let secretBuffer = '';
 
+const ADMIN_ROLE_ALLOWLIST = new Set(['admin', 'system-admin', 'superadmin']);
+
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -28,6 +52,37 @@ function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function getRoleSlug(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+}
+
+function getUserRole(user) {
+  const metaRole = user?.user_metadata?.role
+    || user?.user_metadata?.role_type
+    || user?.app_metadata?.role
+    || user?.role_type
+    || user?.role;
+
+  const slug = getRoleSlug(metaRole);
+  return slug || 'user';
+}
+
+function isAdminUser(user, email) {
+  const role = getUserRole(user);
+  if (ADMIN_ROLE_ALLOWLIST.has(role)) return true;
+
+  const defaultAdminEmail = String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim().toLowerCase();
+  if (defaultAdminEmail && String(email || '').trim().toLowerCase() === defaultAdminEmail) {
+    return true;
+  }
+
+  return false;
 }
 
 function getSupabaseHeaders() {
@@ -188,18 +243,181 @@ if (loginToggleBtn && loginDropdownMenu) {
     setLoginMenu(!loginDropdownMenu.classList.contains('is-open'));
   });
 
-  document.addEventListener('click', (event) => {
-    if (!loginDropdownMenu.classList.contains('is-open')) return;
-    if (loginDropdownMenu.contains(event.target) || loginToggleBtn.contains(event.target)) return;
-    setLoginMenu(false);
-  });
+ document.addEventListener('click', (event) => {
+  if (!loginDropdownMenu.classList.contains('is-open')) return;
+
+  const clickedInsideMenu = loginDropdownMenu.contains(event.target);
+  const clickedToggle = loginToggleBtn.contains(event.target);
+  const clickedPasswordToggle =
+    event.target.closest('#toggle-password');
+
+  if (clickedInsideMenu || clickedToggle || clickedPasswordToggle) {
+    return;
+  }
+
+  setLoginMenu(false);
+});
 }
 
+const supabase = window.supabase?.createClient
+  ? window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey)
+  : null;
+
 if (loginForm) {
-  loginForm.addEventListener('submit', (event) => {
+  loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    setLoginMenu(false);
-    window.location.href = 'pages/user-dashboard.html';
+
+    const loginEmailInput = document.getElementById('login-email');
+    const loginPasswordInput = document.getElementById('login-password');
+    const rememberCheckbox = loginForm.querySelector('.login-dropdown-checkbox');
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+
+    if (!loginEmailInput || !loginPasswordInput || !submitButton) {
+      return;
+    }
+
+    const identifier = loginEmailInput.value.trim();
+    let email = identifier;
+    const password = loginPasswordInput.value.trim();
+
+    const alias = identifier.toLowerCase();
+    const defaultAdminEmail = String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim();
+    if (defaultAdminEmail) {
+      const looksLikeEmail = alias.includes('@');
+      if (!looksLikeEmail || alias === 'admin' || alias === 'superadmin') {
+        email = defaultAdminEmail;
+      }
+    }
+
+    try {
+      if (!supabase || !SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey) {
+        alert('Supabase is not configured. Please set the URL and anon key.');
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Logging in...';
+
+      let data = null;
+      let error = null;
+
+      if (alias.includes('@') && supabase?.auth?.signInWithPassword) {
+        ({ data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        }));
+      }
+
+      if (error || !data?.user) {
+        let tableQuery = supabase
+          .from('users')
+          .select('id,email,username,full_name')
+          .eq('password', password);
+
+        if (alias.includes('@')) {
+          tableQuery = tableQuery.ilike('email', alias);
+        } else {
+          tableQuery = tableQuery.or(`email.ilike.${alias},username.ilike.${alias}`);
+        }
+
+        const { data: tableUser, error: tableError } = await tableQuery.maybeSingle();
+
+        if (tableError || !tableUser) {
+          const details = [
+            tableError?.message || (!tableUser ? 'No matching user in users table' : '') || error?.message || 'Invalid login credentials',
+            tableError?.code ? `table code: ${tableError.code}` : '',
+            error?.status ? `status: ${error.status}` : '',
+            error?.code ? `code: ${error.code}` : '',
+          ].filter(Boolean).join(' | ');
+          alert(`Login failed: ${details}`);
+          return;
+        }
+
+        const defaultAdminEmail = String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim().toLowerCase();
+        const roleValue = defaultAdminEmail && String(tableUser.email || '').trim().toLowerCase() === defaultAdminEmail
+          ? 'system-admin'
+          : 'admin';
+        const mockUser = { user_metadata: { role: roleValue }, role_type: roleValue };
+        const isAdmin = isAdminUser(mockUser, tableUser.email || email);
+        const rememberMe = Boolean(rememberCheckbox?.checked);
+        const storage = rememberMe ? localStorage : sessionStorage;
+        const sessionKey = isAdmin
+          ? (rememberMe ? 'qs_admin_session' : 'qs_admin_session_temp')
+          : (rememberMe ? 'qs_user_session' : 'qs_user_session_temp');
+
+        const sessionPayload = {
+          auth_type: 'table',
+          user: {
+            id: tableUser.id,
+            email: tableUser.email,
+            username: tableUser.username,
+            full_name: tableUser.full_name,
+            role_type: roleValue,
+            user_metadata: {
+              username: tableUser.username,
+              full_name: tableUser.full_name,
+              role: roleValue,
+            },
+          },
+          admin: {
+            id: tableUser.id,
+            email: tableUser.email,
+            username: tableUser.username,
+            full_name: tableUser.full_name,
+            role_type: roleValue,
+            user_metadata: {
+              username: tableUser.username,
+              full_name: tableUser.full_name,
+              role: roleValue,
+            },
+          },
+        };
+
+        storage.setItem(sessionKey, JSON.stringify(sessionPayload));
+
+        if (isAdmin) {
+          localStorage.removeItem('qs_user_session');
+          sessionStorage.removeItem('qs_user_session_temp');
+        } else {
+          localStorage.removeItem('qs_admin_session');
+          sessionStorage.removeItem('qs_admin_session_temp');
+        }
+
+        alert('Login successful!');
+        setLoginMenu(false);
+        window.location.href = isAdmin ? 'pages/admin-ui.html' : 'pages/user-dashboard.html';
+        return;
+      }
+
+      if (data?.user) {
+        const isAdmin = isAdminUser(data.user, email);
+        const rememberMe = Boolean(rememberCheckbox?.checked);
+        const storage = rememberMe ? localStorage : sessionStorage;
+        const sessionKey = isAdmin
+          ? (rememberMe ? 'qs_admin_session' : 'qs_admin_session_temp')
+          : (rememberMe ? 'qs_user_session' : 'qs_user_session_temp');
+
+        storage.setItem(sessionKey, JSON.stringify(data.session));
+
+        if (isAdmin) {
+          localStorage.removeItem('qs_user_session');
+          sessionStorage.removeItem('qs_user_session_temp');
+        } else {
+          localStorage.removeItem('qs_admin_session');
+          sessionStorage.removeItem('qs_admin_session_temp');
+        }
+
+        alert('Login successful!');
+        setLoginMenu(false);
+        window.location.href = isAdmin ? 'pages/admin-ui.html' : 'pages/user-dashboard.html';
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong.');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Login';
+    }
   });
 }
 
@@ -362,7 +580,7 @@ document.addEventListener('keydown', (event) => {
   secretBuffer += char;
 
   if (SECRET_SEQUENCES.includes(secretBuffer)) {
-    window.location.href = 'pages/admin-login-ui.html';
+    window.location.href = 'pages/admin-ui.html';
     secretBuffer = '';
     return;
   }

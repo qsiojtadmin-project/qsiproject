@@ -10,12 +10,6 @@
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 	<link rel="stylesheet" href="/src/styles/admin-ui.css" />
-	<script>
-		const savedAdminSession = localStorage.getItem('qs_admin_session') || sessionStorage.getItem('qs_admin_session_temp');
-		if (!savedAdminSession) {
-			window.location.replace('/pages/admin-login-ui.html');
-		}
-	</script>
 </head>
 <body>
 	<header class="navbar">
@@ -448,7 +442,6 @@
 				if (hasLocalAdmin) return;
 				localStorage.removeItem(SESSION_KEY);
 				sessionStorage.removeItem(SESSION_STORAGE_KEY);
-				window.location.replace('/pages/admin-login-ui.html');
 				return;
 			}
 
@@ -469,12 +462,10 @@
 				if (!resp.ok) {
 					localStorage.removeItem(SESSION_KEY);
 					sessionStorage.removeItem(SESSION_STORAGE_KEY);
-					window.location.replace('/pages/admin-login-ui.html');
 				}
 			} catch (e) {
 				localStorage.removeItem(SESSION_KEY);
 				sessionStorage.removeItem(SESSION_STORAGE_KEY);
-				window.location.replace('/pages/admin-login-ui.html');
 			}
 		})();
 	</script>

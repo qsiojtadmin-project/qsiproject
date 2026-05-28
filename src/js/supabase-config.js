@@ -3,7 +3,7 @@ window.__SUPABASE_ANON_KEY__ = 'sb_publishable_UIrAwPGGHGwPavXFV23FwQ_Z1ywfnAg';
 
 // Optional: default admin email used when someone types "admin" on the login form.
 // Set this to the exact email in Supabase Auth for the admin account.
-window.__ADMIN_DEFAULT_EMAIL__ = 'qsiojtadmin@gmail.com';
+window.__ADMIN_DEFAULT_EMAIL__ = 'jethroadmin@gmail.com';
 
 window.__checkSupabaseConnection__ = async function timeoutCheck(timeoutMs = 4000) {
 	const url = window.__SUPABASE_URL__;

@@ -40,14 +40,31 @@
       <form id="inline-login-form">
         <div class="login-dropdown-field">
           <label for="login-email" class="login-dropdown-label">Username/Email Address</label>
-          <input type="email" id="login-email" class="login-dropdown-input" placeholder="name@example.com" required />
+          <input type="text" id="login-email" class="login-dropdown-input" placeholder="Username or email" required />
         </div>
 
-        <div class="login-dropdown-field">
-          <label for="login-password" class="login-dropdown-label">Password</label>
-          <input type="password" id="login-password" class="login-dropdown-input" placeholder="password" required />
-        </div>
+       <div class="login-dropdown-field password-field">
+  <label for="login-password" class="login-dropdown-label">Password</label>
 
+  <div class="password-input-wrap">
+    <input
+      type="password"
+      id="login-password"
+      class="login-dropdown-input"
+      placeholder="password"
+      required
+    />
+
+    <button
+      type="button"
+      id="toggle-password"
+      class="toggle-password-btn"
+      aria-label="Show password"
+    >
+      <i class="fa-regular fa-eye"></i>
+    </button>
+  </div>
+</div>
         <div class="login-dropdown-meta">
           <label class="login-dropdown-check">
             <input type="checkbox" class="login-dropdown-checkbox" /> Remember me
@@ -360,10 +377,8 @@
     </div>
   </footer>
 
-  <script>
-    window.__SUPABASE_URL__ = 'https://ilbneblzkvzebuklyzgn.supabase.co';
-    window.__SUPABASE_ANON_KEY__ = 'sb_publishable_UIrAwPGGHGwPavXFV23FwQ_Z1ywfnAg';
-  </script>
+  <script src="src/js/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="src/js/script.js"></script>
 </body>
 </html>

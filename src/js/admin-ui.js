@@ -217,10 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let applicantsData = [];
 
     const ADMIN_ROLE_ALLOWLIST = new Set(['system-admin', 'admin']);
-    let usersData = [
-        { name: 'System Admin', email: 'system.admin@questserv.com', role: 'system-admin' },
-        { name: 'Alice Rivera', email: 'alice@questserv.com', role: 'admin' },
-    ];
+    let usersData = [];
 
     function getRoleSlug(role) {
         return String(role || '')
@@ -289,18 +286,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function normalizeAdminUser(row) {
+        const defaultAdminEmail = String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim().toLowerCase();
+        const email = String(row?.email || row?.Email || row?.user_email || '').trim();
         const roleRaw = row?.role_type || row?.role || row?.roleType || '';
-        const role = getRoleSlug(roleRaw || 'admin');
+        const roleFromTable = getRoleSlug(roleRaw || '');
+        const role = roleFromTable || (defaultAdminEmail && email.toLowerCase() === defaultAdminEmail ? 'system-admin' : 'admin');
         return {
             id: row?.id || row?.user_id || row?.userId || '',
             name: getUserDisplayName(row),
-            email: row?.email || row?.Email || row?.user_email || '',
+            email,
             role
         };
     }
 
     function filterAdminUsers(rows) {
-        return rows.filter((row) => ADMIN_ROLE_ALLOWLIST.has(getRoleSlug(row?.role || row?.role_type || row?.roleType)));
+        return rows.filter((row) => {
+            const roleValue = row?.role || row?.role_type || row?.roleType || 'admin';
+            return ADMIN_ROLE_ALLOWLIST.has(getRoleSlug(roleValue));
+        });
     }
 
     function formatRoleLabel(role) {
@@ -452,20 +455,89 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td data-label="Name">${String(user.name || '').toUpperCase()}</td>
                 <td data-label="Email">${user.email}</td>
                 <td data-label="Role"><span class="role-pill ${roleSlug}">${roleLabel}</span></td>
-                <td data-label="Action"><button class="action-btn" data-email="${user.email}" title="Remove user">Remove</button></td>
+                <td data-label="Action">
+                    <div class="action-menu" data-email="${user.email}">
+                        <button class="action-trigger" type="button" aria-label="Open actions" aria-expanded="false">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <div class="action-dropdown" role="menu">
+                            <button class="action-item" type="button" data-action="view">View profile</button>
+                            <button class="action-item" type="button" data-action="edit">Edit</button>
+                            <button class="action-item" type="button" data-action="restrict">Restrict</button>
+                            <button class="action-item" type="button" data-action="block">Block</button>
+                            <button class="action-item danger" type="button" data-action="delete">Delete</button>
+                        </div>
+                    </div>
+                </td>
             </tr>
         `;
         }).join('');
 
-        // attach simple removal handlers (works on local demo data)
-        body.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const email = String(btn.dataset.email || '').trim().toLowerCase();
-                if (!email) return;
-                usersData = usersData.filter((user) => String(user.email || '').trim().toLowerCase() !== email);
-                renderUsers(usersData);
-                showToast && showToast('User removed');
+        body.querySelectorAll('.action-trigger').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const menu = btn.closest('.action-menu');
+                if (!menu) return;
+                const isOpen = menu.classList.contains('is-open');
+                closeUserActionMenus();
+                menu.classList.toggle('is-open', !isOpen);
+                btn.setAttribute('aria-expanded', String(!isOpen));
             });
+        });
+
+        body.querySelectorAll('.action-item').forEach(btn => {
+            btn.addEventListener('click', async (event) => {
+                event.stopPropagation();
+                const action = String(btn.dataset.action || '').trim();
+                const menu = btn.closest('.action-menu');
+                const email = String(menu?.dataset.email || '').trim().toLowerCase();
+                if (!email || !action) return;
+
+                if (action === 'delete') {
+                    if (hasSupabaseConfig()) {
+                        try {
+                            btn.disabled = true;
+                            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users?email=eq.${encodeURIComponent(email)}` , {
+                                method: 'DELETE',
+                                headers: getSupabaseHeaders('return=representation')
+                            });
+                            if (!resp.ok) {
+                                showToast && showToast('Failed to delete user');
+                                btn.disabled = false;
+                                return;
+                            }
+                        } catch (error) {
+                            showToast && showToast('Failed to delete user');
+                            btn.disabled = false;
+                            return;
+                        }
+                    }
+
+                    usersData = usersData.filter((user) => String(user.email || '').trim().toLowerCase() !== email);
+                    renderUsers(usersData);
+                    showToast && showToast('User deleted');
+                    return;
+                }
+
+                const actionLabel = action.charAt(0).toUpperCase() + action.slice(1);
+                showToast && showToast(`${actionLabel} requested for ${email}`);
+                closeUserActionMenus();
+            });
+        });
+
+        if (!body.dataset.actionMenuBound) {
+            document.addEventListener('click', () => {
+                closeUserActionMenus();
+            });
+            body.dataset.actionMenuBound = 'true';
+        }
+    }
+
+    function closeUserActionMenus() {
+        document.querySelectorAll('.action-menu.is-open').forEach((menu) => {
+            menu.classList.remove('is-open');
+            const trigger = menu.querySelector('.action-trigger');
+            if (trigger) trigger.setAttribute('aria-expanded', 'false');
         });
     }
 
@@ -476,15 +548,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/admins?select=*`, {
+            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users?select=id,email,username,full_name`, {
                 headers: getSupabaseHeaders()
             });
-            if (!resp.ok) return;
+            if (!resp.ok) {
+                renderUsers(usersData);
+                return;
+            }
             const rows = await resp.json().catch(() => []);
-            if (!Array.isArray(rows)) return;
+            if (!Array.isArray(rows)) {
+                renderUsers(usersData);
+                return;
+            }
             usersData = rows.map(normalizeAdminUser);
             renderUsers(usersData);
         } catch (error) {
+            renderUsers(usersData);
             return;
         }
     }

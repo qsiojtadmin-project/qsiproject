@@ -4,12 +4,13 @@
         {
             "ssh": "Disabled",
             "previewLimit": 50,
-            "server": "<SUPABASE_DB_HOST>",
+            "server": "aws-1-ap-northeast-1.pooler.supabase.com",
             "port": 6543,
             "driver": "PostgreSQL",
+            "name": "qsiproject",
+            "group": "qsiproject",
             "database": "postgres",
-            "username": "<DB_USER>",
-            "name": "supabase"
+            "username": "postgres.ilbneblzkvzebuklyzgn"
         }
     ]
 }

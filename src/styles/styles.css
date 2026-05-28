@@ -1749,3 +1749,32 @@ select {
     width: min(100%, calc(100% - 28px));
   }
 }
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrap .login-dropdown-input {
+  width: 100%;
+  padding-right: 48px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #5f6368;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password-btn:hover {
+  color: #16a34a;
+}
