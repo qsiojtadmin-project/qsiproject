@@ -71,6 +71,46 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
+create or replace function public.handle_new_auth_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  requested_role text := coalesce(new.raw_user_meta_data->>'role', 'applicant');
+begin
+  if requested_role not in ('applicant', 'employer', 'admin', 'system-admin') then
+    requested_role := 'applicant';
+  end if;
+
+  insert into public.profiles (
+    user_id,
+    role,
+    full_name,
+    contact_number
+  )
+  values (
+    new.id,
+    requested_role,
+    nullif(new.raw_user_meta_data->>'full_name', ''),
+    nullif(coalesce(new.raw_user_meta_data->>'phone', new.raw_user_meta_data->>'contact_number'), '')
+  )
+  on conflict (user_id) do update
+    set role = excluded.role,
+        full_name = coalesce(excluded.full_name, public.profiles.full_name),
+        contact_number = coalesce(excluded.contact_number, public.profiles.contact_number),
+        updated_at = now();
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_auth_user();
+
 create table if not exists public.employers (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null unique references auth.users(id) on delete cascade,

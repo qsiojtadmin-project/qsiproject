@@ -9,13 +9,29 @@ router.use(authenticate, authorize('admin'));
 
 router.get('/overview', async (req, res) => {
   try {
-    const totalUsersResult = await pool.query('SELECT COUNT(*)::int AS total_users FROM users');
-    const totalAdminsResult = await pool.query('SELECT COUNT(*)::int AS total_admins FROM admins');
-    const hiredCountResult = await pool.query("SELECT COUNT(*)::int AS hired_count FROM applications WHERE status = 'Hired'");
+    const [
+      totalApplicantsResult,
+      totalUsersResult,
+      totalAdminsResult,
+      openJobsResult,
+      interviewsResult,
+      hiredCountResult,
+    ] = await Promise.all([
+      pool.query('SELECT COUNT(DISTINCT user_id)::int AS total_applicants FROM applications'),
+      pool.query('SELECT COUNT(*)::int AS total_users FROM users'),
+      pool.query('SELECT COUNT(*)::int AS total_admins FROM admins'),
+      pool.query('SELECT COUNT(*)::int AS open_jobs FROM jobs'),
+      pool.query("SELECT COUNT(*)::int AS interviews_count FROM applications WHERE status ILIKE 'Interview'"),
+      pool.query("SELECT COUNT(*)::int AS hired_count FROM applications WHERE status ILIKE 'Hired'"),
+    ]);
+
+    const applicationApplicants = totalApplicantsResult.rows[0].total_applicants;
 
     return res.json({
-      totalApplicants: totalUsersResult.rows[0].total_users,
+      totalApplicants: applicationApplicants || totalUsersResult.rows[0].total_users,
       totalAdmins: totalAdminsResult.rows[0].total_admins,
+      openJobs: openJobsResult.rows[0].open_jobs,
+      interviewsCount: interviewsResult.rows[0].interviews_count,
       hiredCount: hiredCountResult.rows[0].hired_count,
     });
   } catch (error) {

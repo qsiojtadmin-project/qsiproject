@@ -2,6 +2,7 @@
 
 const totalApplicants = document.getElementById('total-applicants');
 const openJobs = document.getElementById('open-jobs');
+const interviewsCount = document.getElementById('interviews-count');
 const hiredCount = document.getElementById('hired-count');
 const messages = document.getElementById('messages-list');
 
@@ -10,6 +11,7 @@ async function loadOverview() {
     const data = await request('/admin/overview');
     totalApplicants.textContent = data.totalApplicants;
     openJobs.textContent = data.openJobs;
+    interviewsCount.textContent = data.interviewsCount;
     hiredCount.textContent = data.hiredCount;
   } catch (error) {
     messages.innerHTML = `<li class="notice error">${error.message}</li>`;

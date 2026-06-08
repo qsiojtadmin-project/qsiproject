@@ -7,7 +7,7 @@
 	<title>Admin Workspace | QuestServ</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 	<link rel="stylesheet" href="/src/styles/admin-ui.css" />
 </head>
@@ -63,6 +63,7 @@
 				<a class="sidebar-link" href="#users" data-tab="users"><i class="fa-solid fa-id-card"></i><span>User management</span></a>
 				<a class="sidebar-link active" href="#jobs" data-tab="jobs"><i class="fa-solid fa-briefcase"></i><span>Job Templates</span></a>
 				<a class="sidebar-link" href="#posts" data-tab="posts"><i class="fa-solid fa-house"></i><span>Home Posts</span></a>
+				<a class="sidebar-link" href="#logs" data-tab="logs"><i class="fa-solid fa-clipboard-list"></i><span>Logs</span></a>
 				<a class="sidebar-link" href="#settings" data-tab="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
 			</nav>
 
@@ -90,22 +91,22 @@
 					<div class="stats-grid">
 						<div class="stat-card">
 							<div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-							<div class="stat-val">128</div>
+							<div class="stat-val" id="total-applicants-count">0</div>
 							<div class="stat-label">Total Applicants</div>
 						</div>
 						<div class="stat-card">
 							<div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
-							<div class="stat-val" id="active-jobs-count">14</div>
+							<div class="stat-val" id="active-jobs-count">0</div>
 							<div class="stat-label">Active Jobs</div>
 						</div>
 						<div class="stat-card">
 							<div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
-							<div class="stat-val">42</div>
+							<div class="stat-val" id="interviews-count">0</div>
 							<div class="stat-label">Interviews</div>
 						</div>
 						<div class="stat-card">
 							<div class="stat-icon"><i class="fa-solid fa-handshake"></i></div>
-							<div class="stat-val">36</div>
+							<div class="stat-val" id="total-hires-count">0</div>
 							<div class="stat-label">Total Hires</div>
 						</div>
 					</div>
@@ -125,7 +126,7 @@
 							<form id="job-form">
 								<div class="builder-card">
 									<h3><i class="fa-solid fa-circle-info"></i> Job Information</h3>
-									<div class="form-grid">
+									<div class="form-grid form-grid-3">
 										<div class="form-group">
 											<label>Position Title</label>
 											<input type="text" id="field-position" placeholder="e.g. Senior Product Operator" required>
@@ -165,7 +166,6 @@
 										</div>
 									</div>
 								</div>
-									<br><br>
 								<div class="builder-card">
 									<h3><i class="fa-solid fa-address-book"></i> Contact Info</h3>
 									<div class="form-grid form-grid-3">
@@ -184,7 +184,6 @@
 										<input type="hidden" id="field-subject" value="JOB HIRING">
 									</div>
 								</div>
-								<br><br>
 								<div class="builder-card">
 									<h3><i class="fa-solid fa-pen-to-square"></i> Job Description</h3>
 									<div class="form-group full">
@@ -203,7 +202,6 @@
 										<div class="char-counter">0 / 1000</div>
 									</div>
 								</div>
-								<br><br>
 								<div class="builder-card">
 									<h3><i class="fa-solid fa-images"></i> Media Assets</h3>
 									<div class="form-grid">
@@ -219,7 +217,6 @@
 									</div>
 									<img id="p-bg-preview" alt="" hidden>
 								</div>
-								<br><br>
 								<div class="builder-card">
 									<h3><i class="fa-solid fa-sliders"></i> Publish Settings</h3>
 									<div class="form-grid">
@@ -262,8 +259,137 @@
 				</section>
 
 				<section class="admin-section" id="settings-panel" data-tab-panel>
-					<div class="section-header"><h1>Settings</h1></div>
-					<div class="placeholder-content"><h2>Settings</h2><p>Admin platform configuration.</p></div>
+					<div class="section-header">
+						<div>
+							<h1>Settings</h1>
+							<p style="color: var(--text-muted); margin-top: 4px;">Manage platform preferences, admin access, privacy, logs, and system status.</p>
+						</div>
+						<button class="btn btn-primary" type="button" id="settings-save-btn">Save Changes</button>
+					</div>
+
+					<div class="settings-layout">
+						<aside class="settings-nav" aria-label="Settings sections">
+							<button class="settings-nav-btn is-active" type="button" data-settings-tab="general"><i class="fa-solid fa-sliders"></i> General</button>
+							<button class="settings-nav-btn" type="button" data-settings-tab="appearance"><i class="fa-solid fa-palette"></i> Appearance</button>
+							<button class="settings-nav-btn" type="button" data-settings-tab="account"><i class="fa-solid fa-user-shield"></i> Account</button>
+							<button class="settings-nav-btn" type="button" data-settings-tab="privacy"><i class="fa-solid fa-lock"></i> Privacy</button>
+							<button class="settings-nav-btn" type="button" data-settings-tab="audit"><i class="fa-solid fa-terminal"></i> Log Design</button>
+						</aside>
+
+						<div class="settings-content">
+							<section class="settings-panel is-active" data-settings-panel="general">
+								<div class="settings-card">
+									<h3>General Settings</h3>
+									<div class="settings-grid">
+										<label class="settings-field"><span>Company Name</span><input type="text" value="QuestServ Solutions Inc."></label>
+										<label class="settings-field"><span>Admin Email</span><input type="email" value="jethroadmin@gmail.com"></label>
+										<label class="settings-field"><span>Default Location</span><input type="text" value="Cavite, Philippines"></label>
+										<label class="settings-field"><span>Timezone</span><select><option>Asia/Manila</option><option>UTC</option></select></label>
+									</div>
+								</div>
+								<div class="settings-card">
+									<h3>Recruitment Defaults</h3>
+									<div class="settings-toggle-list">
+										<label><input type="checkbox" checked> Accept new applicant registrations</label>
+										<label><input type="checkbox" checked> Show published job templates on homepage</label>
+										<label><input type="checkbox"> Require admin approval before posting jobs</label>
+									</div>
+								</div>
+							</section>
+
+							<section class="settings-panel" data-settings-panel="appearance">
+								<div class="settings-card">
+									<h3>Appearance</h3>
+									<div class="settings-grid">
+										<label class="settings-field"><span>Theme</span><select><option>Light</option><option>Dark</option><option>System</option></select></label>
+										<label class="settings-field"><span>Primary Color</span><input type="color" value="#0b5d3c"></label>
+										<label class="settings-field"><span>Accent Color</span><input type="color" value="#63d770"></label>
+										<label class="settings-field"><span>Dashboard Density</span><select><option>Comfortable</option><option>Compact</option></select></label>
+									</div>
+								</div>
+							</section>
+
+							<section class="settings-panel" data-settings-panel="account">
+								<div class="settings-card">
+									<h3>Account & Security</h3>
+									<div class="settings-grid">
+										<label class="settings-field"><span>Display Name</span><input type="text" value="Heaven Dizon"></label>
+										<label class="settings-field"><span>Role</span><input type="text" value="Admin" readonly></label>
+										<label class="settings-field"><span>New Password</span><input type="password" placeholder="Enter new password"></label>
+										<label class="settings-field"><span>Confirm Password</span><input type="password" placeholder="Confirm password"></label>
+									</div>
+								</div>
+								<div class="settings-card">
+									<h3>Access Controls</h3>
+									<div class="settings-toggle-list">
+										<label><input type="checkbox" checked> Allow admin profile updates</label>
+										<label><input type="checkbox" checked> Notify admin for new applicants</label>
+										<label><input type="checkbox"> Require two-step verification</label>
+									</div>
+								</div>
+							</section>
+
+							<section class="settings-panel" data-settings-panel="privacy">
+								<div class="settings-card">
+									<h3>Privacy & Data</h3>
+									<div class="settings-toggle-list">
+										<label><input type="checkbox" checked> Hide applicant contact details from non-admin users</label>
+										<label><input type="checkbox" checked> Keep resumes private</label>
+										<label><input type="checkbox"> Auto-delete rejected applicant documents after 90 days</label>
+									</div>
+								</div>
+								<div class="settings-card">
+									<h3>Data Retention</h3>
+									<div class="settings-grid">
+										<label class="settings-field"><span>Applicant Records</span><select><option>Keep indefinitely</option><option>1 year</option><option>2 years</option></select></label>
+										<label class="settings-field"><span>Audit Logs</span><select><option>180 days</option><option>1 year</option><option>Keep indefinitely</option></select></label>
+									</div>
+								</div>
+							</section>
+
+							<section class="settings-panel" data-settings-panel="audit">
+								<div class="settings-card">
+									<div class="settings-card-head">
+										<h3>Log Appearance</h3>
+										<button class="btn btn-outline" type="button" id="settings-log-reset">Reset Design</button>
+									</div>
+									<div class="settings-grid">
+										<label class="settings-field"><span>Log Theme</span><select id="log-theme-setting"><option value="dark">Dark Terminal</option><option value="green">Green Console</option><option value="light">Light Paper</option></select></label>
+										<label class="settings-field"><span>Font Size</span><select id="log-font-setting"><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option></select></label>
+										<label class="settings-field"><span>Row Density</span><select id="log-density-setting"><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select></label>
+										<label class="settings-field"><span>Line Wrapping</span><select id="log-wrap-setting"><option value="nowrap">No Wrap</option><option value="wrap">Wrap Long Paths</option></select></label>
+									</div>
+								</div>
+							</section>
+						</div>
+					</div>
+				</section>
+
+				<section class="admin-section" id="logs-panel" data-tab-panel>
+					<div class="section-header">
+						<div>
+							<h1>Logs</h1>
+							<p style="color: var(--text-muted); margin-top: 4px;">Audit trail for admin actions, requests, applicant activity, and system events.</p>
+						</div>
+						<div class="header-actions">
+							<button class="btn btn-outline" type="button" id="logs-clear-btn">Clear View</button>
+							<button class="btn btn-primary" type="button" id="logs-export-btn">Export Logs</button>
+						</div>
+					</div>
+
+					<div class="logs-card">
+						<div class="settings-card-head">
+							<h3>Account Log Audit</h3>
+							<span class="logs-live-pill">Live View</span>
+						</div>
+						<div class="settings-log-terminal logs-terminal" id="settings-log-terminal" aria-label="Audit log output">
+							<div><time>6/8/2026, 10:14:20 PM</time><span>Heaven Dizon</span><strong>LOGIN</strong><em>Signed in using Admin account</em><code>ADMIN</code></div>
+							<div><time>6/8/2026, 10:12:48 PM</time><span>Jethro L. Caronan</span><strong>CREATE</strong><em>Created applicant account with jethro@gmail.com</em><code>APPLICANT</code></div>
+							<div><time>6/8/2026, 10:11:35 PM</time><span>QuestServ Admin</span><strong>LOGIN</strong><em>Signed in using System Admin account</em><code>SYSTEM</code></div>
+							<div><time>6/8/2026, 10:08:09 PM</time><span>Maria Santos</span><strong>CREATE</strong><em>Created applicant account with maria@example.com</em><code>APPLICANT</code></div>
+							<div><time>6/8/2026, 10:04:51 PM</time><span>Heaven Dizon</span><strong>LOGIN</strong><em>Signed in using Admin account</em><code>ADMIN</code></div>
+						</div>
+					</div>
 				</section>
 
 				<section class="admin-section" id="placeholder-panel">
@@ -285,6 +411,45 @@
 		<button type="button" class="post-menu-item" data-action="view"><i class="fa-regular fa-eye"></i><span>View Profile</span></button>
 		<button type="button" class="post-menu-item" data-action="archive"><i class="fa-regular fa-folder-open"></i><span>Archive</span></button>
 		<button type="button" class="post-menu-item" data-action="start"><i class="fa-regular fa-circle-play"></i><span>Start</span></button>
+	</div>
+
+	<div class="profile-modal-overlay" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-name" aria-hidden="true">
+		<article class="profile-modal-card">
+			<button class="profile-modal-close" id="profile-modal-close" type="button" aria-label="Close profile">
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+			<header class="profile-modal-head">
+				<div class="profile-avatar" id="profile-modal-avatar">A</div>
+				<div>
+					<p class="profile-eyebrow" id="profile-modal-type">User Profile</p>
+					<h2 id="profile-modal-name">Applicant Name</h2>
+					<span class="profile-role" id="profile-modal-role">Applicant</span>
+				</div>
+			</header>
+			<div class="profile-modal-grid">
+				<section class="profile-info-block">
+					<span>Email</span>
+					<strong id="profile-modal-email">-</strong>
+				</section>
+				<section class="profile-info-block">
+					<span>Position</span>
+					<strong id="profile-modal-title">-</strong>
+				</section>
+				<section class="profile-info-block">
+					<span>Status</span>
+					<strong id="profile-modal-status">-</strong>
+				</section>
+				<section class="profile-info-block">
+					<span>Date Added</span>
+					<strong id="profile-modal-date">-</strong>
+				</section>
+			</div>
+			<footer class="profile-modal-actions">
+				<button class="btn btn-secondary" id="profile-modal-edit" type="button">Edit</button>
+				<button class="btn btn-outline" id="profile-modal-restrict" type="button">Restrict</button>
+				<button class="btn btn-primary" id="profile-modal-done" type="button">Done</button>
+			</footer>
+		</article>
 	</div>
 
 	<!-- CONFIRM PUBLISH MODAL -->
@@ -407,9 +572,9 @@
 				<button class="vt-action-btn close-btn" id="vt-close-btn" aria-label="Close">
 					<i class="fa-solid fa-xmark"></i>
 				</button>
-				<button class="vt-action-btn select-btn" id="vt-select-btn" aria-label="Post template to home posts">
+				<button class="vt-action-btn submit-btn" id="vt-select-btn" aria-label="Submit template">
 					<i class="fa-solid fa-paper-plane"></i>
-					<span class="tooltip">Post Template</span>
+					<span class="tooltip">Submit</span>
 				</button>
 				<button class="vt-action-btn print-btn" id="vt-print-btn" aria-label="Print / Save as PDF">
 					<i class="fa-solid fa-print"></i>

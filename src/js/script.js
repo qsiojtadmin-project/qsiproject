@@ -311,7 +311,7 @@ if (loginForm) {
       if (error || !data?.user) {
         let tableQuery = supabase
           .from('users')
-          .select('id,email,username,full_name')
+          .select('id,email,username,full_name,role,role_type')
           .eq('password', password);
 
         if (alias.includes('@')) {
@@ -336,7 +336,7 @@ if (loginForm) {
         const defaultAdminEmail = String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim().toLowerCase();
         const roleValue = defaultAdminEmail && String(tableUser.email || '').trim().toLowerCase() === defaultAdminEmail
           ? 'system-admin'
-          : 'admin';
+          : getRoleSlug(tableUser.role_type || tableUser.role) || 'user';
         const mockUser = { user_metadata: { role: roleValue }, role_type: roleValue };
         const isAdmin = isAdminUser(mockUser, tableUser.email || email);
         const rememberMe = Boolean(rememberCheckbox?.checked);

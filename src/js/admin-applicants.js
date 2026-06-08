@@ -8,6 +8,10 @@ const sortFilter = document.getElementById('sort-filter');
 const toggleFiltersBtn = document.getElementById('toggle-filters');
 const filtersPanel = document.getElementById('applicant-filters-panel');
 const bodyEl = document.getElementById('applicants-body');
+const SUPABASE_CONFIG = {
+  url: window.__SUPABASE_URL__ || 'https://ilbneblzkvzebuklyzgn.supabase.co',
+  anonKey: window.__SUPABASE_ANON_KEY__ || 'sb_publishable_UIrAwPGGHGwPavXFV23FwQ_Z1ywfnAg',
+};
 
 let allRows = [];
 const fallbackRows = [
@@ -47,10 +51,11 @@ const fallbackRows = [
 
 function normalizeStatus(status) {
   const raw = (status || '').toLowerCase();
+  if (raw === 'registered') return 'Registered';
   if (raw === 'pending') return 'Under Review';
   if (raw === 'called' || raw === 'interviewed' || raw === 'interview') return 'Interview';
   if (raw === 'shortlisted') return 'Shortlisted';
-  if (raw === 'hired') return 'Hired';
+  if (raw === 'hired' || raw === 'accepted') return 'Hired';
   if (raw === 'rejected') return 'Rejected';
   return 'Under Review';
 }
@@ -66,6 +71,121 @@ function escapeHtml(value = '') {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function hasSupabaseConfig() {
+  return Boolean(SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey);
+}
+
+function getSupabaseHeaders() {
+  return {
+    apikey: SUPABASE_CONFIG.anonKey,
+    Authorization: `Bearer ${SUPABASE_CONFIG.anonKey}`,
+    'Content-Type': 'application/json',
+  };
+}
+
+async function fetchSupabaseJson(path) {
+  if (!hasSupabaseConfig()) return null;
+  const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${path}`, {
+    headers: getSupabaseHeaders(),
+  });
+  if (!response.ok) return null;
+  return response.json();
+}
+
+function getApplicantName(row = {}) {
+  const full = String(row.full_name || row.fullName || '').trim();
+  if (full) return full;
+  const first = String(row.first_name || row.firstName || '').trim();
+  const last = String(row.last_name || row.lastName || '').trim();
+  const combined = `${first} ${last}`.trim();
+  return combined || row.name || row.username || row.email || 'Applicant';
+}
+
+function normalizeApplicant(row = {}) {
+  return {
+    id: row.id || row.user_id || row.applicant_id || '',
+    name: getApplicantName(row),
+    email: row.email || row.user_email || row.contact_number || row.phone || row.applicant_id || row.user_id || '',
+    resume: row.resume || row.resume_path || row.resume_url || row.resume_link || row.resume_file || row.cv || 'N/A',
+    title: row.position || row.job_title || row.title || row.applied_position || 'Applicant Profile',
+    status: row.status || 'Registered',
+    created_at: row.created_at || row.createdAt || '',
+  };
+}
+
+async function loadSupabaseApplicants() {
+  if (!hasSupabaseConfig()) return null;
+
+  const profiles = await fetchSupabaseJson(
+    'profiles?select=user_id,full_name,contact_number,resume_document_id,created_at&role=eq.applicant&order=created_at.desc'
+  );
+  const applications = await fetchSupabaseJson(
+    'applications?select=id,applicant_id,status,created_at,resume_document_id,jobs(title)&order=created_at.desc'
+  );
+
+  if (!Array.isArray(profiles) && !Array.isArray(applications)) return null;
+
+  const profileRows = Array.isArray(profiles) ? profiles : [];
+  const applicationRows = Array.isArray(applications) ? applications : [];
+  const userIds = [...new Set([
+    ...profileRows.map((row) => row.user_id),
+    ...applicationRows.map((row) => row.applicant_id),
+  ].filter(Boolean))];
+  const resumeIds = [...new Set([
+    ...profileRows.map((row) => row.resume_document_id),
+    ...applicationRows.map((row) => row.resume_document_id),
+  ].filter(Boolean))];
+
+  const users = userIds.length
+    ? await fetchSupabaseJson(`users?select=id,email,username,full_name,role,role_type,created_at&id=in.(${userIds.join(',')})`) || []
+    : [];
+  const documents = resumeIds.length
+    ? await fetchSupabaseJson(`documents?select=id,path&id=in.(${resumeIds.join(',')})`) || []
+    : [];
+
+  const profilesByUser = new Map(profileRows.map((row) => [row.user_id, row]));
+  const usersById = new Map(users.map((row) => [row.id, row]));
+  const docsById = new Map(documents.map((row) => [row.id, row]));
+  const applicationUserIds = new Set(applicationRows.map((row) => row.applicant_id));
+
+  const appliedRows = applicationRows.map((application) => {
+    const profile = profilesByUser.get(application.applicant_id) || {};
+    const user = usersById.get(application.applicant_id) || {};
+    const resume = docsById.get(application.resume_document_id || profile.resume_document_id);
+    return normalizeApplicant({
+      id: application.id,
+      applicant_id: application.applicant_id,
+      full_name: profile.full_name || user.full_name || user.username,
+      email: user.email,
+      contact_number: profile.contact_number,
+      resume_path: resume?.path,
+      title: application.jobs?.title,
+      status: application.status,
+      created_at: application.created_at,
+    });
+  });
+
+  const registeredRows = profileRows
+    .filter((profile) => !applicationUserIds.has(profile.user_id))
+    .map((profile) => {
+      const user = usersById.get(profile.user_id) || {};
+      const resume = docsById.get(profile.resume_document_id);
+      return normalizeApplicant({
+        id: profile.user_id,
+        user_id: profile.user_id,
+        full_name: profile.full_name || user.full_name || user.username,
+        email: user.email,
+        contact_number: profile.contact_number,
+        resume_path: resume?.path,
+        title: 'Applicant Profile',
+        status: 'Registered',
+        created_at: profile.created_at,
+      });
+    });
+
+  return [...appliedRows, ...registeredRows];
 }
 
 function populatePositionFilter(rows) {
@@ -160,7 +280,10 @@ function renderTable() {
 
 async function loadApplicants() {
   try {
-    allRows = await request('/admin/applicants');
+    const supabaseRows = await loadSupabaseApplicants();
+    allRows = Array.isArray(supabaseRows) && supabaseRows.length
+      ? supabaseRows
+      : await request('/admin/applicants');
     populatePositionFilter(allRows);
     renderTable();
   } catch (error) {

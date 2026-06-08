@@ -22,11 +22,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const notifyList = document.getElementById('notify-list');
     const notifyBadge = document.getElementById('notify-badge');
     const notifyClear = document.getElementById('notify-clear');
+    const profileModal = document.getElementById('profile-modal');
+    const profileModalClose = document.getElementById('profile-modal-close');
+    const profileModalDone = document.getElementById('profile-modal-done');
+    const profileModalEdit = document.getElementById('profile-modal-edit');
+    const profileModalRestrict = document.getElementById('profile-modal-restrict');
+    const settingsSaveBtn = document.getElementById('settings-save-btn');
+    const settingsLogReset = document.getElementById('settings-log-reset');
+    const logsClearBtn = document.getElementById('logs-clear-btn');
+    const logsExportBtn = document.getElementById('logs-export-btn');
+    const logThemeSetting = document.getElementById('log-theme-setting');
+    const logFontSetting = document.getElementById('log-font-setting');
+    const logDensitySetting = document.getElementById('log-density-setting');
+    const logWrapSetting = document.getElementById('log-wrap-setting');
     const FORGOT_REQUESTS_KEY = 'qs_forgot_requests';
     let homePostsCache = [];
     let activeContextPostId = null;
     let activeApplicantId = null;
     let currentEditingPostId = null;
+    const dashboardStats = {
+        totalApplicants: document.getElementById('total-applicants-count'),
+        activeJobs: document.getElementById('active-jobs-count'),
+        interviews: document.getElementById('interviews-count'),
+        totalHires: document.getElementById('total-hires-count')
+    };
 
     function hasSupabaseConfig() {
         return Boolean(SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey);
@@ -41,6 +60,84 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (prefer) headers.Prefer = prefer;
         return headers;
+    }
+
+    function setDashboardStat(key, value) {
+        const node = dashboardStats[key];
+        if (!node) return;
+        node.textContent = Number.isFinite(Number(value)) ? Number(value).toLocaleString() : '0';
+    }
+
+    async function countSupabaseRows(path) {
+        if (!hasSupabaseConfig()) return null;
+
+        const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${path}`, {
+            method: 'HEAD',
+            headers: {
+                ...getSupabaseHeaders(),
+                Prefer: 'count=exact'
+            }
+        });
+
+        if (!response.ok) return null;
+
+        const range = response.headers.get('content-range') || '';
+        const count = Number.parseInt(range.split('/').pop(), 10);
+        return Number.isFinite(count) ? count : null;
+    }
+
+    async function firstCount(paths) {
+        for (const path of paths) {
+            try {
+                const count = await countSupabaseRows(path);
+                if (count !== null) return count;
+            } catch (error) {
+                continue;
+            }
+        }
+        return null;
+    }
+
+    async function loadDashboardStats() {
+        const fallbackCounts = {
+            totalApplicants: applicantsData.length,
+            activeJobs: homePostsCache.filter((post) => post.status === 'published').length || homePostsCache.length,
+            interviews: applicantsData.filter((row) => getApplicantStatusClass(row.status) === 'interview').length,
+            totalHires: applicantsData.filter((row) => ['hired', 'accepted'].includes(getApplicantStatusClass(row.status))).length
+        };
+
+        try {
+            const [totalApplicants, activeJobs, interviews, totalHires] = await Promise.all([
+                firstCount([
+                    'profiles?select=user_id&role=eq.applicant',
+                    'applications?select=id',
+                    'users?select=id'
+                ]),
+                firstCount([
+                    'jobs?select=id&is_active=eq.true',
+                    'job_templates?select=id&status=eq.published',
+                    'jobs?select=id'
+                ]),
+                firstCount([
+                    'interviews?select=id',
+                    'applications?select=id&status=in.(interview,Interview)'
+                ]),
+                firstCount([
+                    'applications?select=id&status=in.(accepted,Hired,hired)'
+                ])
+            ]);
+
+            setDashboardStat('totalApplicants', totalApplicants ?? fallbackCounts.totalApplicants);
+            setDashboardStat('activeJobs', activeJobs ?? fallbackCounts.activeJobs);
+            setDashboardStat('interviews', interviews ?? fallbackCounts.interviews);
+            setDashboardStat('totalHires', totalHires ?? fallbackCounts.totalHires);
+        } catch (error) {
+            console.error(error);
+            setDashboardStat('totalApplicants', fallbackCounts.totalApplicants);
+            setDashboardStat('activeJobs', fallbackCounts.activeJobs);
+            setDashboardStat('interviews', fallbackCounts.interviews);
+            setDashboardStat('totalHires', fallbackCounts.totalHires);
+        }
     }
 
     function normalizeJobTemplate(row) {
@@ -83,6 +180,107 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    document.querySelectorAll('[data-settings-tab]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const target = button.dataset.settingsTab;
+            document.querySelectorAll('[data-settings-tab]').forEach((item) => {
+                item.classList.toggle('is-active', item === button);
+            });
+            document.querySelectorAll('[data-settings-panel]').forEach((panel) => {
+                panel.classList.toggle('is-active', panel.dataset.settingsPanel === target);
+            });
+        });
+    });
+
+    settingsSaveBtn?.addEventListener('click', () => {
+        const settings = {};
+        document.querySelectorAll('#settings-panel input, #settings-panel select').forEach((field) => {
+            const key = field.closest('label')?.querySelector('span')?.textContent || field.id || field.name;
+            settings[key] = field.type === 'checkbox' ? field.checked : field.value;
+        });
+        localStorage.setItem('qs_admin_settings', JSON.stringify(settings));
+        showToast('Settings saved locally.');
+    });
+
+    function getLogSettings() {
+        try {
+            return JSON.parse(localStorage.getItem('qs_admin_log_design') || '{}');
+        } catch (error) {
+            return {};
+        }
+    }
+
+    function applyLogDesign(settings = getLogSettings()) {
+        const terminal = document.getElementById('settings-log-terminal');
+        if (!terminal) return;
+        const theme = settings.theme || 'dark';
+        const font = settings.font || 'small';
+        const density = settings.density || 'compact';
+        const wrap = settings.wrap || 'nowrap';
+
+        terminal.classList.remove(
+            'log-theme-dark',
+            'log-theme-green',
+            'log-theme-light',
+            'log-font-small',
+            'log-font-medium',
+            'log-font-large',
+            'log-density-compact',
+            'log-density-comfortable',
+            'log-wrap-nowrap',
+            'log-wrap-wrap'
+        );
+        terminal.classList.add(
+            `log-theme-${theme}`,
+            `log-font-${font}`,
+            `log-density-${density}`,
+            `log-wrap-${wrap}`
+        );
+
+        if (logThemeSetting) logThemeSetting.value = theme;
+        if (logFontSetting) logFontSetting.value = font;
+        if (logDensitySetting) logDensitySetting.value = density;
+        if (logWrapSetting) logWrapSetting.value = wrap;
+    }
+
+    function saveLogDesign() {
+        const settings = {
+            theme: logThemeSetting?.value || 'dark',
+            font: logFontSetting?.value || 'small',
+            density: logDensitySetting?.value || 'compact',
+            wrap: logWrapSetting?.value || 'nowrap'
+        };
+        localStorage.setItem('qs_admin_log_design', JSON.stringify(settings));
+        applyLogDesign(settings);
+    }
+
+    [logThemeSetting, logFontSetting, logDensitySetting, logWrapSetting].forEach((control) => {
+        control?.addEventListener('change', saveLogDesign);
+    });
+
+    settingsLogReset?.addEventListener('click', () => {
+        localStorage.removeItem('qs_admin_log_design');
+        applyLogDesign({ theme: 'dark', font: 'small', density: 'compact', wrap: 'nowrap' });
+        showToast('Log design reset.');
+    });
+
+    logsClearBtn?.addEventListener('click', () => {
+        const terminal = document.getElementById('settings-log-terminal');
+        if (!terminal) return;
+        terminal.innerHTML = '<div><time>Just now</time><span>Current Admin</span><strong>LOGIN</strong><em>Account log view cleared by admin</em><code>ADMIN</code></div>';
+        showToast('Log view cleared.');
+    });
+
+    logsExportBtn?.addEventListener('click', () => {
+        const rows = Array.from(document.querySelectorAll('#settings-log-terminal div')).map((row) => row.textContent.trim());
+        const blob = new Blob([rows.join('\n')], { type: 'text/plain;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'account-logs.txt';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    });
+
     // Tab & Navigation Logic
     const config = {
         dashboard: 'Dashboard',
@@ -90,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         users: 'Users',
         jobs: 'Job Templates',
         posts: 'Home Posts',
+        logs: 'Logs',
         settings: 'Settings'
     };
 
@@ -140,7 +339,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    sidebarLinks.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); switchTab(link.dataset.tab); }));
+    sidebarLinks.forEach(link => link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = link.dataset.tab;
+        window.location.hash = target;
+        switchTab(target);
+    }));
     switchTab('dashboard');
 
     function getForgotRequests() {
@@ -312,6 +516,50 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/\b\w/g, (char) => char.toUpperCase());
     }
 
+    function formatProfileDate(value) {
+        if (!value) return '-';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '-';
+        return date.toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    function setProfileField(id, value) {
+        const node = document.getElementById(id);
+        if (!node) return;
+        node.textContent = value || '-';
+    }
+
+    function openProfileModal(profile) {
+        if (!profileModal) return;
+        const name = profile.name || 'User';
+        const role = formatRoleLabel(profile.role || 'applicant');
+        const initial = name.trim().charAt(0).toUpperCase() || 'U';
+
+        setProfileField('profile-modal-avatar', initial);
+        setProfileField('profile-modal-type', profile.type || 'Profile');
+        setProfileField('profile-modal-name', name);
+        setProfileField('profile-modal-role', role);
+        setProfileField('profile-modal-email', profile.email);
+        setProfileField('profile-modal-title', profile.title || profile.position || profile.role);
+        setProfileField('profile-modal-status', profile.status || role);
+        setProfileField('profile-modal-date', formatProfileDate(profile.date || profile.created_at));
+
+        profileModal.classList.add('is-open');
+        profileModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeProfileModal() {
+        if (!profileModal) return;
+        profileModal.classList.remove('is-open');
+        profileModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
     function formatApplicantStatus(status) {
         return String(status || '')
             .replace(/[-_]+/g, ' ')
@@ -335,13 +583,99 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function normalizeApplicant(row) {
         return {
+            id: row?.id || row?.user_id || row?.applicant_id || '',
             name: getApplicantName(row),
-            email: row?.email || row?.user_email || '',
-            resume: row?.resume || row?.resume_url || row?.resume_link || row?.resume_file || row?.cv || 'N/A',
+            email: row?.email || row?.user_email || row?.contact_number || row?.phone || row?.applicant_id || row?.user_id || '',
+            resume: row?.resume || row?.resume_url || row?.resume_link || row?.resume_file || row?.cv || row?.resume_path || 'N/A',
             title: row?.position || row?.job_title || row?.title || row?.applied_position || 'Applicant',
             status: row?.status || 'Under Review',
             date: row?.created_at || row?.createdAt || ''
         };
+    }
+
+    async function fetchSupabaseJson(path) {
+        if (!hasSupabaseConfig()) return null;
+        const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${path}`, {
+            headers: getSupabaseHeaders()
+        });
+        if (!response.ok) return null;
+        return response.json();
+    }
+
+    async function loadSupabaseApplicants() {
+        if (!hasSupabaseConfig()) return null;
+
+        const profiles = await fetchSupabaseJson(
+            'profiles?select=user_id,full_name,contact_number,resume_document_id,created_at&role=eq.applicant&order=created_at.desc'
+        );
+        const applications = await fetchSupabaseJson(
+            'applications?select=id,applicant_id,status,created_at,resume_document_id,jobs(title)&order=created_at.desc'
+        );
+
+        if (!Array.isArray(profiles) && !Array.isArray(applications)) return null;
+
+        const profileRows = Array.isArray(profiles) ? profiles : [];
+        const applicationRows = Array.isArray(applications) ? applications : [];
+        const userIds = [...new Set([
+            ...profileRows.map((row) => row.user_id),
+            ...applicationRows.map((row) => row.applicant_id)
+        ].filter(Boolean))];
+        const resumeIds = [...new Set([
+            ...profileRows.map((row) => row.resume_document_id),
+            ...applicationRows.map((row) => row.resume_document_id)
+        ].filter(Boolean))];
+
+        let users = [];
+        if (userIds.length) {
+            users = await fetchSupabaseJson(`users?select=id,email,username,full_name,role,role_type,created_at&id=in.(${userIds.join(',')})`) || [];
+        }
+
+        let documents = [];
+        if (resumeIds.length) {
+            documents = await fetchSupabaseJson(`documents?select=id,path&id=in.(${resumeIds.join(',')})`) || [];
+        }
+
+        const profilesByUser = new Map(profileRows.map((row) => [row.user_id, row]));
+        const usersById = new Map(users.map((row) => [row.id, row]));
+        const docsById = new Map(documents.map((row) => [row.id, row]));
+        const applicationUserIds = new Set(applicationRows.map((row) => row.applicant_id));
+
+        const applicationApplicants = applicationRows.map((application) => {
+            const profile = profilesByUser.get(application.applicant_id) || {};
+            const user = usersById.get(application.applicant_id) || {};
+            const resume = docsById.get(application.resume_document_id || profile.resume_document_id);
+            return normalizeApplicant({
+                id: application.id,
+                applicant_id: application.applicant_id,
+                full_name: profile.full_name || user.full_name || user.username,
+                email: user.email,
+                contact_number: profile.contact_number,
+                resume_path: resume?.path,
+                title: application.jobs?.title,
+                status: application.status,
+                created_at: application.created_at
+            });
+        });
+
+        const registeredApplicants = profileRows
+            .filter((profile) => !applicationUserIds.has(profile.user_id))
+            .map((profile) => {
+                const user = usersById.get(profile.user_id) || {};
+                const resume = docsById.get(profile.resume_document_id);
+                return normalizeApplicant({
+                    id: profile.user_id,
+                    user_id: profile.user_id,
+                    full_name: profile.full_name || user.full_name || user.username,
+                    email: user.email,
+                    contact_number: profile.contact_number,
+                    resume_path: resume?.path,
+                    title: 'Applicant Profile',
+                    status: 'Registered',
+                    created_at: profile.created_at
+                });
+            });
+
+        return [...applicationApplicants, ...registeredApplicants];
     }
 
     function renderApplicants(rows = applicantsData) {
@@ -359,11 +693,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadApplicants() {
+        try {
+            const supabaseApplicants = await loadSupabaseApplicants();
+            if (Array.isArray(supabaseApplicants) && supabaseApplicants.length) {
+                applicantsData = supabaseApplicants;
+                renderApplicants();
+                loadDashboardStats();
+                return;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
         const endpoints = [
             `${API_BASE}/applicants`,
-            `${API_BASE}/auth/applicants`,
-            `${API_BASE}/auth/users`,
-            `${API_BASE}/users`
+            `${API_BASE}/admin/applicants`
         ];
 
         for (const url of endpoints) {
@@ -384,6 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!list) continue;
                 applicantsData = list.map(normalizeApplicant);
                 renderApplicants();
+                loadDashboardStats();
                 return;
             } catch (error) {
                 continue;
@@ -422,7 +767,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const applicant = getApplicantById(applicantId);
         if (!applicant) return;
         closeApplicantContextMenu();
-        showToast(`Profile: ${applicant.name} - ${applicant.title}`);
+        openProfileModal({
+            type: 'Applicant Profile',
+            name: applicant.name,
+            email: applicant.email,
+            role: 'applicant',
+            title: applicant.title,
+            status: formatApplicantStatus(applicant.status),
+            date: applicant.date
+        });
     }
 
     function archiveApplicant(applicantId) {
@@ -492,6 +845,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 const menu = btn.closest('.action-menu');
                 const email = String(menu?.dataset.email || '').trim().toLowerCase();
                 if (!email || !action) return;
+                const selectedUser = usersData.find((user) => String(user.email || '').trim().toLowerCase() === email);
+
+                if (action === 'view') {
+                    openProfileModal({
+                        type: 'Admin User',
+                        name: selectedUser?.name || email,
+                        email,
+                        role: selectedUser?.role || 'admin',
+                        title: 'Admin account',
+                        status: formatRoleLabel(selectedUser?.role || 'admin'),
+                        date: selectedUser?.created_at
+                    });
+                    closeUserActionMenus();
+                    return;
+                }
 
                 if (action === 'delete') {
                     if (hasSupabaseConfig()) {
@@ -1090,6 +1458,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!hasSupabaseConfig()) {
             homePostsCache = localDraft ? [localDraft] : [];
             renderHomePosts();
+            loadDashboardStats();
             return;
         }
 
@@ -1105,10 +1474,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 ...rows.map(normalizeJobTemplate)
             ];
             renderHomePosts();
+            loadDashboardStats();
         } catch (error) {
             console.error(error);
             homePostsCache = localDraft ? [localDraft] : [];
             renderHomePosts();
+            loadDashboardStats();
             showToast('Could not load published templates from Supabase.');
         }
     }
@@ -1367,6 +1738,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (action !== 'archive' && action !== 'start') closeApplicantContextMenu();
     });
 
+    profileModalClose?.addEventListener('click', closeProfileModal);
+    profileModalDone?.addEventListener('click', closeProfileModal);
+    profileModal?.addEventListener('click', (e) => {
+        if (e.target === profileModal) closeProfileModal();
+    });
+    profileModalEdit?.addEventListener('click', () => {
+        showToast('Edit profile coming soon.');
+    });
+    profileModalRestrict?.addEventListener('click', () => {
+        showToast('Restrict action ready for backend connection.');
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeProfileModal();
+    });
+
     document.addEventListener('click', (e) => {
         if (!e.target.closest('#post-context-menu')) closePostContextMenu();
         if (!e.target.closest('#applicant-context-menu')) closeApplicantContextMenu();
@@ -1433,5 +1820,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUsers();
     syncPreview();
     loadHomePosts();
+    applyLogDesign();
+    loadDashboardStats();
     renderCurrentUserProfile();
 });
