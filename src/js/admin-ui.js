@@ -381,11 +381,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function switchTab(id) {
         const panels = document.querySelectorAll('.admin-section');
         const activePanel = document.getElementById(`${id}-panel`) || document.getElementById('placeholder-panel');
-        panels.forEach(p => p.classList.remove('is-active'));
+        panels.forEach((panel) => {
+            const isActive = panel === activePanel;
+            panel.hidden = !isActive;
+            panel.classList.toggle('is-active', isActive);
+        });
         if (activePanel === document.getElementById('placeholder-panel')) {
             activePanel.querySelector('h2').textContent = config[id] || id;
         }
-        activePanel?.classList.add('is-active');
 
         sidebarLinks.forEach(link => link.classList.toggle('active', link.dataset.tab === id));
         updateTabBar(id);
@@ -2079,14 +2082,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabPanels = Array.from(document.querySelectorAll('[data-tab-panel]'));
     function setActiveTab(tabId) {
         const targetId = tabId || 'dashboard';
-        tabPanels.forEach((panel) => {
-            const isActive = panel.id === (targetId + '-panel');
-            panel.hidden = !isActive;
-            panel.classList.toggle('is-active', isActive);
-        });
         sidebarLinks.forEach((link) => link.classList.toggle('active', link.dataset.tab === targetId));
         switchTab(targetId);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     window.addEventListener('hashchange', () => setActiveTab(window.location.hash.replace('#', '') || 'dashboard'));
