@@ -35,6 +35,15 @@ if (togglePasswordBtn && passwordInput) {
   });
 }
 
+document.addEventListener('keydown', (event) => {
+  if (!event.shiftKey || event.key.toLowerCase() !== 'u') return;
+  const activeField = event.target.closest('input, textarea, select, [contenteditable="true"]');
+  if (activeField) return;
+
+  event.preventDefault();
+  window.location.href = 'pages/admin-ui.html#users';
+});
+
 const SUPABASE_CONFIG = {
   url: window.__SUPABASE_URL__ || 'https://ilbneblzkvzebuklyzgn.supabase.co',
   anonKey: window.__SUPABASE_ANON_KEY__ || '',

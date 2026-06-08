@@ -95,6 +95,11 @@
 							<div class="stat-label">Total Applicants</div>
 						</div>
 						<div class="stat-card">
+							<div class="stat-icon"><i class="fa-solid fa-user-shield"></i></div>
+							<div class="stat-val" id="registered-users-count">0</div>
+							<div class="stat-label">Registered Users</div>
+						</div>
+						<div class="stat-card">
 							<div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
 							<div class="stat-val" id="active-jobs-count">0</div>
 							<div class="stat-label">Active Jobs</div>
@@ -109,6 +114,47 @@
 							<div class="stat-val" id="total-hires-count">0</div>
 							<div class="stat-label">Total Hires</div>
 						</div>
+					</div>
+
+					<div class="dashboard-insight-grid">
+						<section class="dashboard-panel dashboard-panel-wide">
+							<div class="dashboard-panel-head">
+								<div>
+									<h2>Account Created</h2>
+									<p>Latest registered users and applicants.</p>
+								</div>
+								<i class="fa-solid fa-user-plus"></i>
+							</div>
+							<div class="dashboard-mini-table" id="dashboard-created-accounts">
+								<p class="dashboard-empty">No account activity yet.</p>
+							</div>
+						</section>
+
+						<section class="dashboard-panel">
+							<div class="dashboard-panel-head">
+								<div>
+									<h2>Applicant Status</h2>
+									<p>Current application pipeline.</p>
+								</div>
+								<i class="fa-solid fa-chart-simple"></i>
+							</div>
+							<div class="dashboard-status-list" id="dashboard-status-summary">
+								<p class="dashboard-empty">No applicant status yet.</p>
+							</div>
+						</section>
+
+						<section class="dashboard-panel dashboard-panel-full">
+							<div class="dashboard-panel-head">
+								<div>
+									<h2>Needs Interview / Pending</h2>
+									<p>Applicants that need follow-up.</p>
+								</div>
+								<i class="fa-solid fa-calendar-plus"></i>
+							</div>
+							<div class="dashboard-interview-list" id="dashboard-needs-interview">
+								<p class="dashboard-empty">No pending applicants right now.</p>
+							</div>
+						</section>
 					</div>
 				</section>
 				
@@ -186,6 +232,7 @@
 								</div>
 								<div class="builder-card">
 									<h3><i class="fa-solid fa-pen-to-square"></i> Job Description</h3>
+									<div class="job-description-grid">
 									<div class="form-group full">
 										<label>Responsibilities</label>
 										<textarea id="p-desc" placeholder="List responsibilities (one per line)..."></textarea>
@@ -200,6 +247,7 @@
 										<label>Benefits</label>
 										<textarea id="p-ben" placeholder="List benefits (one per line)..."></textarea>
 										<div class="char-counter">0 / 1000</div>
+									</div>
 									</div>
 								</div>
 								<div class="builder-card">

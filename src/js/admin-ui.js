@@ -42,10 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentEditingPostId = null;
     const dashboardStats = {
         totalApplicants: document.getElementById('total-applicants-count'),
+        registeredUsers: document.getElementById('registered-users-count'),
         activeJobs: document.getElementById('active-jobs-count'),
         interviews: document.getElementById('interviews-count'),
         totalHires: document.getElementById('total-hires-count')
     };
+    const dashboardCreatedAccounts = document.getElementById('dashboard-created-accounts');
+    const dashboardStatusSummary = document.getElementById('dashboard-status-summary');
+    const dashboardNeedsInterview = document.getElementById('dashboard-needs-interview');
 
     function hasSupabaseConfig() {
         return Boolean(SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey);
@@ -101,16 +105,20 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadDashboardStats() {
         const fallbackCounts = {
             totalApplicants: applicantsData.length,
+            registeredUsers: usersData.length,
             activeJobs: homePostsCache.filter((post) => post.status === 'published').length || homePostsCache.length,
             interviews: applicantsData.filter((row) => getApplicantStatusClass(row.status) === 'interview').length,
             totalHires: applicantsData.filter((row) => ['hired', 'accepted'].includes(getApplicantStatusClass(row.status))).length
         };
 
         try {
-            const [totalApplicants, activeJobs, interviews, totalHires] = await Promise.all([
+            const [totalApplicants, registeredUsers, activeJobs, interviews, totalHires] = await Promise.all([
                 firstCount([
-                    'profiles?select=user_id&role=eq.applicant',
-                    'applications?select=id',
+                    'profiles?select=user_id&role=eq.applicant'
+                ]),
+                firstCount([
+                    'profiles?select=user_id&role=in.(admin,system-admin,employer)',
+                    'admins?select=id',
                     'users?select=id'
                 ]),
                 firstCount([
@@ -128,15 +136,19 @@ document.addEventListener('DOMContentLoaded', () => {
             ]);
 
             setDashboardStat('totalApplicants', totalApplicants ?? fallbackCounts.totalApplicants);
+            setDashboardStat('registeredUsers', registeredUsers ?? fallbackCounts.registeredUsers);
             setDashboardStat('activeJobs', activeJobs ?? fallbackCounts.activeJobs);
             setDashboardStat('interviews', interviews ?? fallbackCounts.interviews);
             setDashboardStat('totalHires', totalHires ?? fallbackCounts.totalHires);
+            renderDashboardOverview();
         } catch (error) {
             console.error(error);
             setDashboardStat('totalApplicants', fallbackCounts.totalApplicants);
+            setDashboardStat('registeredUsers', fallbackCounts.registeredUsers);
             setDashboardStat('activeJobs', fallbackCounts.activeJobs);
             setDashboardStat('interviews', fallbackCounts.interviews);
             setDashboardStat('totalHires', fallbackCounts.totalHires);
+            renderDashboardOverview();
         }
     }
 
@@ -499,7 +511,8 @@ document.addEventListener('DOMContentLoaded', () => {
             id: row?.id || row?.user_id || row?.userId || '',
             name: getUserDisplayName(row),
             email,
-            role
+            role,
+            created_at: row?.created_at || row?.createdAt || row?.registered_at || ''
         };
     }
 
@@ -525,6 +538,92 @@ document.addEventListener('DOMContentLoaded', () => {
             month: 'short',
             day: 'numeric'
         });
+    }
+
+    function escapeDashboardText(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function getStatusCount(statuses) {
+        const allowed = new Set(statuses);
+        return applicantsData.filter((row) => allowed.has(getApplicantStatusClass(row.status))).length;
+    }
+
+    function renderDashboardOverview() {
+        if (dashboardCreatedAccounts) {
+            const accountRows = [
+                ...usersData.map((user) => ({
+                    name: user.name || user.email || 'User',
+                    email: user.email || 'No email',
+                    role: formatRoleLabel(user.role || 'User'),
+                    date: user.created_at || ''
+                })),
+                ...applicantsData.map((applicant) => ({
+                    name: applicant.name || 'Applicant',
+                    email: applicant.email || 'No email',
+                    role: 'Applicant',
+                    date: applicant.date || ''
+                }))
+            ].sort((a, b) => {
+                const aTime = new Date(a.date || 0).getTime() || 0;
+                const bTime = new Date(b.date || 0).getTime() || 0;
+                return bTime - aTime;
+            }).slice(0, 6);
+
+            dashboardCreatedAccounts.innerHTML = accountRows.length
+                ? accountRows.map((row) => `
+                    <div class="dashboard-table-row">
+                        <div class="dashboard-person">
+                            <strong>${escapeDashboardText(row.name)}</strong>
+                            <span>${escapeDashboardText(row.email)}</span>
+                        </div>
+                        <span class="dashboard-role">${escapeDashboardText(row.role)}</span>
+                        <time>${escapeDashboardText(formatProfileDate(row.date))}</time>
+                    </div>
+                `).join('')
+                : '<p class="dashboard-empty">No account activity yet.</p>';
+        }
+
+        if (dashboardStatusSummary) {
+            const statusItems = [
+                { label: 'Pending / Review', icon: 'fa-hourglass-half', count: getStatusCount(['pending', 'under-review', 'registered', 'reviewing', 'started']) },
+                { label: 'Need Interview', icon: 'fa-calendar-check', count: getStatusCount(['interview', 'for-interview', 'scheduled']) },
+                { label: 'Hired', icon: 'fa-handshake', count: getStatusCount(['hired', 'accepted']) },
+                { label: 'Rejected / Archived', icon: 'fa-box-archive', count: getStatusCount(['rejected', 'archived']) }
+            ];
+
+            dashboardStatusSummary.innerHTML = statusItems.map((item) => `
+                <div class="dashboard-status-item">
+                    <span><i class="fa-solid ${item.icon}"></i>${item.label}</span>
+                    <strong>${item.count}</strong>
+                </div>
+            `).join('');
+        }
+
+        if (dashboardNeedsInterview) {
+            const followUpStatuses = new Set(['pending', 'under-review', 'registered', 'reviewing', 'started', 'interview', 'for-interview', 'scheduled']);
+            const followUps = applicantsData
+                .filter((row) => followUpStatuses.has(getApplicantStatusClass(row.status)))
+                .slice(0, 6);
+
+            dashboardNeedsInterview.innerHTML = followUps.length
+                ? followUps.map((row) => `
+                    <div class="dashboard-follow-row">
+                        <div>
+                            <strong>${escapeDashboardText(row.name)}</strong>
+                            <span>${escapeDashboardText(row.title || 'Applicant')}</span>
+                        </div>
+                        <span class="status ${getApplicantStatusClass(row.status)}">${escapeDashboardText(formatApplicantStatus(row.status))}</span>
+                        <time>${escapeDashboardText(formatProfileDate(row.date))}</time>
+                    </div>
+                `).join('')
+                : '<p class="dashboard-empty">No pending applicants right now.</p>';
+        }
     }
 
     function setProfileField(id, value) {
@@ -783,6 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!applicant) return;
         applicant.status = 'Archived';
         renderApplicants();
+        renderDashboardOverview();
         closeApplicantContextMenu();
         showToast(`${applicant.name} archived.`);
     }
@@ -792,6 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!applicant) return;
         applicant.status = 'Started';
         renderApplicants();
+        renderDashboardOverview();
         closeApplicantContextMenu();
         showToast(`${applicant.name} started.`);
     }
@@ -912,26 +1013,31 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadUsers() {
         if (!hasSupabaseConfig()) {
             renderUsers(usersData);
+            loadDashboardStats();
             return;
         }
 
         try {
-            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users?select=id,email,username,full_name`, {
+            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users?select=id,email,username,full_name,role,role_type,created_at`, {
                 headers: getSupabaseHeaders()
             });
             if (!resp.ok) {
                 renderUsers(usersData);
+                loadDashboardStats();
                 return;
             }
             const rows = await resp.json().catch(() => []);
             if (!Array.isArray(rows)) {
                 renderUsers(usersData);
+                loadDashboardStats();
                 return;
             }
             usersData = rows.map(normalizeAdminUser);
             renderUsers(usersData);
+            loadDashboardStats();
         } catch (error) {
             renderUsers(usersData);
+            loadDashboardStats();
             return;
         }
     }
@@ -1752,6 +1858,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeProfileModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (!e.shiftKey || e.key.toLowerCase() !== 'u') return;
+        const activeField = e.target.closest('input, textarea, select, [contenteditable="true"]');
+        if (activeField) return;
+
+        e.preventDefault();
+        window.location.hash = '#users';
+        switchTab('users');
     });
 
     document.addEventListener('click', (e) => {
