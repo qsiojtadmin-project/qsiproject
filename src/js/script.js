@@ -449,11 +449,46 @@ const jobs = [
     posted: '2 days ago',
     summary: 'Work with partner companies and applicants to ensure smooth onboarding and placement support.',
   },
+  {
+    title: 'Recruitment Associate',
+    company: 'QuestServ Solutions',
+    type: 'On-site',
+    salary: 20000,
+    location: 'Pasig',
+    posted: '3 days ago',
+    summary: 'Assist the hiring team with interview scheduling, onboarding checklists, and candidate follow-ups.',
+  },
 ];
 
+const JOBS_PER_PAGE = 3;
+const TOTAL_PAGES = 5;
+let activeJobs = [...jobs];
+let currentJobsPage = 1;
 
-function renderJobs(list) {
-  const jobMarkup = list
+const paginationRoot = document.querySelector('.jobs-pagination-controls');
+const paginationButtons = paginationRoot
+  ? Array.from(paginationRoot.querySelectorAll('.jobs-page-button'))
+  : [];
+const paginationPrevBtn = paginationButtons[0] || null;
+const paginationNextBtn = paginationButtons[paginationButtons.length - 1] || null;
+const paginationPageButtons = paginationButtons
+  .slice(1, -1)
+  .filter((button) => !button.classList.contains('jobs-page-dots'));
+const paginationDotsBtn = paginationRoot?.querySelector('.jobs-page-dots') || null;
+
+function getTotalPages() {
+  return Math.max(1, TOTAL_PAGES);
+}
+
+function renderJobs(list, page = 1) {
+  const total = list.length;
+  const totalPages = getTotalPages();
+  const safePage = Math.min(Math.max(page, 1), totalPages);
+  const startIndex = (safePage - 1) * JOBS_PER_PAGE;
+  const pageItems = list.slice(startIndex, startIndex + JOBS_PER_PAGE);
+  const endIndex = Math.min(startIndex + pageItems.length, total);
+
+  const jobMarkup = pageItems
     .map(
       (job) => `
         <article class="job-card">
@@ -484,16 +519,49 @@ function renderJobs(list) {
   }
 
   if (jobsTotalCount) {
-    jobsTotalCount.textContent = `${list.length} Total`;
+    jobsTotalCount.textContent = `${total} Total`;
   }
 
   if (homeJobsTotalCount) {
-    homeJobsTotalCount.textContent = `${list.length} Total`;
+    homeJobsTotalCount.textContent = `${total} Total`;
   }
 
   if (jobsPaginationText) {
-    jobsPaginationText.textContent = `Showing ${list.length} results`;
+    jobsPaginationText.textContent = pageItems.length
+      ? `Showing ${startIndex + 1}-${endIndex} of ${total} results`
+      : 'Showing 0 results';
   }
+
+  updatePaginationControls(safePage);
+}
+
+function updatePaginationControls(page) {
+  if (!paginationRoot) return;
+  const totalPages = getTotalPages();
+  const windowSize = paginationPageButtons.length || 3;
+  const maxStart = Math.max(1, totalPages - windowSize + 1);
+  const windowStart = Math.min(Math.max(page - 1, 1), maxStart);
+
+  paginationPageButtons.forEach((button, index) => {
+    const pageNumber = windowStart + index;
+    button.hidden = pageNumber > totalPages;
+    button.textContent = String(pageNumber);
+    button.disabled = pageNumber === page;
+    button.classList.toggle('is-current', pageNumber === page);
+  });
+
+  if (paginationDotsBtn) {
+    paginationDotsBtn.hidden = totalPages <= paginationPageButtons.length;
+  }
+
+  if (paginationPrevBtn) paginationPrevBtn.disabled = page <= 1;
+  if (paginationNextBtn) paginationNextBtn.disabled = page >= totalPages;
+}
+
+function setJobsPage(page) {
+  const totalPages = getTotalPages();
+  currentJobsPage = Math.min(Math.max(page, 1), totalPages);
+  renderJobs(activeJobs, currentJobsPage);
 }
 
 function setFilterMenu(open) {
@@ -540,7 +608,8 @@ function applyDropdownFilters() {
     return matchesTitle && matchesSalary && matchesType;
   });
 
-  renderJobs(filteredJobs);
+  activeJobs = filteredJobs;
+  setJobsPage(1);
 }
 
 if (filterDropdownForm) {
@@ -554,16 +623,39 @@ if (filterDropdownForm) {
   if (clearButton) {
     clearButton.addEventListener('click', () => {
       filterDropdownForm.reset();
-      renderJobs(jobs);
+        activeJobs = [...jobs];
+        setJobsPage(1);
     });
   }
 }
 
 if (jobFilterForm) {
   jobFilterForm.addEventListener('submit', () => {
-    renderJobs(jobs);
+    activeJobs = [...jobs];
+    setJobsPage(1);
   });
 }
+
+if (paginationPrevBtn) {
+  paginationPrevBtn.addEventListener('click', () => {
+    setJobsPage(currentJobsPage - 1);
+  });
+}
+
+if (paginationNextBtn) {
+  paginationNextBtn.addEventListener('click', () => {
+    setJobsPage(currentJobsPage + 1);
+  });
+}
+
+paginationPageButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const pageNumber = Number(button.textContent);
+    if (!Number.isNaN(pageNumber)) {
+      setJobsPage(pageNumber);
+    }
+  });
+});
 
 document.addEventListener('keydown', (event) => {
   if (!event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) {
@@ -594,5 +686,5 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-renderJobs(jobs);
+setJobsPage(1);
 loadHomePoster();

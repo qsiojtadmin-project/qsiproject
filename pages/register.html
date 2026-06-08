@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply | Questserv</title>
+  <link rel="stylesheet" href="/src/styles/theme.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-wrap">
+      <a href="/index.html" class="site-brand" aria-label="QuestServ home">
+        <img class="brand-logo brand-logo-icon" src="/assets/logo.png" alt="QuestServ logo" />
+        <span class="brand-text" aria-hidden="true">
+          <span class="brand-title">QUESTSERV</span>
+          <span class="brand-subtitle">SOLUTIONS INC.</span>
+        </span>
+      </a>
+      <nav class="nav-links">
+        <a href="/index.html">Home</a>
+        <a href="/pages/jobs.html">Jobs</a>
+        <a href="/pages/apply.html">Apply</a>
+      </nav>
+      <div class="nav-actions">
+        <a id="nav-dashboard" class="btn btn-secondary" style="display:none">Dashboard</a>
+        <a id="nav-login" class="btn btn-outline" href="/pages/login-only.html">Login</a>
+        <a id="nav-register" class="btn btn-primary" href="/pages/login-only.html">Register</a>
+        <button id="nav-logout" class="btn btn-outline" style="display:none">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container grid" style="grid-template-columns: 1.2fr 1fr; gap: 20px;">
+      <section class="form-card" style="max-width:none; margin:0;">
+        <h1>Application Form</h1>
+        <p class="muted">Submit your profile and resume to apply for your selected role.</p>
+        <div id="feedback"></div>
+        <form id="application-form" class="form-grid" enctype="multipart/form-data">
+          <input id="profile-name" class="input" name="name" placeholder="Full name" readonly />
+          <input id="profile-email" class="input" name="email" placeholder="Email" readonly />
+          <input class="input" name="phone" placeholder="Phone" required />
+          <input class="input" name="address" placeholder="Address" required />
+          <select class="select" id="job_id" name="job_id" required></select>
+          <input class="input" type="file" name="resume" accept=".pdf,.doc,.docx" required />
+          <button class="btn btn-primary" type="submit">Submit Application</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>My Applications</h2>
+        <div id="my-applications" class="grid"></div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="/src/js/common.js"></script>
+  <script type="module" src="/src/js/apply.js"></script>
+</body>
+</html>
+
+

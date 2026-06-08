@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | QuestServ Solution Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <header class="site-header" id="home">
+    <div class="container header-wrap">
+      <a href="../index.html#home" class="site-brand" aria-label="QuestServ home">
+        <img src="../assets/logo.png" alt="QuestServ logo" class="site-brand-logo" />
+        <span class="brand-text" aria-hidden="true">
+          <span class="brand-title">QUESTSERV</span>
+          <span class="brand-subtitle">SOLUTIONS INC.</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a>
+        <a href="../index.html#jobs">Jobs</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+      <div class="session-box">
+        <span id="session-label" class="muted">Guest</span>
+        <button id="logout-btn" class="btn btn-outline hidden" type="button">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section auth-login-shell">
+      <div class="container auth-login-wrap">
+        <article class="auth-modern-card">
+          <div class="auth-modern-stack" id="login-panel">
+            <div class="auth-modern-head">
+              <h2>Welcome back</h2>
+              <p id="login-role-copy" class="muted">Please enter your details.</p>
+            </div>
+
+            <button class="auth-google-btn" type="button">
+              <span class="auth-google-mark">G</span>
+              <span>Sign in with Google</span>
+            </button>
+
+            <div class="auth-divider">
+              <span>or</span>
+            </div>
+
+            <form id="login-form" class="form-grid single-column auth-modern-form" novalidate>
+              <label>
+                Email address
+                <input type="email" id="login-email" required />
+              </label>
+              <label>
+                Password
+                <div class="password-field">
+                  <input type="password" id="login-password" required />
+                  <button class="password-toggle" type="button" data-password-toggle data-target="login-password" aria-label="Show password" aria-pressed="false"></button>
+                </div>
+              </label>
+
+              <div class="auth-meta-row">
+                <label class="auth-check">
+                  <input type="checkbox" id="remember-login" />
+                  <span>Remember for 30 days</span>
+                </label>
+                <a class="auth-text-link" href="/pages/login-only.html">Forgot password</a>
+              </div>
+
+              <button class="btn btn-primary auth-signin-btn" type="submit">Sign in</button>
+              <p id="login-message" class="form-message" aria-live="polite"></p>
+            </form>
+
+            <p class="auth-switch-copy">
+              Don't have an account?
+              <a id="show-register-btn" class="auth-text-link" href="/pages/create-account-admin.html">Sign up</a>
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <p>&copy; <span id="year"></span> QuestServ Solution Inc. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>
