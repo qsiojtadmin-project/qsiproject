@@ -1087,9 +1087,7 @@ body {
 
 /* --- SECTION CONTENT --- */
 .admin-section { display: none; }
-.admin-section.is-active { display: block; animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.admin-section.is-active { display: block; }
 
 .section-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 32px; }
 .section-header h1 {
@@ -1735,6 +1733,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	gap: 18px;
+	padding-inline: clamp(16px, 2vw, 28px);
 }
 
 #job-form {
@@ -1868,6 +1867,7 @@ textarea {
 	background: rgba(248, 250, 249, 0.8);
 	backdrop-filter: blur(12px);
 	padding: 16px 0;
+	margin-inline: clamp(16px, 2vw, 28px);
 	margin-top: 16px;
 	border-top: 1px solid var(--border);
 	display: flex;
@@ -2450,6 +2450,7 @@ textarea {
 	.sidebar { display: none; }
 	.admin-layout { grid-template-columns: 1fr; }
 	.admin-main { padding: 18px; }
+	.builder-main-col { padding-inline: 0; }
 	.builder-card { padding: 18px; }
 	.section-header { flex-direction: column; align-items: flex-start; gap: 20px; }
 	.tab-bar-container { justify-content: flex-start; }
@@ -2463,11 +2464,13 @@ textarea {
 	.dashboard-follow-row .status {
 		justify-self: flex-start;
 	}
+	.sticky-builder-actions { margin-inline: 0; }
 
 	.vt-shell { flex-direction: column-reverse; align-items: center; }
 	.vt-actions-panel { flex-direction: row; }
 	.vt-poster-wrap { width: 100%; }
 }
+
 .login-dropdown-register {
   display: flex;
   align-items: center;

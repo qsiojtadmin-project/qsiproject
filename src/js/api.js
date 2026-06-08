@@ -61,7 +61,7 @@ export function updateAuthLinks() {
     registerBtn.style.display = 'none';
     if (logoutBtn) logoutBtn.style.display = 'inline-flex';
     dashboardLink.style.display = 'inline-flex';
-    dashboardLink.href = user.role === 'admin' ? '/pages/admin-dashboard.html' : '/pages/jobs.html';
+    dashboardLink.href = user.role === 'admin' ? '/pages/admin-dashboard.html' : '/pages/user-dashboard.html';
   } else {
     loginBtn.style.display = 'inline-flex';
     registerBtn.style.display = 'inline-flex';

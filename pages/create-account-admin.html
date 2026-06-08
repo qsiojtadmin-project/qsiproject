@@ -631,6 +631,24 @@
       return data;
     }
 
+    function pushAccountAuditLog(entry) {
+      try {
+        const key = 'qs_account_audit_logs';
+        const logs = JSON.parse(localStorage.getItem(key) || '[]');
+        const safeLogs = Array.isArray(logs) ? logs : [];
+        safeLogs.unshift({
+          at: new Date().toISOString(),
+          actor: entry.actor || 'Applicant',
+          action: 'CREATE',
+          detail: entry.detail || 'Created applicant account',
+          scope: 'APPLICANT'
+        });
+        localStorage.setItem(key, JSON.stringify(safeLogs.slice(0, 100)));
+      } catch (error) {
+        console.warn('Unable to write audit log', error);
+      }
+    }
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       clearErrors();
@@ -655,6 +673,10 @@
 
       try {
         await submitToSystem(payload);
+        pushAccountAuditLog({
+          actor: payload.full_name || payload.email,
+          detail: `Created applicant account with ${payload.email}`
+        });
         showFormMessage('success', 'Account created successfully.');
         form.reset();
       } catch (error) {

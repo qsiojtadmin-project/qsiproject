@@ -41,7 +41,7 @@ document.addEventListener('keydown', (event) => {
   if (activeField) return;
 
   event.preventDefault();
-  window.location.href = 'pages/admin-ui.html#users';
+  window.location.href = 'pages/user-dashboard.html';
 });
 
 const SUPABASE_CONFIG = {
@@ -92,6 +92,25 @@ function isAdminUser(user, email) {
   }
 
   return false;
+}
+
+const ACCOUNT_AUDIT_LOG_KEY = 'qs_account_audit_logs';
+
+function pushAccountAuditLog(entry) {
+  try {
+    const logs = JSON.parse(localStorage.getItem(ACCOUNT_AUDIT_LOG_KEY) || '[]');
+    const safeLogs = Array.isArray(logs) ? logs : [];
+    safeLogs.unshift({
+      at: new Date().toISOString(),
+      actor: entry.actor || 'User',
+      action: String(entry.action || 'LOGIN').toUpperCase(),
+      detail: entry.detail || 'Signed in',
+      scope: String(entry.scope || 'USER').toUpperCase(),
+    });
+    localStorage.setItem(ACCOUNT_AUDIT_LOG_KEY, JSON.stringify(safeLogs.slice(0, 100)));
+  } catch (error) {
+    console.warn('Unable to write audit log', error);
+  }
 }
 
 function getSupabaseHeaders() {
@@ -318,18 +337,21 @@ if (loginForm) {
       }
 
       if (error || !data?.user) {
-        let tableQuery = supabase
+        const tableQuery = supabase
           .from('users')
-          .select('id,email,username,full_name,role,role_type')
+          .select('*')
           .eq('password', password);
 
-        if (alias.includes('@')) {
-          tableQuery = tableQuery.ilike('email', alias);
-        } else {
-          tableQuery = tableQuery.or(`email.ilike.${alias},username.ilike.${alias}`);
-        }
-
-        const { data: tableUser, error: tableError } = await tableQuery.maybeSingle();
+        const { data: tableUsers, error: tableError } = await tableQuery;
+        const tableList = Array.isArray(tableUsers) ? tableUsers : [];
+        const tableUser = tableList.find((row) => {
+          return [
+            row.email,
+            row.username,
+            row.name,
+            row.full_name
+          ].some((value) => String(value || '').trim().toLowerCase() === alias);
+        });
 
         if (tableError || !tableUser) {
           const details = [
@@ -345,7 +367,7 @@ if (loginForm) {
         const defaultAdminEmail = String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim().toLowerCase();
         const roleValue = defaultAdminEmail && String(tableUser.email || '').trim().toLowerCase() === defaultAdminEmail
           ? 'system-admin'
-          : getRoleSlug(tableUser.role_type || tableUser.role) || 'user';
+          : getRoleSlug(tableUser.role_type || tableUser.role) || 'admin';
         const mockUser = { user_metadata: { role: roleValue }, role_type: roleValue };
         const isAdmin = isAdminUser(mockUser, tableUser.email || email);
         const rememberMe = Boolean(rememberCheckbox?.checked);
@@ -359,24 +381,24 @@ if (loginForm) {
           user: {
             id: tableUser.id,
             email: tableUser.email,
-            username: tableUser.username,
-            full_name: tableUser.full_name,
+            username: tableUser.username || tableUser.name || tableUser.email,
+            full_name: tableUser.full_name || tableUser.name || tableUser.email,
             role_type: roleValue,
             user_metadata: {
-              username: tableUser.username,
-              full_name: tableUser.full_name,
+              username: tableUser.username || tableUser.name || tableUser.email,
+              full_name: tableUser.full_name || tableUser.name || tableUser.email,
               role: roleValue,
             },
           },
           admin: {
             id: tableUser.id,
             email: tableUser.email,
-            username: tableUser.username,
-            full_name: tableUser.full_name,
+            username: tableUser.username || tableUser.name || tableUser.email,
+            full_name: tableUser.full_name || tableUser.name || tableUser.email,
             role_type: roleValue,
             user_metadata: {
-              username: tableUser.username,
-              full_name: tableUser.full_name,
+              username: tableUser.username || tableUser.name || tableUser.email,
+              full_name: tableUser.full_name || tableUser.name || tableUser.email,
               role: roleValue,
             },
           },
@@ -393,6 +415,12 @@ if (loginForm) {
         }
 
         alert('Login successful!');
+        pushAccountAuditLog({
+          actor: tableUser.full_name || tableUser.name || tableUser.username || tableUser.email || email,
+          action: 'LOGIN',
+          detail: `Signed in using ${isAdmin ? 'Admin' : 'Applicant'} account`,
+          scope: isAdmin ? 'ADMIN' : 'APPLICANT',
+        });
         setLoginMenu(false);
         window.location.href = isAdmin ? 'pages/admin-ui.html' : 'pages/user-dashboard.html';
         return;
@@ -417,6 +445,12 @@ if (loginForm) {
         }
 
         alert('Login successful!');
+        pushAccountAuditLog({
+          actor: data.user?.user_metadata?.full_name || data.user?.user_metadata?.username || data.user?.email || email,
+          action: 'LOGIN',
+          detail: `Signed in using ${isAdmin ? 'Admin' : 'Applicant'} account`,
+          scope: isAdmin ? 'ADMIN' : 'APPLICANT',
+        });
         setLoginMenu(false);
         window.location.href = isAdmin ? 'pages/admin-ui.html' : 'pages/user-dashboard.html';
       }

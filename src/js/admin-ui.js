@@ -31,11 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsLogReset = document.getElementById('settings-log-reset');
     const logsClearBtn = document.getElementById('logs-clear-btn');
     const logsExportBtn = document.getElementById('logs-export-btn');
+    const createAdminUserBtn = document.getElementById('create-admin-user-btn');
     const logThemeSetting = document.getElementById('log-theme-setting');
     const logFontSetting = document.getElementById('log-font-setting');
     const logDensitySetting = document.getElementById('log-density-setting');
     const logWrapSetting = document.getElementById('log-wrap-setting');
     const FORGOT_REQUESTS_KEY = 'qs_forgot_requests';
+    const ACCOUNT_AUDIT_LOG_KEY = 'qs_account_audit_logs';
     let homePostsCache = [];
     let activeContextPostId = null;
     let activeApplicantId = null;
@@ -270,6 +272,71 @@ document.addEventListener('DOMContentLoaded', () => {
         control?.addEventListener('change', saveLogDesign);
     });
 
+    function getAuditLogs() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(ACCOUNT_AUDIT_LOG_KEY) || '[]');
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function saveAuditLogs(logs) {
+        localStorage.setItem(ACCOUNT_AUDIT_LOG_KEY, JSON.stringify(logs.slice(0, 100)));
+    }
+
+    function getCurrentAdminName() {
+        const raw = localStorage.getItem('qs_admin_session') || sessionStorage.getItem('qs_admin_session_temp');
+        if (!raw) return 'Current Admin';
+        try {
+            const session = JSON.parse(raw);
+            const user = session.admin || session.user || session;
+            return getUserDisplayName(user?.user_metadata || user) || user?.email || 'Current Admin';
+        } catch (error) {
+            return 'Current Admin';
+        }
+    }
+
+    function addAuditLog(entry) {
+        const logs = getAuditLogs();
+        logs.unshift({
+            at: entry.at || new Date().toISOString(),
+            actor: entry.actor || getCurrentAdminName(),
+            action: String(entry.action || 'INFO').toUpperCase(),
+            detail: entry.detail || 'Updated account audit log',
+            scope: String(entry.scope || 'ADMIN').toUpperCase()
+        });
+        saveAuditLogs(logs);
+        renderAuditLogs();
+    }
+
+    function formatAuditTime(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return 'Unknown';
+        return date.toLocaleString();
+    }
+
+    function renderAuditLogs() {
+        const terminal = document.getElementById('settings-log-terminal');
+        if (!terminal) return;
+        const logs = getAuditLogs();
+
+        if (!logs.length) {
+            terminal.innerHTML = '<div><time>No logs</time><span>System</span><strong>INFO</strong><em>No login or account creation activity recorded yet</em><code>OK</code></div>';
+            return;
+        }
+
+        terminal.innerHTML = logs.map((log) => `
+            <div>
+                <time>${escapeDashboardText(formatAuditTime(log.at))}</time>
+                <span>${escapeDashboardText(log.actor)}</span>
+                <strong>${escapeDashboardText(log.action)}</strong>
+                <em>${escapeDashboardText(log.detail)}</em>
+                <code>${escapeDashboardText(log.scope)}</code>
+            </div>
+        `).join('');
+    }
+
     settingsLogReset?.addEventListener('click', () => {
         localStorage.removeItem('qs_admin_log_design');
         applyLogDesign({ theme: 'dark', font: 'small', density: 'compact', wrap: 'nowrap' });
@@ -277,14 +344,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     logsClearBtn?.addEventListener('click', () => {
-        const terminal = document.getElementById('settings-log-terminal');
-        if (!terminal) return;
-        terminal.innerHTML = '<div><time>Just now</time><span>Current Admin</span><strong>LOGIN</strong><em>Account log view cleared by admin</em><code>ADMIN</code></div>';
+        localStorage.removeItem(ACCOUNT_AUDIT_LOG_KEY);
+        renderAuditLogs();
         showToast('Log view cleared.');
     });
 
     logsExportBtn?.addEventListener('click', () => {
-        const rows = Array.from(document.querySelectorAll('#settings-log-terminal div')).map((row) => row.textContent.trim());
+        const logs = getAuditLogs();
+        const rows = logs.map((log) => [
+            formatAuditTime(log.at),
+            log.actor,
+            log.action,
+            log.detail,
+            log.scope
+        ].join(' | '));
         const blob = new Blob([rows.join('\n')], { type: 'text/plain;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -300,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         users: 'Users',
         jobs: 'Job Templates',
         posts: 'Home Posts',
+        analytics: 'Analytics',
         logs: 'Logs',
         settings: 'Settings'
     };
@@ -504,23 +578,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function normalizeAdminUser(row) {
         const defaultAdminEmail = String(window.__ADMIN_DEFAULT_EMAIL__ || '').trim().toLowerCase();
         const email = String(row?.email || row?.Email || row?.user_email || '').trim();
+        const username = String(row?.username || row?.user_name || row?.Username || '').trim();
+        const displayKey = email || username || String(row?.id || row?.user_id || '').trim();
         const roleRaw = row?.role_type || row?.role || row?.roleType || '';
         const roleFromTable = getRoleSlug(roleRaw || '');
-        const role = roleFromTable || (defaultAdminEmail && email.toLowerCase() === defaultAdminEmail ? 'system-admin' : 'admin');
+        const role = defaultAdminEmail && email.toLowerCase() === defaultAdminEmail
+            ? 'system-admin'
+            : (ADMIN_ROLE_ALLOWLIST.has(roleFromTable) ? roleFromTable : 'admin');
         return {
             id: row?.id || row?.user_id || row?.userId || '',
             name: getUserDisplayName(row),
-            email,
+            email: displayKey,
+            username,
             role,
             created_at: row?.created_at || row?.createdAt || row?.registered_at || ''
         };
     }
 
     function filterAdminUsers(rows) {
-        return rows.filter((row) => {
-            const roleValue = row?.role || row?.role_type || row?.roleType || 'admin';
-            return ADMIN_ROLE_ALLOWLIST.has(getRoleSlug(roleValue));
-        });
+        return rows;
     }
 
     function formatRoleLabel(role) {
@@ -624,6 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `).join('')
                 : '<p class="dashboard-empty">No pending applicants right now.</p>';
         }
+
     }
 
     function setProfileField(id, value) {
@@ -901,16 +978,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const body = document.getElementById('users-body');
         if (!body) return;
         const filtered = filterAdminUsers(rows);
+        if (!filtered.length) {
+            body.innerHTML = '<tr><td data-label="Users" colspan="4" class="muted">No users found in Supabase yet.</td></tr>';
+            return;
+        }
         body.innerHTML = filtered.map((user) => {
             const roleSlug = getRoleSlug(user.role) || 'admin';
             const roleLabel = formatRoleLabel(roleSlug);
+            const userKey = user.id || user.email || user.username || user.name;
             return `
             <tr>
                 <td data-label="Name">${String(user.name || '').toUpperCase()}</td>
                 <td data-label="Email">${user.email}</td>
                 <td data-label="Role"><span class="role-pill ${roleSlug}">${roleLabel}</span></td>
                 <td data-label="Action">
-                    <div class="action-menu" data-email="${user.email}">
+                    <div class="action-menu" data-user-key="${userKey}">
                         <button class="action-trigger" type="button" aria-label="Open actions" aria-expanded="false">
                             <i class="fa-solid fa-ellipsis-vertical"></i>
                         </button>
@@ -944,15 +1026,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.stopPropagation();
                 const action = String(btn.dataset.action || '').trim();
                 const menu = btn.closest('.action-menu');
-                const email = String(menu?.dataset.email || '').trim().toLowerCase();
-                if (!email || !action) return;
-                const selectedUser = usersData.find((user) => String(user.email || '').trim().toLowerCase() === email);
+                const userKey = String(menu?.dataset.userKey || '').trim();
+                if (!userKey || !action) return;
+                const selectedUser = usersData.find((user) => {
+                    return [user.id, user.email, user.username, user.name]
+                        .map((value) => String(value || '').trim().toLowerCase())
+                        .includes(userKey.toLowerCase());
+                });
+                const label = selectedUser?.email || selectedUser?.username || selectedUser?.name || userKey;
 
                 if (action === 'view') {
                     openProfileModal({
                         type: 'Admin User',
-                        name: selectedUser?.name || email,
-                        email,
+                        name: selectedUser?.name || label,
+                        email: label,
                         role: selectedUser?.role || 'admin',
                         title: 'Admin account',
                         status: formatRoleLabel(selectedUser?.role || 'admin'),
@@ -966,7 +1053,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (hasSupabaseConfig()) {
                         try {
                             btn.disabled = true;
-                            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users?email=eq.${encodeURIComponent(email)}` , {
+                            const deleteColumn = selectedUser?.id ? 'id' : selectedUser?.username ? 'username' : 'email';
+                            const deleteValue = selectedUser?.id || selectedUser?.username || selectedUser?.email;
+                            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users?${deleteColumn}=eq.${encodeURIComponent(deleteValue)}` , {
                                 method: 'DELETE',
                                 headers: getSupabaseHeaders('return=representation')
                             });
@@ -982,14 +1071,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    usersData = usersData.filter((user) => String(user.email || '').trim().toLowerCase() !== email);
+                    usersData = usersData.filter((user) => user !== selectedUser);
                     renderUsers(usersData);
+                    addAuditLog({
+                        action: 'DELETE',
+                        actor: getCurrentAdminName(),
+                        detail: `Deleted admin user ${label}`,
+                        scope: 'ADMIN'
+                    });
                     showToast && showToast('User deleted');
                     return;
                 }
 
                 const actionLabel = action.charAt(0).toUpperCase() + action.slice(1);
-                showToast && showToast(`${actionLabel} requested for ${email}`);
+                showToast && showToast(`${actionLabel} requested for ${label}`);
                 closeUserActionMenus();
             });
         });
@@ -1010,6 +1105,71 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    async function insertSupabaseAdminUser(payloads) {
+        let lastError = null;
+        for (const payload of payloads) {
+            try {
+                const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users`, {
+                    method: 'POST',
+                    headers: getSupabaseHeaders('return=representation'),
+                    body: JSON.stringify(payload)
+                });
+                if (resp.ok) return resp.json().catch(() => []);
+                lastError = await resp.text();
+            } catch (error) {
+                lastError = error.message;
+            }
+        }
+        throw new Error(lastError || 'Failed to create admin user');
+    }
+
+    async function createAdminUser() {
+        if (!hasSupabaseConfig()) {
+            showToast('Set window.__SUPABASE_ANON_KEY__ before creating users.');
+            return;
+        }
+
+        const name = String(prompt('Admin full name:') || '').trim();
+        if (!name) return;
+        const usernameOrEmail = String(prompt('Admin username or email:') || '').trim().toLowerCase();
+        if (!usernameOrEmail) return;
+        const password = String(prompt('Temporary password:') || '').trim();
+        if (!password) return;
+        const username = usernameOrEmail.includes('@') ? usernameOrEmail.split('@')[0] : usernameOrEmail;
+
+        createAdminUserBtn.disabled = true;
+        try {
+            await insertSupabaseAdminUser([
+                {
+                    name,
+                    full_name: name,
+                    username,
+                    email: usernameOrEmail.includes('@') ? usernameOrEmail : '',
+                    password,
+                    role: 'admin',
+                    role_type: 'admin'
+                },
+                { username, password, full_name: name, role: 'admin' },
+                { username, password, full_name: name },
+                { name, email: usernameOrEmail, password, role: 'admin' },
+                { name, email: usernameOrEmail, password }
+            ]);
+            addAuditLog({
+                action: 'CREATE',
+                actor: getCurrentAdminName(),
+                detail: `Created admin user ${username}`,
+                scope: 'ADMIN'
+            });
+            showToast('Admin user created.');
+            await loadUsers();
+        } catch (error) {
+            console.error(error);
+            showToast(error.message || 'Failed to create admin user.');
+        } finally {
+            createAdminUserBtn.disabled = false;
+        }
+    }
+
     async function loadUsers() {
         if (!hasSupabaseConfig()) {
             renderUsers(usersData);
@@ -1018,7 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users?select=id,email,username,full_name,role,role_type,created_at`, {
+            const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/users?select=*`, {
                 headers: getSupabaseHeaders()
             });
             if (!resp.ok) {
@@ -1041,6 +1201,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     }
+
+    createAdminUserBtn?.addEventListener('click', createAdminUser);
 
     if (navLogout) navLogout.addEventListener('click', () => {
         localStorage.removeItem('qs_admin_session');
@@ -1937,6 +2099,7 @@ document.addEventListener('DOMContentLoaded', () => {
     syncPreview();
     loadHomePosts();
     applyLogDesign();
+    renderAuditLogs();
     loadDashboardStats();
     renderCurrentUserProfile();
 });

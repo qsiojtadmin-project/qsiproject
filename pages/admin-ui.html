@@ -63,6 +63,7 @@
 				<a class="sidebar-link" href="#users" data-tab="users"><i class="fa-solid fa-id-card"></i><span>User management</span></a>
 				<a class="sidebar-link active" href="#jobs" data-tab="jobs"><i class="fa-solid fa-briefcase"></i><span>Job Templates</span></a>
 				<a class="sidebar-link" href="#posts" data-tab="posts"><i class="fa-solid fa-house"></i><span>Home Posts</span></a>
+				<a class="sidebar-link" href="#analytics" data-tab="analytics"><i class="fa-solid fa-chart-line"></i><span>Analytics</span></a>
 				<a class="sidebar-link" href="#logs" data-tab="logs"><i class="fa-solid fa-clipboard-list"></i><span>Logs</span></a>
 				<a class="sidebar-link" href="#settings" data-tab="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
 			</nav>
@@ -302,8 +303,18 @@
 				</section>
 
 				<section class="admin-section" id="users-panel" data-tab-panel>
-					<div class="section-header"><h1>Users</h1></div>
+					<div class="section-header">
+						<h1>Users</h1>
+						<div class="header-actions">
+							<button class="btn btn-primary" type="button" id="create-admin-user-btn">
+								<i class="fa-solid fa-user-plus"></i> Create Admin User
+							</button>
+						</div>
+					</div>
 					<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody id="users-body"></tbody></table>
+				</section>
+
+				<section class="admin-section" id="analytics-panel" data-tab-panel>
 				</section>
 
 				<section class="admin-section" id="settings-panel" data-tab-panel>
@@ -428,14 +439,9 @@
 					<div class="logs-card">
 						<div class="settings-card-head">
 							<h3>Account Log Audit</h3>
-							<span class="logs-live-pill">Live View</span>
 						</div>
 						<div class="settings-log-terminal logs-terminal" id="settings-log-terminal" aria-label="Audit log output">
-							<div><time>6/8/2026, 10:14:20 PM</time><span>Heaven Dizon</span><strong>LOGIN</strong><em>Signed in using Admin account</em><code>ADMIN</code></div>
-							<div><time>6/8/2026, 10:12:48 PM</time><span>Jethro L. Caronan</span><strong>CREATE</strong><em>Created applicant account with jethro@gmail.com</em><code>APPLICANT</code></div>
-							<div><time>6/8/2026, 10:11:35 PM</time><span>QuestServ Admin</span><strong>LOGIN</strong><em>Signed in using System Admin account</em><code>SYSTEM</code></div>
-							<div><time>6/8/2026, 10:08:09 PM</time><span>Maria Santos</span><strong>CREATE</strong><em>Created applicant account with maria@example.com</em><code>APPLICANT</code></div>
-							<div><time>6/8/2026, 10:04:51 PM</time><span>Heaven Dizon</span><strong>LOGIN</strong><em>Signed in using Admin account</em><code>ADMIN</code></div>
+							<div><time>Loading</time><span>System</span><strong>INFO</strong><em>Preparing account audit logs</em><code>OK</code></div>
 						</div>
 					</div>
 				</section>

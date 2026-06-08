@@ -5,6 +5,24 @@ const registerForm = document.getElementById('register-form');
 const roleSelect = document.getElementById('role');
 const adminCodeInput = document.getElementById('admin_code');
 const adminCodeField = document.getElementById('admin-code-field');
+const ACCOUNT_AUDIT_LOG_KEY = 'qs_account_audit_logs';
+
+function pushAccountAuditLog(entry) {
+  try {
+    const logs = JSON.parse(localStorage.getItem(ACCOUNT_AUDIT_LOG_KEY) || '[]');
+    const safeLogs = Array.isArray(logs) ? logs : [];
+    safeLogs.unshift({
+      at: new Date().toISOString(),
+      actor: entry.actor || 'User',
+      action: String(entry.action || 'LOGIN').toUpperCase(),
+      detail: entry.detail || 'Account activity',
+      scope: String(entry.scope || 'USER').toUpperCase(),
+    });
+    localStorage.setItem(ACCOUNT_AUDIT_LOG_KEY, JSON.stringify(safeLogs.slice(0, 100)));
+  } catch (error) {
+    console.warn('Unable to write audit log', error);
+  }
+}
 
 function wirePasswordToggle(button) {
   const targetId = button.dataset.target;
@@ -58,7 +76,13 @@ loginForm?.addEventListener('submit', async (e) => {
   try {
     const res = await request('/auth/login', { method: 'POST', body: JSON.stringify(data) });
     auth.setSession(res.token, res.user);
-    window.location.href = res.user.role === 'admin' ? '/pages/admin-dashboard.html' : '/pages/jobs.html';
+    pushAccountAuditLog({
+      actor: res.user.name || res.user.full_name || res.user.email || data.email || 'User',
+      action: 'LOGIN',
+      detail: `Signed in using ${res.user.role === 'admin' ? 'Admin' : 'Applicant'} account`,
+      scope: res.user.role === 'admin' ? 'ADMIN' : 'APPLICANT',
+    });
+    window.location.href = res.user.role === 'admin' ? '/pages/admin-dashboard.html' : '/pages/user-dashboard.html';
   } catch (error) {
     showMessage('login', error.message, 'error');
   }
@@ -77,7 +101,13 @@ registerForm?.addEventListener('submit', async (e) => {
   try {
     const res = await request('/auth/register', { method: 'POST', body: JSON.stringify(data) });
     auth.setSession(res.token, res.user);
-    window.location.href = res.user.role === 'admin' ? '/pages/admin-dashboard.html' : '/pages/jobs.html';
+    pushAccountAuditLog({
+      actor: res.user.name || res.user.full_name || res.user.email || data.email || 'User',
+      action: 'CREATE',
+      detail: `Created ${res.user.role === 'admin' ? 'admin' : 'applicant'} account`,
+      scope: res.user.role === 'admin' ? 'ADMIN' : 'APPLICANT',
+    });
+    window.location.href = res.user.role === 'admin' ? '/pages/admin-dashboard.html' : '/pages/user-dashboard.html';
   } catch (error) {
     showMessage('register', error.message, 'error');
   }
