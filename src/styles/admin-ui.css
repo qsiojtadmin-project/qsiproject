@@ -1466,6 +1466,56 @@ body {
 	color: #1f2937;
 }
 
+/* Analytics: show only the three chart/graph visuals */
+#analytics-panel .analytics-report-head,
+#analytics-panel .analytics-chart-toolbar,
+#analytics-panel .analytics-total-card > h2,
+#analytics-panel .analytics-segmented,
+#analytics-panel .analytics-total-body > div:first-child,
+#analytics-panel .analytics-record-filter,
+#analytics-panel .analytics-month-legend,
+#analytics-panel .analytics-frequency-head,
+#analytics-panel .analytics-frequency-legend {
+	display: none;
+}
+
+#analytics-panel .analytics-report {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+#analytics-panel .analytics-report-grid {
+	display: grid;
+	grid-template-columns: minmax(280px, 420px);
+}
+
+#analytics-panel .analytics-accident-card,
+#analytics-panel .analytics-total-card,
+#analytics-panel .analytics-frequency-card {
+	background: #f8fbff;
+}
+
+#analytics-panel .analytics-chart-window,
+#analytics-panel .analytics-total-body,
+#analytics-panel .analytics-line-wrap {
+	border: 0;
+	background-color: transparent;
+}
+
+#analytics-panel .analytics-total-card {
+	display: grid;
+	place-items: center;
+}
+
+#analytics-panel .analytics-total-body {
+	display: block;
+	min-height: auto;
+	padding: 8px;
+}
+
+#analytics-panel .analytics-donut-report {
+	margin: 0 auto;
+}
+
 .analytics-accident-card,
 .analytics-total-card,
 .analytics-frequency-card {
@@ -1558,6 +1608,10 @@ body {
 	border: 1px solid #dce5f2;
 	border-radius: 12px;
 	padding: 16px 14px 8px;
+}
+
+#analytics-panel .analytics-chart-window {
+	padding: 8px 10px 4px;
 }
 
 .analytics-chart-toolbar {
@@ -1763,6 +1817,10 @@ body {
 
 .analytics-frequency-card {
 	padding: 14px;
+}
+
+#analytics-panel .analytics-frequency-card {
+	padding: 10px;
 }
 
 .analytics-frequency-head {
