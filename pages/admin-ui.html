@@ -315,6 +315,144 @@
 				</section>
 
 				<section class="admin-section" id="analytics-panel" data-tab-panel>
+					<div class="analytics-report">
+						<section class="analytics-accident-card">
+							<div class="analytics-report-head">
+								<div>
+									<h1>QuestServ Applicant Chart</h1>
+									<div class="analytics-legend-row">
+										<span><i class="legend-dot white"></i> No applicants</span>
+										<span><i class="legend-dot green"></i> Low volume (1-10)</span>
+										<span><i class="legend-dot yellow"></i> Standard (11-20)</span>
+										<span><i class="legend-dot red"></i> High priority (21+)</span>
+									</div>
+								</div>
+								<div class="analytics-filter-stack">
+									<div class="analytics-filter-row">
+										<button type="button">Month: <strong>All Months</strong> <i class="fa-solid fa-caret-down"></i></button>
+										<button type="button">Year: <strong>2026</strong> <i class="fa-solid fa-caret-down"></i></button>
+									</div>
+									<p>Showing all months in 2026</p>
+								</div>
+							</div>
+
+							<div class="analytics-chart-window">
+								<div class="analytics-chart-toolbar">
+									<p><strong>Chart zoom: 100%</strong> <span>Ctrl + (+) to zoom in, Ctrl + (-) to zoom out</span></p>
+									<div>
+										<button type="button" aria-label="Zoom out">−</button>
+										<button type="button" aria-label="Zoom in">+</button>
+										<a href="#">Reset</a>
+									</div>
+								</div>
+								<div class="analytics-bar-scroll">
+									<div class="analytics-y-axis">
+										<span>21</span><span>18</span><span>15</span><span>12</span><span>9</span><span>6</span><span>3</span><span>0</span>
+									</div>
+									<div class="analytics-bar-chart">
+										<div class="analytics-bar standard" style="--v: 82%"><span>Production</span></div>
+										<div class="analytics-bar standard" style="--v: 74%"><span>Office</span></div>
+										<div class="analytics-bar standard" style="--v: 86%"><span>Recruitment</span></div>
+										<div class="analytics-bar standard" style="--v: 82%"><span>Screening</span></div>
+										<div class="analytics-bar low" style="--v: 55%"><span>Taguig</span></div>
+										<div class="analytics-bar danger" style="--v: 96%"><span>Cavite</span></div>
+										<div class="analytics-bar standard" style="--v: 86%"><span>Onboarding</span></div>
+										<div class="analytics-bar standard" style="--v: 86%"><span>Support</span></div>
+										<div class="analytics-bar standard" style="--v: 86%"><span>Mandaluyong</span></div>
+										<div class="analytics-bar standard" style="--v: 82%"><span>Placements</span></div>
+										<div class="analytics-bar danger" style="--v: 95%"><span>Pending</span></div>
+										<div class="analytics-bar standard" style="--v: 78%"><span>Applicants</span></div>
+										<div class="analytics-bar standard" style="--v: 86%"><span>Interviews</span></div>
+										<div class="analytics-bar standard" style="--v: 82%"><span>Hires</span></div>
+										<div class="analytics-bar low" style="--v: 50%"><span>Referrals</span></div>
+										<div class="analytics-bar danger" style="--v: 96%"><span>Priority</span></div>
+										<div class="analytics-bar standard" style="--v: 86%"><span>Active Jobs</span></div>
+										<div class="analytics-bar standard" style="--v: 78%"><span>Shortlist</span></div>
+										<div class="analytics-bar standard" style="--v: 82%"><span>Endorsements</span></div>
+										<div class="analytics-bar standard" style="--v: 78%"><span>Profiles</span></div>
+									</div>
+								</div>
+							</div>
+						</section>
+
+						<div class="analytics-report-grid">
+							<section class="analytics-total-card">
+								<h2>Total Reported Applicants</h2>
+								<div class="analytics-segmented">
+									<button type="button">Daily</button>
+									<button type="button" class="active">Monthly</button>
+									<button type="button">Yearly</button>
+								</div>
+								<div class="analytics-total-body">
+									<div>
+										<strong>15</strong>
+										<span>Records</span>
+										<b>June 2026</b>
+										<p>Based on reported applicant records</p>
+									</div>
+									<div class="analytics-donut-report">
+										<div><strong>15</strong><span>Jun</span></div>
+									</div>
+									<button class="analytics-record-filter" type="button">All Records <i class="fa-solid fa-chevron-down"></i></button>
+								</div>
+								<div class="analytics-month-legend">
+									<span><i style="background:#4f86e8"></i> Jan (102)</span>
+									<span><i style="background:#58a8df"></i> Feb (96)</span>
+									<span><i style="background:#6bd1cf"></i> Mar (79)</span>
+									<span><i style="background:#55b46f"></i> Apr (89)</span>
+									<span><i style="background:#f3b829"></i> May (126)</span>
+									<span><i style="background:#fa8b2d"></i> Jun (15)</span>
+									<span><i style="background:#f25b68"></i> Jul (0)</span>
+								</div>
+							</section>
+						</div>
+
+						<section class="analytics-frequency-card">
+							<div class="analytics-frequency-head">
+								<div class="analytics-icon-box"><i class="fa-solid fa-chart-line"></i></div>
+								<div>
+									<h2>Monthly Frequency</h2>
+									<p>Applicant records captured across each month of 2026.</p>
+								</div>
+								<div class="analytics-filter-row">
+									<button type="button">Month: <strong>All Months</strong> <i class="fa-solid fa-caret-down"></i></button>
+									<button type="button">Year: <strong>2026</strong> <i class="fa-solid fa-caret-down"></i></button>
+								</div>
+							</div>
+							<div class="analytics-line-wrap">
+								<svg class="analytics-line-chart" viewBox="0 0 1200 210" preserveAspectRatio="none" aria-hidden="true">
+									<defs>
+										<linearGradient id="analyticsLineFill" x1="0" x2="0" y1="0" y2="1">
+											<stop offset="0%" stop-color="#2f73e6" stop-opacity="0.22"/>
+											<stop offset="100%" stop-color="#2f73e6" stop-opacity="0"/>
+										</linearGradient>
+									</defs>
+									<path class="line-fill" d="M0,70 C90,70 130,72 200,72 C300,72 330,78 420,70 C510,58 520,62 620,30 C690,12 720,34 760,126 C790,190 800,190 890,200 C980,205 1060,205 1200,205 L1200,210 L0,210 Z"/>
+									<path class="line-path" d="M0,70 C90,70 130,72 200,72 C300,72 330,78 420,70 C510,58 520,62 620,30 C690,12 720,34 760,126 C790,190 800,190 890,200 C980,205 1060,205 1200,205"/>
+								</svg>
+								<div class="analytics-line-points">
+									<span style="left:0%; top:31%"><b>70</b></span>
+									<span style="left:10.5%; top:32%"><b>69</b></span>
+									<span style="left:21.5%; top:34%"><b>67</b></span>
+									<span style="left:31.5%; top:29%"><b>74</b></span>
+									<span style="left:41%; top:18%"><b>84</b></span>
+									<span style="left:50%; top:86%"><b>4</b></span>
+									<span style="left:60.5%; top:96%"><b>0</b></span>
+									<span style="left:70%; top:96%"><b>0</b></span>
+									<span style="left:79%; top:96%"><b>0</b></span>
+									<span style="left:88%; top:96%"><b>0</b></span>
+									<span style="left:100%; top:96%"><b>0</b></span>
+								</div>
+								<div class="analytics-line-months">
+									<span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+								</div>
+							</div>
+							<div class="analytics-frequency-legend">
+								<span><i style="background:#2f73e6"></i> Monthly Cases (368)</span>
+								<span><i style="background:#f57927"></i> Peak Month (84)</span>
+							</div>
+						</section>
+					</div>
 				</section>
 
 				<section class="admin-section" id="settings-panel" data-tab-panel>

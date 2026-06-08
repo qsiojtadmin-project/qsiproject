@@ -1460,6 +1460,404 @@ body {
 	background: #fbfdfc;
 }
 
+.analytics-report {
+	display: grid;
+	gap: 18px;
+	color: #1f2937;
+}
+
+.analytics-accident-card,
+.analytics-total-card,
+.analytics-frequency-card {
+	background: #f4f6fa;
+	border: 1px solid #cfd8e6;
+	border-radius: 16px;
+	box-shadow: 0 10px 26px rgba(31, 41, 55, 0.08);
+}
+
+.analytics-accident-card {
+	padding: 16px;
+}
+
+.analytics-report-head,
+.analytics-frequency-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 18px;
+	margin-bottom: 16px;
+}
+
+.analytics-report-head h1 {
+	font-family: Inter, sans-serif;
+	font-size: 1.9rem;
+	font-weight: 500;
+	letter-spacing: 0;
+	margin: 0 0 12px;
+	color: #1f2937;
+}
+
+.analytics-legend-row,
+.analytics-filter-row,
+.analytics-month-legend,
+.analytics-frequency-legend {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 14px;
+	color: #667085;
+	font-size: 0.82rem;
+}
+
+.legend-dot,
+.analytics-month-legend i,
+.analytics-frequency-legend i {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 6px;
+}
+
+.legend-dot.white {
+	background: #fff;
+	border: 1px solid #7f96bc;
+}
+
+.legend-dot.green { background: #28c76f; }
+.legend-dot.yellow { background: #f2b705; }
+.legend-dot.red { background: #f43f46; }
+
+.analytics-filter-stack {
+	display: grid;
+	justify-items: end;
+	gap: 8px;
+}
+
+.analytics-filter-stack p {
+	margin: 0;
+	color: #4b5563;
+	font-size: 0.82rem;
+	font-weight: 700;
+}
+
+.analytics-filter-row button,
+.analytics-record-filter {
+	border: 1px solid #bfd0ea;
+	background: #fff;
+	color: #213a5d;
+	border-radius: 14px;
+	padding: 8px 14px;
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.analytics-chart-window {
+	background: #f8faff;
+	border: 1px solid #dce5f2;
+	border-radius: 12px;
+	padding: 16px 14px 8px;
+}
+
+.analytics-chart-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	margin-bottom: 14px;
+}
+
+.analytics-chart-toolbar p {
+	margin: 0;
+	font-size: 0.78rem;
+	color: #1f2937;
+}
+
+.analytics-chart-toolbar span {
+	color: #667085;
+	margin-left: 4px;
+}
+
+.analytics-chart-toolbar div {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.analytics-chart-toolbar button {
+	width: 36px;
+	height: 36px;
+	border: 0;
+	border-radius: 50%;
+	background: #d9e0eb;
+	color: #667085;
+	font-size: 1.25rem;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.analytics-chart-toolbar a {
+	color: #213a5d;
+	font-weight: 600;
+	text-decoration: none;
+	margin-left: 12px;
+}
+
+.analytics-bar-scroll {
+	display: grid;
+	grid-template-columns: 46px minmax(920px, 1fr);
+	overflow-x: auto;
+	padding-bottom: 12px;
+}
+
+.analytics-y-axis {
+	display: grid;
+	align-content: stretch;
+	color: #42526e;
+	font-size: 0.62rem;
+	text-align: right;
+	padding-right: 10px;
+	height: 210px;
+}
+
+.analytics-bar-chart {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(20, minmax(42px, 1fr));
+	align-items: end;
+	gap: 10px;
+	height: 210px;
+	padding: 0 4px 42px;
+	background-image: repeating-linear-gradient(to top, #dce5f2 0 1px, transparent 1px 10px);
+	border-bottom: 2px solid #d5deeb;
+}
+
+.analytics-bar {
+	height: var(--v);
+	border-radius: 3px 3px 0 0;
+	position: relative;
+	min-height: 4px;
+}
+
+.analytics-bar.standard { background: #f2b705; }
+.analytics-bar.low { background: #28c76f; }
+.analytics-bar.danger { background: #f43f46; }
+
+.analytics-bar span {
+	position: absolute;
+	left: 50%;
+	bottom: -38px;
+	transform: translateX(-50%);
+	width: 70px;
+	text-align: center;
+	color: #667085;
+	font-size: 0.62rem;
+	line-height: 1.15;
+}
+
+.analytics-report-grid {
+	display: grid;
+	grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1fr);
+	gap: 18px;
+}
+
+.analytics-total-card {
+	padding: 14px;
+}
+
+.analytics-total-card h2,
+.analytics-frequency-head h2 {
+	font-family: Inter, sans-serif;
+	margin: 0 0 10px;
+	color: #1f2937;
+	font-size: 1.05rem;
+}
+
+.analytics-segmented {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.analytics-segmented button {
+	border: 1px solid #afc2df;
+	background: transparent;
+	color: #244568;
+	border-radius: 18px;
+	padding: 10px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.analytics-segmented .active {
+	background: linear-gradient(180deg, #69b9f7, #4fa8ed);
+	border-color: #4fa8ed;
+}
+
+.analytics-total-body {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(130px, 0.8fr) 1.2fr;
+	gap: 12px;
+	min-height: 280px;
+	border: 1px solid #afcbed;
+	border-radius: 12px;
+	padding: 12px;
+	background: #f8fbff;
+}
+
+.analytics-total-body strong {
+	display: block;
+	font-size: 2rem;
+	color: #163f78;
+	line-height: 1;
+}
+
+.analytics-total-body span,
+.analytics-total-body p {
+	color: #667085;
+	font-size: 0.8rem;
+}
+
+.analytics-total-body b {
+	display: block;
+	margin: 8px 0;
+	color: #163f78;
+}
+
+.analytics-donut-report {
+	width: 210px;
+	height: 210px;
+	border-radius: 50%;
+	align-self: center;
+	justify-self: center;
+	background:
+		radial-gradient(circle at center, #f8fbff 0 40%, transparent 41%),
+		conic-gradient(#4f86e8 0 20%, #58a8df 20% 40%, #6bd1cf 40% 56%, #55b46f 56% 72%, #f3b829 72% 94%, #fa8b2d 94% 100%);
+	display: grid;
+	place-items: center;
+}
+
+.analytics-donut-report div {
+	width: 95px;
+	height: 95px;
+	border-radius: 50%;
+	background: #f8fbff;
+	display: grid;
+	place-items: center;
+	align-content: center;
+}
+
+.analytics-record-filter {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.analytics-month-legend {
+	margin-top: 10px;
+	gap: 8px;
+}
+
+.analytics-frequency-card {
+	padding: 14px;
+}
+
+.analytics-frequency-head {
+	align-items: center;
+	margin-bottom: 14px;
+}
+
+.analytics-frequency-head > div:nth-child(2) {
+	margin-right: auto;
+}
+
+.analytics-frequency-head p {
+	margin: 0;
+	color: #526783;
+	font-size: 0.82rem;
+}
+
+.analytics-icon-box {
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	background: #e7efff;
+	color: #2f73e6;
+	display: grid;
+	place-items: center;
+	font-size: 1.1rem;
+}
+
+.analytics-line-wrap {
+	position: relative;
+	height: 210px;
+	border: 1px solid #d8e2f0;
+	border-radius: 10px;
+	background-image:
+		linear-gradient(to right, #e5ebf5 1px, transparent 1px),
+		linear-gradient(to top, #dbe4f0 1px, transparent 1px);
+	background-size: calc(100% / 11) 100%, 100% calc(100% / 4);
+	overflow: hidden;
+	padding-bottom: 34px;
+}
+
+.analytics-line-chart {
+	position: absolute;
+	inset: 20px 40px 34px 40px;
+	width: calc(100% - 80px);
+	height: calc(100% - 54px);
+}
+
+.line-fill { fill: url(#analyticsLineFill); }
+.line-path {
+	fill: none;
+	stroke: #2f73e6;
+	stroke-width: 4;
+	stroke-linecap: round;
+}
+
+.analytics-line-points {
+	position: absolute;
+	inset: 20px 40px 34px 40px;
+}
+
+.analytics-line-points span {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #2f73e6;
+	transform: translate(-50%, -50%);
+}
+
+.analytics-line-points b {
+	position: absolute;
+	left: 50%;
+	bottom: 13px;
+	transform: translateX(-50%);
+	color: #244568;
+	font-size: 0.72rem;
+}
+
+.analytics-line-months {
+	position: absolute;
+	left: 36px;
+	right: 26px;
+	bottom: 8px;
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	color: #17365f;
+	font-size: 0.75rem;
+}
+
+.analytics-frequency-legend {
+	justify-content: center;
+	margin-top: 10px;
+}
+
 .placeholder-content { text-align: center; padding: 120px 0; color: var(--text-muted); }
 .placeholder-content i { font-size: 3rem; margin-bottom: 16px; opacity: 0.3; }
 
@@ -2420,6 +2818,10 @@ textarea {
 	.nav-wrap { flex-wrap: wrap; }
 	.admin-head-search { max-width: 100%; }
 	.dashboard-insight-grid { grid-template-columns: 1fr; }
+	.analytics-report-head,
+	.analytics-frequency-head { flex-direction: column; align-items: flex-start; }
+	.analytics-filter-stack { justify-items: start; }
+	.analytics-report-grid { grid-template-columns: 1fr; }
 	.settings-layout { grid-template-columns: 1fr; }
 	.settings-nav {
 		position: static;
@@ -2464,6 +2866,12 @@ textarea {
 	.dashboard-follow-row .status {
 		justify-self: flex-start;
 	}
+	.analytics-accident-card,
+	.analytics-total-card,
+	.analytics-frequency-card { border-radius: 12px; }
+	.analytics-total-body { grid-template-columns: 1fr; }
+	.analytics-donut-report { width: 170px; height: 170px; }
+	.analytics-line-months { font-size: 0.62rem; }
 	.sticky-builder-actions { margin-inline: 0; }
 
 	.vt-shell { flex-direction: column-reverse; align-items: center; }
