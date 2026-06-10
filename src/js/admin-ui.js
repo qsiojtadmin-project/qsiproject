@@ -1466,7 +1466,71 @@ document.addEventListener('DOMContentLoaded', () => {
     //  HOME POSTS LOGIC
     // ═══════════════════════════════════════════════════════
 
+    function getTemplateNeedCount(post) {
+        const count = Number(
+            post?.vacancy_count ??
+            post?.vacancyCount ??
+            post?.openings ??
+            post?.slots ??
+            post?.headcount ??
+            1
+        );
+        return Number.isFinite(count) && count > 0 ? count : 1;
+    }
+
+    function escapeAnalyticsText(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[char]));
+    }
+
+    function renderMostNeededWorkChart() {
+        const chart = document.getElementById('most-needed-work-chart');
+        if (!chart) return;
+
+        const grouped = homePostsCache.reduce((items, post) => {
+            if (post?.status && post.status !== 'published' && String(post.id) !== 'local-draft') return items;
+
+            const title = (post?.title || post?.position || post?.job_title || '').trim();
+            if (!title) return items;
+
+            const key = title.toLowerCase();
+            const existing = items.get(key) || { title, count: 0 };
+            existing.count += getTemplateNeedCount(post);
+            items.set(key, existing);
+            return items;
+        }, new Map());
+
+        const rows = Array.from(grouped.values())
+            .sort((a, b) => b.count - a.count || a.title.localeCompare(b.title))
+            .slice(0, 10);
+
+        if (!rows.length) {
+            chart.innerHTML = '<div class="analytics-empty">No published job templates yet</div>';
+            return;
+        }
+
+        const maxCount = Math.max(...rows.map((item) => item.count), 1);
+        chart.style.gridTemplateColumns = `repeat(${Math.max(rows.length, 1)}, minmax(72px, 1fr))`;
+        chart.innerHTML = rows.map((item) => {
+            const height = Math.max(12, Math.round((item.count / maxCount) * 96));
+            const levelClass = item.count === maxCount ? 'danger' : item.count <= Math.ceil(maxCount * 0.4) ? 'low' : 'standard';
+            const safeTitle = escapeAnalyticsText(item.title);
+            return `
+                <div class="analytics-bar ${levelClass}" style="--v: ${height}%" title="${safeTitle}: ${item.count} needed">
+                    <b>${item.count}</b>
+                    <span>${safeTitle}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
     function renderHomePosts() {
+        renderMostNeededWorkChart();
         const container = document.getElementById('home-posts-container');
         if (!container) return;
         const posts = homePostsCache;

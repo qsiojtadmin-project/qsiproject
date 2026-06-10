@@ -310,6 +310,36 @@ select {
   min-height: 44px;
 }
 
+.login-google-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  border: 1px solid #d8e3dc;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #22352d;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: inherit;
+  font-size: 0.94rem;
+  font-weight: 700;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.login-google-button:hover {
+  border-color: var(--primary);
+  box-shadow: 0 10px 22px rgba(34, 197, 94, 0.14);
+  transform: translateY(-1px);
+}
+
+.login-google-button .fa-google {
+  color: #ea4335;
+  font-size: 1rem;
+}
+
 .login-dropdown-register {
   gap: 6px;
   margin-top: 16px;
