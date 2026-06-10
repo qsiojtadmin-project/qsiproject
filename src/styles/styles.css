@@ -335,11 +335,6 @@ select {
   transform: translateY(-1px);
 }
 
-.login-google-button .fa-google {
-  color: #ea4335;
-  font-size: 1rem;
-}
-
 .login-dropdown-register {
   gap: 6px;
   margin-top: 16px;
