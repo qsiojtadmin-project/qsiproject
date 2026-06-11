@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuestServ | Find Jobs</title>
+  <meta name="description" content="Search thousands of jobs across the Philippines. Filter by location, salary, job type, and more." />
+  <link rel="icon" type="image/x-icon" href="../assets/icon.ico?v=3" />
+  <link rel="shortcut icon" href="../assets/icon.ico?v=3" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../src/styles/styles.css" />
+  <style>
+    /* ── Page layout ── */
+    .js-page {
+      padding: 32px 0 64px;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(88,220,142,.14), transparent 22%),
+        radial-gradient(circle at 90% 20%, rgba(15,90,62,.07), transparent 24%),
+        linear-gradient(180deg, #f7fbf8 0%, #ffffff 60%, #f3f8f5 100%);
+      min-height: calc(100vh - 80px);
+    }
+
+    /* ── Search hero ── */
+    .js-hero {
+      padding: 28px 32px 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(8,44,29,.08);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 16px;
+    }
+    .js-hero h1 {
+      margin: 0 0 4px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      line-height: 1.05;
+      color: var(--text);
+    }
+    .js-hero > p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .js-search-row {
+      display: grid;
+      grid-template-columns: 1fr 220px 160px;
+      gap: 10px;
+    }
+    .js-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 50px;
+      padding: 0 16px;
+      border: 1px solid rgba(8,44,29,.12);
+      border-radius: 999px;
+      background: #fff;
+      transition: border-color .16s, box-shadow .16s;
+    }
+    .js-field:focus-within {
+      border-color: rgba(34,166,104,.4);
+      box-shadow: 0 0 0 4px rgba(88,220,142,.12);
+    }
+    .js-field-icon {
+      font-size: .92rem;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    .js-field input {
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: .96rem;
+      width: 100%;
+      outline: none;
+    }
+    .js-field input::placeholder { color: var(--muted); }
+    .js-search-btn {
+      height: 50px;
+      border-radius: 999px;
+      background: linear-gradient(135deg,#63e094,#45cd80);
+      color: #fff;
+      border: 0;
+      font-family: inherit;
+      font-size: .96rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 10px 24px rgba(69,205,128,.22);
+      transition: transform .16s, box-shadow .16s;
+    }
+    .js-search-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(69,205,128,.3);
+    }
+
+    /* ── Quick chips ── */
+    .js-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .js-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(8,44,29,.12);
+      background: #f4f7f5;
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .14s, border-color .14s, color .14s;
+    }
+    .js-chip.active,
+    .js-chip:hover {
+      background: #e1f5ee;
+      border-color: #5dcaa5;
+      color: var(--primary-dark);
+    }
+
+    /* ── Recommended strip ── */
+    .js-rec {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(8,44,29,.07);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .js-rec-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .84rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      white-space: nowrap;
+    }
+    .js-rec-label i { color: var(--accent); }
+    .js-rec-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .js-rec-chip {
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(8,44,29,.1);
+      background: #fff;
+      color: var(--text);
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color .14s, color .14s, background .14s;
+    }
+    .js-rec-chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #edf8f2;
+    }
+
+    /* ── Body: sidebar + results ── */
+    .js-body {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── Sidebar ── */
+    .js-sidebar {
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(8,44,29,.08);
+      border-radius: 22px;
+      padding: 22px 20px;
+      box-shadow: var(--shadow-md);
+    }
+    .js-sidebar-title {
+      margin: 0 0 16px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .js-filter-section {
+      margin-bottom: 18px;
+    }
+    .js-filter-section + .js-filter-section {
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+    .js-filter-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+    .js-filter-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(8,44,29,.06);
+      cursor: pointer;
+      gap: 8px;
+    }
+    .js-filter-option:last-child { border-bottom: 0; }
+    .js-filter-left {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: .88rem;
+      color: var(--text);
+    }
+    .js-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid rgba(8,44,29,.2);
+      background: #f4f7f5;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+      color: #fff;
+      transition: background .14s, border-color .14s;
+    }
+    .js-checkbox.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .js-filter-count {
+      font-size: .76rem;
+      color: var(--muted);
+      background: #f0f5f2;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .js-salary-range {
+      font-size: .82rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .js-salary-slider {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+    .js-salary-val {
+      margin-top: 6px;
+      font-size: .84rem;
+      color: var(--muted);
+    }
+    .js-salary-val strong {
+      color: var(--primary-dark);
+    }
+
+    /* ── Results main ── */
+    .js-results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .js-results-count {
+      font-size: .9rem;
+      color: var(--muted);
+    }
+    .js-results-count strong { color: var(--text); }
+    .js-sort-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .js-sort-label {
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .js-sort-select {
+      font-size: .84rem;
+      padding: 6px 10px;
+      border: 1px solid rgba(8,44,29,.12);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+    }
+    .js-view-toggle {
+      display: flex;
+      gap: 4px;
+    }
+    .js-view-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(8,44,29,.12);
+      border-radius: 8px;
+      background: #f4f7f5;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .88rem;
+      transition: background .14s, color .14s;
+    }
+    .js-view-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* ── Job cards ── */
+    .js-job-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .js-job-card {
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(8,44,29,.08);
+      border-radius: 18px;
+      padding: 20px 22px 18px;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: transform .18s, border-color .18s, box-shadow .18s;
+    }
+    .js-job-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(88,220,142,.34);
+      box-shadow: 0 16px 34px rgba(8,44,29,.1);
+    }
+    .js-job-card.featured {
+      border-left: 3px solid var(--primary);
+      border-radius: 0 18px 18px 0;
+    }
+    .jc-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .jc-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #edf4ef;
+      border: 1px solid rgba(8,44,29,.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    .jc-info { flex: 1; min-width: 0; }
+    .jc-title {
+      margin: 0 0 2px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .jc-company {
+      margin: 0;
+      font-size: .84rem;
+      color: var(--muted);
+    }
+    .jc-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .jc-badge-new {
+      font-size: .72rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: #e1f5ee;
+      color: #085041;
+    }
+    .jc-save {
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 1rem;
+      padding: 0;
+      transition: color .14s;
+    }
+    .jc-save:hover { color: var(--primary); }
+    .jc-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .jc-tag {
+      font-size: .76rem;
+      font-weight: 700;
+      padding: 4px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(8,44,29,.1);
+      color: var(--muted);
+      background: #f4f7f5;
+    }
+    .jc-tag-green {
+      background: #e1f5ee;
+      color: #085041;
+      border-color: #9fe1cb;
+    }
+    .jc-tag-amber {
+      background: #fff8ec;
+      color: #7a4f0b;
+      border-color: #fac775;
+    }
+    .jc-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .jc-meta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .jc-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .84rem;
+      color: var(--muted);
+    }
+    .jc-salary {
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .jc-apply {
+      height: 36px;
+      padding: 0 18px;
+      background: linear-gradient(135deg,#63e094,#45cd80);
+      color: #fff;
+      border: 0;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: .84rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 6px 14px rgba(69,205,128,.22);
+      transition: transform .14s, box-shadow .14s;
+    }
+    .jc-apply:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(69,205,128,.3);
+    }
+
+    /* ── Pagination ── */
+    .js-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 24px;
+    }
+    .js-pg-btn {
+      min-width: 38px;
+      height: 38px;
+      padding: 0 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(8,44,29,.12);
+      background: #f4f7f5;
+      color: var(--primary);
+      font-family: inherit;
+      font-size: .84rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .14s, color .14s, border-color .14s;
+    }
+    .js-pg-btn:hover { background: #e1f5ee; border-color: #5dcaa5; }
+    .js-pg-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .js-pg-ellipsis {
+      font-size: .84rem;
+      color: var(--muted);
+      padding: 0 4px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      .js-body { grid-template-columns: 1fr; }
+      .js-sidebar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 24px; }
+      .js-sidebar-title { grid-column: 1 / -1; }
+    }
+    @media (max-width: 700px) {
+      .js-search-row { grid-template-columns: 1fr; }
+      .js-search-btn { width: 100%; }
+      .js-field { border-radius: 14px; }
+      .js-search-btn { border-radius: 14px; }
+      .js-sidebar { display: flex; flex-direction: column; }
+      .js-hero { padding: 20px 18px 18px; }
+      .js-results-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="site-header" id="top">
+    <div class="container header-wrap header-container">
+      <a href="../index.html#home" class="site-brand" aria-label="QuestServ home">
+        <img class="site-brand-logo" src="../assets/logo1.png" alt="QuestServ logo" />
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="../index.html#home">Home</a>
+       
+      </nav>
+      <div class="header-actions">
+        <button class="header-login-button" type="button" id="accountBtn">Account</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="js-page">
+    <div class="container">
+
+      <!-- ── Search hero ── -->
+      <div class="js-hero">
+        <h1>Find your next job</h1>
+        <p>Thousands of roles across the Philippines — search, filter, and apply in minutes.</p>
+        <div class="js-search-row">
+          <div class="js-field">
+            <i class="js-field-icon fas fa-search"></i>
+            <input type="text" id="keyword-input" placeholder="Job title, keyword, or company" value="" />
+          </div>
+          <div class="js-field">
+            <i class="js-field-icon fas fa-map-marker-alt"></i>
+            <input type="text" id="location-input" placeholder="City or province" value="" />
+          </div>
+          <button class="js-search-btn" id="searchBtn" type="button">
+            <i class="fas fa-search"></i> Search jobs
+          </button>
+        </div>
+        <div class="js-chips" id="chipRow">
+          <button class="js-chip active" data-chip="Full-time"><i class="fas fa-briefcase"></i> Full-time</button>
+          <button class="js-chip" data-chip="Part-time"><i class="fas fa-clock"></i> Part-time</button>
+          <button class="js-chip" data-chip="Contractual"><i class="fas fa-file-contract"></i> Contractual</button>
+          <button class="js-chip" data-chip="Work from home"><i class="fas fa-home"></i> Work from home</button>
+          <button class="js-chip" data-chip="Urgent hiring"><i class="fas fa-bolt"></i> Urgent hiring</button>
+          <button class="js-chip" data-chip="Fresh grad OK"><i class="fas fa-graduation-cap"></i> Fresh grad OK</button>
+        </div>
+      </div>
+
+      <!-- ── Recommended strip ── -->
+      <div class="js-rec">
+        <div class="js-rec-label">
+          <i class="fas fa-star"></i> Recommended for you
+        </div>
+        <div class="js-rec-chips">
+          <button class="js-rec-chip" onclick="fillSearch('Warehouse Helper')">Warehouse Helper</button>
+          <button class="js-rec-chip" onclick="fillSearch('QA Checker')">QA Checker</button>
+          <button class="js-rec-chip" onclick="fillSearch('HR Assistant')">HR Assistant</button>
+          <button class="js-rec-chip" onclick="fillSearch('Production Operator')">Production Operator</button>
+          <button class="js-rec-chip" onclick="fillSearch('Recruitment Coordinator')">Recruitment Coordinator</button>
+        </div>
+      </div>
+
+      <!-- ── Body ── -->
+      <div class="js-body">
+
+        <!-- ── Sidebar ── -->
+        <aside class="js-sidebar">
+          <h2 class="js-sidebar-title">Filters</h2>
+
+          <div class="js-filter-section">
+            <span class="js-filter-label">Job type</span>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox checked"><i class="fas fa-check"></i></span> Full-time</div>
+              <span class="js-filter-count">142</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Part-time</div>
+              <span class="js-filter-count">38</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Contractual</div>
+              <span class="js-filter-count">61</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Project-based</div>
+              <span class="js-filter-count">22</span>
+            </div>
+          </div>
+
+          <div class="js-filter-section">
+            <span class="js-filter-label">Location</span>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox checked"><i class="fas fa-check"></i></span> Metro Manila</div>
+              <span class="js-filter-count">98</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Cavite</div>
+              <span class="js-filter-count">44</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Laguna</div>
+              <span class="js-filter-count">31</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Bulacan</div>
+              <span class="js-filter-count">19</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Cebu</div>
+              <span class="js-filter-count">27</span>
+            </div>
+          </div>
+
+          <div class="js-filter-section">
+            <span class="js-filter-label">Monthly salary</span>
+            <div class="js-salary-range">
+              <span>₱15,000</span><span>₱50,000+</span>
+            </div>
+            <input class="js-salary-slider" type="range" min="15000" max="50000" step="1000" value="35000" id="salarySlider" />
+            <p class="js-salary-val">Up to <strong id="salaryVal">₱35,000</strong></p>
+          </div>
+
+          <div class="js-filter-section">
+            <span class="js-filter-label">Experience</span>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox checked"><i class="fas fa-check"></i></span> No experience</div>
+              <span class="js-filter-count">55</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> 1–2 years</div>
+              <span class="js-filter-count">87</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> 3–5 years</div>
+              <span class="js-filter-count">49</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> 5+ years</div>
+              <span class="js-filter-count">22</span>
+            </div>
+          </div>
+
+          <div class="js-filter-section">
+            <span class="js-filter-label">Industry</span>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Manufacturing</div>
+              <span class="js-filter-count">76</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> BPO / Call center</div>
+              <span class="js-filter-count">54</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Retail</div>
+              <span class="js-filter-count">38</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Logistics</div>
+              <span class="js-filter-count">29</span>
+            </div>
+            <div class="js-filter-option" onclick="toggleCheck(this)">
+              <div class="js-filter-left"><span class="js-checkbox"></span> Healthcare</div>
+              <span class="js-filter-count">21</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ── Job results ── -->
+        <div>
+          <div class="js-results-header">
+            <p class="js-results-count"><strong>263 jobs</strong> found in Metro Manila</p>
+            <div class="js-sort-row">
+              <span class="js-sort-label">Sort by</span>
+              <select class="js-sort-select" aria-label="Sort jobs">
+                <option>Most relevant</option>
+                <option>Newest first</option>
+                <option>Highest salary</option>
+              </select>
+              <div class="js-view-toggle">
+                <button class="js-view-btn active" aria-label="List view" title="List view"><i class="fas fa-list"></i></button>
+                <button class="js-view-btn" aria-label="Grid view" title="Grid view"><i class="fas fa-th-large"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="js-job-list" id="jobList">
+
+            <!-- Card 1 — Featured -->
+            <article class="js-job-card featured">
+              <div class="jc-top">
+                <div class="jc-logo">QS</div>
+                <div class="jc-info">
+                  <h3 class="jc-title">Production Staff</h3>
+                  <p class="jc-company">QuestServ Solutions &nbsp;·&nbsp; Taguig City</p>
+                </div>
+                <div class="jc-right">
+                  <span class="jc-badge-new">New today</span>
+                  <button class="jc-save" aria-label="Save this job"><i class="far fa-bookmark"></i></button>
+                </div>
+              </div>
+              <div class="jc-tags">
+                <span class="jc-tag jc-tag-green">Full-time</span>
+                <span class="jc-tag">Manufacturing</span>
+                <span class="jc-tag">Day shift</span>
+                <span class="jc-tag">No experience needed</span>
+              </div>
+              <div class="jc-footer">
+                <div class="jc-meta">
+                  <span class="jc-salary">₱18,000 – ₱22,000 / mo</span>
+                  <span class="jc-meta-item"><i class="fas fa-clock"></i> Posted 2 hrs ago</span>
+                  <span class="jc-meta-item"><i class="fas fa-users"></i> 10 slots open</span>
+                </div>
+                <button class="jc-apply" onclick="window.location.href='../pages/apply.html'">Apply now</button>
+              </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article class="js-job-card">
+              <div class="jc-top">
+                <div class="jc-logo">SM</div>
+                <div class="jc-info">
+                  <h3 class="jc-title">Warehouse Helper</h3>
+                  <p class="jc-company">SM Logistics &nbsp;·&nbsp; Cavite</p>
+                </div>
+                <div class="jc-right">
+                  <button class="jc-save" aria-label="Save this job"><i class="far fa-bookmark"></i></button>
+                </div>
+              </div>
+              <div class="jc-tags">
+                <span class="jc-tag jc-tag-green">Full-time</span>
+                <span class="jc-tag">Logistics</span>
+                <span class="jc-tag">Night shift available</span>
+                <span class="jc-tag jc-tag-amber">Urgent</span>
+              </div>
+              <div class="jc-footer">
+                <div class="jc-meta">
+                  <span class="jc-salary">₱16,000 – ₱20,000 / mo</span>
+                  <span class="jc-meta-item"><i class="fas fa-clock"></i> Posted 1 day ago</span>
+                  <span class="jc-meta-item"><i class="fas fa-users"></i> 25 slots open</span>
+                </div>
+                <button class="jc-apply" onclick="window.location.href='../pages/apply.html'">Apply now</button>
+              </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article class="js-job-card">
+              <div class="jc-top">
+                <div class="jc-logo">JG</div>
+                <div class="jc-info">
+                  <h3 class="jc-title">QA Checker</h3>
+                  <p class="jc-company">JG Summit Holdings &nbsp;·&nbsp; Pasig</p>
+                </div>
+                <div class="jc-right">
+                  <button class="jc-save" aria-label="Save this job"><i class="far fa-bookmark"></i></button>
+                </div>
+              </div>
+              <div class="jc-tags">
+                <span class="jc-tag jc-tag-green">Full-time</span>
+                <span class="jc-tag">Manufacturing</span>
+                <span class="jc-tag">1–2 yrs experience</span>
+              </div>
+              <div class="jc-footer">
+                <div class="jc-meta">
+                  <span class="jc-salary">₱20,000 – ₱26,000 / mo</span>
+                  <span class="jc-meta-item"><i class="fas fa-clock"></i> Posted 2 days ago</span>
+                  <span class="jc-meta-item"><i class="fas fa-users"></i> 5 slots open</span>
+                </div>
+                <button class="jc-apply" onclick="window.location.href='../pages/apply.html'">Apply now</button>
+              </div>
+            </article>
+
+            <!-- Card 4 -->
+            <article class="js-job-card">
+              <div class="jc-top">
+                <div class="jc-logo">RR</div>
+                <div class="jc-info">
+                  <h3 class="jc-title">HR Assistant</h3>
+                  <p class="jc-company">Robinsons Retail &nbsp;·&nbsp; Mandaluyong</p>
+                </div>
+                <div class="jc-right">
+                  <button class="jc-save" aria-label="Save this job"><i class="far fa-bookmark"></i></button>
+                </div>
+              </div>
+              <div class="jc-tags">
+                <span class="jc-tag jc-tag-green">Full-time</span>
+                <span class="jc-tag">Retail</span>
+                <span class="jc-tag">Fresh grad OK</span>
+              </div>
+              <div class="jc-footer">
+                <div class="jc-meta">
+                  <span class="jc-salary">₱17,000 – ₱21,000 / mo</span>
+                  <span class="jc-meta-item"><i class="fas fa-clock"></i> Posted 3 days ago</span>
+                  <span class="jc-meta-item"><i class="fas fa-users"></i> 3 slots open</span>
+                </div>
+                <button class="jc-apply" onclick="window.location.href='../pages/apply.html'">Apply now</button>
+              </div>
+            </article>
+
+            <!-- Card 5 -->
+            <article class="js-job-card">
+              <div class="jc-top">
+                <div class="jc-logo">TD</div>
+                <div class="jc-info">
+                  <h3 class="jc-title">Recruitment Coordinator</h3>
+                  <p class="jc-company">TechDynamics Inc. &nbsp;·&nbsp; Makati</p>
+                </div>
+                <div class="jc-right">
+                  <button class="jc-save" aria-label="Save this job"><i class="far fa-bookmark"></i></button>
+                </div>
+              </div>
+              <div class="jc-tags">
+                <span class="jc-tag jc-tag-green">Full-time</span>
+                <span class="jc-tag">BPO / Call center</span>
+                <span class="jc-tag">1–2 yrs experience</span>
+              </div>
+              <div class="jc-footer">
+                <div class="jc-meta">
+                  <span class="jc-salary">₱22,000 – ₱28,000 / mo</span>
+                  <span class="jc-meta-item"><i class="fas fa-clock"></i> Posted 4 days ago</span>
+                  <span class="jc-meta-item"><i class="fas fa-users"></i> 8 slots open</span>
+                </div>
+                <button class="jc-apply" onclick="window.location.href='../pages/apply.html'">Apply now</button>
+              </div>
+            </article>
+
+          </div>
+
+          <!-- Pagination -->
+          <nav class="js-pagination" aria-label="Job results pages">
+            <button class="js-pg-btn" aria-label="Previous page"><i class="fas fa-chevron-left"></i></button>
+            <button class="js-pg-btn active" aria-current="page">1</button>
+            <button class="js-pg-btn">2</button>
+            <button class="js-pg-btn">3</button>
+            <span class="js-pg-ellipsis">…</span>
+            <button class="js-pg-btn">18</button>
+            <button class="js-pg-btn" aria-label="Next page"><i class="fas fa-chevron-right"></i></button>
+          </nav>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3 class="footer-title">About Company</h3>
+          <p class="footer-about-copy">We're dedicated to connecting reliable talent with growing businesses across the Philippines.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div>
+          <h3 class="footer-title">Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="../index.html#home">About Us</a></li>
+            <li><a href="job-search.html">Find Jobs</a></li>
+            <li><a href="../pages/employers.html">Services</a></li>
+            <li><a href="../index.html#contact">Contact</a></li>
+            <li><a href="../pages/register-account.html">Register</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="footer-title">Support</h3>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="../pages/register.html">Admin</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 QuestServ Solution Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Salary slider ── */
+    const slider = document.getElementById('salarySlider');
+    const salaryVal = document.getElementById('salaryVal');
+    slider.addEventListener('input', () => {
+      salaryVal.textContent = '₱' + Number(slider.value).toLocaleString();
+    });
+
+    /* ── Quick chips toggle ── */
+    document.querySelectorAll('.js-chip').forEach(chip => {
+      chip.addEventListener('click', () => chip.classList.toggle('active'));
+    });
+
+    /* ── Sidebar checkboxes ── */
+    function toggleCheck(option) {
+      const box = option.querySelector('.js-checkbox');
+      if (!box) return;
+      const checked = box.classList.toggle('checked');
+      box.innerHTML = checked ? '<i class="fas fa-check"></i>' : '';
+    }
+
+    /* ── View toggle ── */
+    document.querySelectorAll('.js-view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.js-view-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    /* ── Pagination ── */
+    document.querySelectorAll('.js-pg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.querySelector('i')) return;
+        document.querySelectorAll('.js-pg-btn').forEach(b => {
+          b.classList.remove('active');
+          b.removeAttribute('aria-current');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-current', 'page');
+      });
+    });
+
+    /* ── Recommended chip fill ── */
+    function fillSearch(term) {
+      document.getElementById('keyword-input').value = term;
+      document.getElementById('keyword-input').focus();
+    }
+
+    /* ── Bookmark toggle ── */
+    document.querySelectorAll('.jc-save').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const icon = btn.querySelector('i');
+        if (icon.classList.contains('far')) {
+          icon.classList.replace('far', 'fas');
+          btn.style.color = 'var(--primary)';
+        } else {
+          icon.classList.replace('fas', 'far');
+          btn.style.color = '';
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
