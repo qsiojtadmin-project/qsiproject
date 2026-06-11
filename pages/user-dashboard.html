@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuestServ | User Dashboard</title>
+  <title>QuestServ | User Dashboard</title> 
   <meta name="description" content="User dashboard for QuestServ applicants." />
   <link rel="icon" type="image/x-icon" href="../assets/icon.ico?v=3" />
   <link rel="shortcut icon" href="../assets/icon.ico?v=3" />
@@ -12,6 +12,136 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../src/styles/styles.css" />
+  <style>
+    .header-account-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(8,44,29,.12);
+      background: #fff;
+      color: var(--primary, #07572c);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .16s, border-color .16s, transform .16s, color .16s;
+      padding: 0;
+      position: relative;
+      z-index: 100;
+    }
+    .header-account-icon:hover {
+      background: rgba(99,224,148,.12);
+      border-color: rgba(69,205,128,.35);
+      transform: translateY(-1px);
+      color: #2f7f55;
+    }
+    .header-account-icon:focus-visible {
+      outline: 3px solid rgba(88,220,142,.35);
+      outline-offset: 2px;
+    }
+    .header-actions {
+      position: relative;
+      margin-right: 12px;
+    }
+    .header-account-menu {
+      position: absolute;
+      right: 0;
+      top: 54px;
+      width: 260px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.98);
+      border: 1px solid rgba(8,44,29,.12);
+      box-shadow: 0 24px 64px rgba(8,44,29,.14);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity .18s ease, transform .18s ease, visibility .18s;
+      z-index: 90;
+      pointer-events: none;
+    }
+    .header-actions:hover .header-account-menu,
+    .header-actions:focus-within .header-account-menu,
+    .header-account-icon:hover + .header-account-menu,
+    .header-account-menu:hover {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .account-menu-card {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+    .account-menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(8,44,29,.08);
+    }
+    .account-menu-email {
+      display: block;
+      font-weight: 700;
+      color: #0f2e18;
+    }
+    .account-menu-note {
+      margin: 4px 0 0;
+      font-size: .82rem;
+      color: #617168;
+    }
+    .account-menu-badge {
+      min-width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #e1f5ee;
+      color: #085041;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .78rem;
+      font-weight: 700;
+    }
+    .account-menu-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: .92rem;
+      color: #0f2e18;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background .16s, color .16s;
+    }
+    .account-menu-item:hover {
+      background: #f4f7f5;
+      color: #07572c;
+    }
+    .account-menu-footer {
+      padding-top: 8px;
+      border-top: 1px solid rgba(8,44,29,.08);
+    }
+    .account-menu-signout {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: #c0392b;
+      background: #fff5f5;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background .16s;
+    }
+    .account-menu-signout:hover {
+      background: #fdecea;
+    }
+  </style>
 </head>
 <body>
   <header class="site-header" id="top">
@@ -22,15 +152,34 @@
 
       <nav class="site-nav" aria-label="Main navigation">
         <a href="../index.html#home">Home</a>
-        <a href="../index.html#jobs">Jobs</a>
-        <a href="../index.html#contact">Contact</a>
-        <a href="../pages/jobs.html">Find Salaries</a>
-        <a href="../pages/apply.html">Apply now</a>
+        <a href="../pages/jobs.html">Jobs</a>
+        <a href="../pages/jobs.html">Find Salary</a>
       </nav>
 
       <div class="header-actions">
-        <button class="header-login-button" type="button">Account</button>
-        <a href="../pages/employers.html" class="header-post-btn">Post a Job</a>
+        <button class="header-login-button header-account-icon" type="button" aria-label="Account">
+          <i class="fas fa-user"></i>
+        </button>
+        <div class="header-account-menu" aria-hidden="true">
+          <div class="account-menu-card">
+            <div class="account-menu-header">
+              <div>
+                <span class="account-menu-email">qsiojadmin@gmail.com</span>
+                <p class="account-menu-note">Manage your account</p>
+              </div>
+              <span class="account-menu-badge">1</span>
+            </div>
+            <button type="button" class="account-menu-item"><i class="fas fa-user-circle"></i> Profile</button>
+            <button type="button" class="account-menu-item"><i class="fas fa-star"></i> My reviews</button>
+            <button type="button" class="account-menu-item"><i class="fas fa-cog"></i> Settings</button>
+            <button type="button" class="account-menu-item"><i class="fas fa-question-circle"></i> Help</button>
+            <button type="button" class="account-menu-item"><i class="fas fa-lock"></i> Privacy Center</button>
+            <div class="account-menu-footer">
+              <button type="button" class="account-menu-signout">Sign out</button>
+            </div>
+          </div>
+        </div>
+        
       </div>
     </div>
   </header>
@@ -39,13 +188,12 @@
     <section class="user-hero">
       <div class="container user-hero-inner">
         <div>
-          <p class="user-kicker">Welcome back</p>
-          <h1>Your applicant dashboard</h1>
+          <p class="user-kicker">Hello </p>
+          <h1>User</h1>
           <p>Track your applications, finish your profile, and unlock new opportunities faster.</p>
         </div>
         <div class="user-hero-actions">
           <a class="btn" href="../pages/apply.html">Complete profile</a>
-          <a class="btn user-btn-ghost" href="../pages/jobs.html">Explore jobs</a>
         </div>
       </div>
     </section>
@@ -101,7 +249,7 @@
               <span class="user-tag user-tag-neutral">Submitted</span>
             </div>
           </div>
-          <a class="user-link" href="../pages/apply.html">View all applications</a>
+         
         </article>
 
         <article class="user-card">
@@ -173,8 +321,8 @@
           <ul class="footer-links">
             <li><a href="../index.html#home">About Us</a></li>
             <li><a href="../index.html#jobs">Jobs</a></li>
-            <li><a href="../pages/employers.html">Services</a></li>
-            <li><a href="../index.html#contact">Contact</a></li>
+          
+            
             <li><a href="../pages/register-account.html?v=20260609">Register</a></li>
           </ul>
         </div>

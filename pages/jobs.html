@@ -332,6 +332,136 @@
       border-color: var(--primary);
     }
 
+    .header-account-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(8,44,29,.12);
+      background: #fff;
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .16s, border-color .16s, transform .16s, color .16s;
+      padding: 0;
+      position: relative;
+      z-index: 100;
+    }
+    .header-account-icon:hover {
+      background: rgba(99,224,148,.12);
+      border-color: rgba(69,205,128,.35);
+      transform: translateY(-1px);
+      color: #2f7f55;
+    }
+    .header-account-icon:focus-visible {
+      outline: 3px solid rgba(88,220,142,.35);
+      outline-offset: 2px;
+    }
+    .header-actions {
+      position: relative;
+      margin-right: 12px;
+    }
+    .header-account-menu {
+      position: absolute;
+      right: 0;
+      top: 54px;
+      width: 260px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.98);
+      border: 1px solid rgba(8,44,29,.12);
+      box-shadow: 0 24px 64px rgba(8,44,29,.14);
+      display: block;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity .18s ease, transform .18s ease, visibility .18s;
+      z-index: 90;
+      pointer-events: none;
+    }
+    .header-actions:hover .header-account-menu,
+    .header-actions:focus-within .header-account-menu,
+    .header-account-icon:hover + .header-account-menu,
+    .header-account-menu:hover {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .account-menu-card {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+    .account-menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(8,44,29,.08);
+    }
+    .account-menu-email {
+      display: block;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .account-menu-note {
+      margin: 4px 0 0;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .account-menu-badge {
+      min-width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #e1f5ee;
+      color: #085041;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .78rem;
+      font-weight: 700;
+    }
+    .account-menu-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: .92rem;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background .16s, color .16s;
+    }
+    .account-menu-item:hover {
+      background: #f4f7f5;
+      color: var(--primary-dark);
+    }
+    .account-menu-footer {
+      padding-top: 8px;
+      border-top: 1px solid rgba(8,44,29,.08);
+    }
+    .account-menu-signout {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: #c0392b;
+      background: #fff5f5;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background .16s;
+    }
+    .account-menu-signout:hover {
+      background: #fdecea;
+    }
+
     /* ── Job cards ── */
     .js-job-list {
       display: flex;
@@ -550,7 +680,29 @@
        
       </nav>
       <div class="header-actions">
-        <button class="header-login-button" type="button" id="accountBtn">Account</button>
+        <button class="header-login-button header-account-icon" type="button" id="accountBtn" aria-label="Account" aria-expanded="false">
+          <i class="fas fa-user"></i>
+        </button>
+
+        <div class="header-account-menu" id="accountMenu" aria-hidden="true">
+          <div class="account-menu-card">
+            <div class="account-menu-header">
+              <div>
+                <span class="account-menu-email">qsiojadmin@gmail.com</span>
+                <p class="account-menu-note">Manage your account</p>
+              </div>
+              <span class="account-menu-badge">1</span>
+            </div>
+            <button type="button" class="account-menu-item"><i class="fas fa-user-circle"></i> Profile</button>
+            <button type="button" class="account-menu-item"><i class="fas fa-star"></i> My reviews</button>
+            <button type="button" class="account-menu-item"><i class="fas fa-cog"></i> Settings</button>
+            <button type="button" class="account-menu-item"><i class="fas fa-question-circle"></i> Help</button>
+            <button type="button" class="account-menu-item"><i class="fas fa-lock"></i> Privacy Center</button>
+            <div class="account-menu-footer">
+              <button type="button" class="account-menu-signout">Sign out</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -985,6 +1137,8 @@
         }
       });
     });
+
+    /* ── Account popup now uses CSS hover */
   </script>
 
 </body>
