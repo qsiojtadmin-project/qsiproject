@@ -90,13 +90,30 @@
     </div>
   </header>
 
+  <nav class="mobile-page-nav" aria-label="Mobile section navigation">
+    <a class="mobile-page-nav-btn mobile-page-nav-prev" href="#home" data-mobile-prev aria-label="Previous section">
+      <i class="fas fa-chevron-left" aria-hidden="true"></i>
+    </a>
+    <a class="mobile-page-nav-btn mobile-page-nav-next" href="#jobs" data-mobile-next aria-label="Next section">
+      <i class="fas fa-chevron-right" aria-hidden="true"></i>
+    </a>
+  </nav>
+
   <main>
     <section class="hero-section">
       <div class="hero-geo" aria-hidden="true"></div>
       <div class="container">
         <div class="hero-layout">
           <div class="hero-content">
-            <p class="hero-kicker">QuestServ Solution Inc.</p>
+            <p class="hero-kicker">500+ Companies Actively Hiring</p>
+            <div class="mobile-hero-copy" aria-hidden="true">
+              <h1>
+                <span>Find Your Next</span>
+                <span>Career Opportunity</span>
+                <span>with QuestServ</span>
+              </h1>
+              <p>Connecting talented professionals with leading companies. Start your journey to a better career today.</p>
+            </div>
             <h1>
               <span class="hero-title-line">Your Trusted Manpower</span>
               <span class="hero-title-line">Partner in the</span>
@@ -107,6 +124,21 @@
             <div class="hero-buttons">
               <a href="#jobs" class="btn-hero-white">View Job Openings <i class="fas fa-briefcase btn-icon" aria-hidden="true"></i></a>
               <a href="pages/register-account.html?v=20260609" class="btn-hero-outline">Partner With Us <i class="fas fa-handshake btn-icon" aria-hidden="true"></i></a>
+            </div>
+
+            <form class="mobile-hero-search" action="#jobs">
+              <label aria-label="Search jobs">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input type="text" name="keyword" placeholder="Search job title, skill, company" />
+              </label>
+              <button type="submit">Search</button>
+            </form>
+
+            <div class="mobile-section-dots" aria-hidden="true">
+              <span class="is-active"></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
 
             <div class="hero-badges">
@@ -389,5 +421,6 @@
   <script src="src/js/supabase-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="src/js/script.js"></script>
+  <script src="src/js/mobile-sections.js"></script>
 </body>
 </html>
