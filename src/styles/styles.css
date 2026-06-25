@@ -2139,9 +2139,11 @@ select {
     pointer-events: none;
   }
 
-  .mobile-page-nav-btn {
+.mobile-page-nav-btn {
+  opacity: 0.2;
     position: fixed;
-    top: 88px;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 120;
     width: 46px;
     height: 46px;
@@ -2154,8 +2156,7 @@ select {
     backdrop-filter: blur(10px);
     box-shadow: 0 12px 26px rgba(3, 38, 24, 0.2);
     pointer-events: auto;
-  }
-
+}
   .mobile-page-nav-next {
     right: 0;
   }
