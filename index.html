@@ -16,11 +16,12 @@
 <body>
   <div id="home"></div>
   <header class="site-header">
+    
     <div class="container header-wrap header-container">
       <a href="#home" class="site-brand" aria-label="QuestServ home">
         <img class="site-brand-logo" src="assets/logo1.png" alt="QuestServ logo" />
       </a>
-      <button class="mobile-menu-btn">
+  <button class="mobile-menu-btn" id="menuBtn">
     <i class="fas fa-bars"></i>
 </button>
 
@@ -92,6 +93,21 @@
       </form>
     </div>
   </header>
+  <div class="mobile-sidebar" id="mobileSidebar">
+
+    <div class="sidebar-header">
+        <img src="assets/logo1.png" alt="QuestServ">
+    </div>
+
+    <a href="#home">Home</a>
+    <a href="#about">About Company</a>
+    <a href="#jobs">Apply Job</a>
+    <a href="#contact">Contact</a>
+    <a href="#login">Login</a>
+
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <nav class="mobile-page-nav" aria-label="Mobile section navigation">
     <a class="mobile-page-nav-btn mobile-page-nav-prev" href="#home" data-mobile-prev aria-label="Previous section">

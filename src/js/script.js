@@ -731,3 +731,17 @@ document.addEventListener('keydown', (event) => {
 
 setJobsPage(1);
 loadHomePoster();
+
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.getElementById("mobileSidebar");
+const overlay = document.getElementById("sidebarOverlay");
+
+menuBtn.onclick = function () {
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+};
+
+overlay.onclick = function () {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+};
