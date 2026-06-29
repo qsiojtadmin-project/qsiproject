@@ -78,7 +78,7 @@ select {
    backdrop-filter: blur(14px);
 }
 .header-wrap {
-  min-height: 80px;
+  min-height: 95px;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -99,8 +99,8 @@ select {
 
 .site-brand-logo {
     width: auto;
-    height: 40px;
-    max-width: 140px;
+    height: 65px;
+    max-width: 240px;
     object-fit: contain;
 }
 .site-nav {
@@ -1824,15 +1824,15 @@ select {
     padding: 0;
   }
 
-  .site-brand-logo {
-    height: 38px;
-    max-width: 138px;
+.site-brand-logo {
+    height: 60px;       /* Increased from 38px */
+    max-width: 220px;   /* Increased from 138px */
     object-fit: contain;
     padding: 6px 9px;
     border-radius: 7px;
     background: transparent;
     box-shadow: none;
-  }
+}
 
   .site-nav {
     display: none;
