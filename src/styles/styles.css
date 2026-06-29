@@ -2506,7 +2506,7 @@ select {
 .sidebar-overlay{
     position:fixed;
     inset:0;
-    background:rgba(2,18,12,.58);
+    background:rgba(3, 31, 21, 0.58);
     backdrop-filter: blur(3px);
     opacity:0;
     visibility:hidden;
