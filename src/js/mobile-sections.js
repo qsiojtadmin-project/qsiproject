@@ -3,14 +3,14 @@
   const prevButton = document.querySelector('[data-mobile-prev]');
   const nextButton = document.querySelector('[data-mobile-next]');
   const nav = document.querySelector('.mobile-page-nav');
-  const dots = Array.from(document.querySelectorAll('.mobile-section-dots span'));
+  const dots = Array.from(document.querySelectorAll('.mobile-page-indicator span'));
 
-  if (!prevButton || !nextButton || !nav) return;
+  if (!nextButton || !nav) return;
 
   const pages = [
     { id: 'home', element: document.querySelector('.hero-section') },
-    { id: 'jobs', element: document.getElementById('jobs') },
     { id: 'about', element: document.getElementById('about') },
+    { id: 'jobs', element: document.getElementById('jobs') },
     { id: 'contact', element: document.getElementById('contact') },
   ].filter((page) => page.element);
 
@@ -21,7 +21,9 @@
   let touchEndY = 0;
 
   function setActiveIndex(index) {
-    activeIndex = Math.max(0, Math.min(index, pages.length - 1));
+    const nextIndex = Math.max(0, Math.min(index, pages.length - 1));
+    const previousIndex = activeIndex;
+    activeIndex = nextIndex;
 
     const previous = pages[activeIndex - 1];
     const next = pages[activeIndex + 1];
@@ -37,10 +39,18 @@
       dot.classList.toggle('is-active', dotIndex === activeIndex);
     });
 
-    prevButton.classList.toggle('is-hidden', !previous);
+    if (mobileQuery.matches && previousIndex !== activeIndex) {
+      nav.classList.remove('is-moving-next', 'is-moving-prev');
+      nav.classList.add(activeIndex > previousIndex ? 'is-moving-next' : 'is-moving-prev');
+      window.setTimeout(() => {
+        nav.classList.remove('is-moving-next', 'is-moving-prev');
+      }, 360);
+    }
+
+    prevButton?.classList.toggle('is-hidden', !previous);
     nextButton.classList.toggle('is-hidden', !next);
 
-    if (previous) prevButton.href = `#${previous.id}`;
+    if (previous && prevButton) prevButton.href = `#${previous.id}`;
     if (next) nextButton.href = `#${next.id}`;
 
     nav.classList.toggle('is-on-hero', activeIndex === 0);
@@ -73,6 +83,7 @@
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (event) => {
       if (!mobileQuery.matches) return;
+      if (link.matches('[data-mobile-next], [data-mobile-prev]')) return;
 
       const targetIndex = pages.findIndex((page) => `#${page.id}` === link.getAttribute('href'));
       if (targetIndex >= 0) {
@@ -82,7 +93,7 @@
     });
   });
 
-  prevButton.addEventListener('click', (event) => {
+  prevButton?.addEventListener('click', (event) => {
     event.preventDefault();
     goToPage(activeIndex - 1);
   });

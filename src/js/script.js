@@ -735,13 +735,32 @@ loadHomePoster();
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("mobileSidebar");
 const overlay = document.getElementById("sidebarOverlay");
+const sidebarClose = document.getElementById("sidebarClose");
 
-menuBtn.onclick = function () {
-    sidebar.classList.toggle("active");
-    overlay.classList.toggle("active");
-};
+function setMobileSidebar(isOpen) {
+    if (!sidebar || !overlay || !menuBtn) return;
+    sidebar.classList.toggle("active", isOpen);
+    overlay.classList.toggle("active", isOpen);
+    sidebar.setAttribute("aria-hidden", String(!isOpen));
+    menuBtn.setAttribute("aria-expanded", String(isOpen));
+}
 
-overlay.onclick = function () {
-    sidebar.classList.remove("active");
-    overlay.classList.remove("active");
-};
+if (menuBtn && sidebar && overlay) {
+    menuBtn.onclick = function () {
+        setMobileSidebar(!sidebar.classList.contains("active"));
+    };
+
+    overlay.onclick = function () {
+        setMobileSidebar(false);
+    };
+
+    sidebar.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => setMobileSidebar(false));
+    });
+}
+
+if (sidebarClose) {
+    sidebarClose.onclick = function () {
+        setMobileSidebar(false);
+    };
+}
