@@ -42,14 +42,16 @@
     }
     .header-actions {
       position: relative;
-      margin-right: 12px;
+      margin-right: 0;
     }
     .header-account-menu {
       position: absolute;
-      right: 0;
-      top: 54px;
-      width: 260px;
-      border-radius: 22px;
+      right: clamp(-10px, -1.6vw, 0px);
+      top: calc(100% + 12px);
+      width: min(292px, calc(100vw - 32px));
+      max-height: calc(100vh - 104px);
+      overflow-y: auto;
+      border-radius: 20px;
       background: rgba(255,255,255,.98);
       border: 1px solid rgba(8,44,29,.12);
       box-shadow: 0 24px 64px rgba(8,44,29,.14);
@@ -57,8 +59,20 @@
       visibility: hidden;
       transform: translateY(-10px);
       transition: opacity .18s ease, transform .18s ease, visibility .18s;
-      z-index: 90;
+      z-index: 160;
       pointer-events: none;
+    }
+    .header-account-menu::before {
+      content: "";
+      position: absolute;
+      top: -8px;
+      right: 18px;
+      width: 16px;
+      height: 16px;
+      background: rgba(255,255,255,.98);
+      border-left: 1px solid rgba(8,44,29,.12);
+      border-top: 1px solid rgba(8,44,29,.12);
+      transform: rotate(45deg);
     }
     .header-actions:hover .header-account-menu,
     .header-actions:focus-within .header-account-menu,
@@ -70,29 +84,39 @@
       pointer-events: auto;
     }
     .account-menu-card {
-      padding: 18px;
+      position: relative;
+      padding: 16px;
       display: grid;
-      gap: 12px;
+      gap: 8px;
     }
     .account-menu-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      padding-bottom: 8px;
+      gap: 12px;
+      padding-bottom: 10px;
       border-bottom: 1px solid rgba(8,44,29,.08);
+    }
+    .account-menu-header > div {
+      min-width: 0;
     }
     .account-menu-email {
       display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-weight: 700;
       color: #0f2e18;
+      line-height: 1.25;
     }
     .account-menu-note {
-      margin: 4px 0 0;
+      margin: 3px 0 0;
       font-size: .82rem;
       color: #617168;
     }
     .account-menu-badge {
+      flex: 0 0 auto;
       min-width: 28px;
       height: 28px;
       border-radius: 999px;
@@ -109,8 +133,8 @@
       border: 0;
       background: transparent;
       text-align: left;
-      padding: 10px 12px;
-      border-radius: 14px;
+      padding: 9px 10px;
+      border-radius: 12px;
       font-size: .92rem;
       color: #0f2e18;
       cursor: pointer;
@@ -124,7 +148,8 @@
       color: #07572c;
     }
     .account-menu-footer {
-      padding-top: 8px;
+      margin-top: 2px;
+      padding-top: 10px;
       border-top: 1px solid rgba(8,44,29,.08);
     }
     .account-menu-signout {
@@ -140,6 +165,22 @@
     }
     .account-menu-signout:hover {
       background: #fdecea;
+    }
+    @media (max-width: 520px) {
+      .header-account-menu {
+        position: fixed;
+        top: 70px;
+        right: 16px;
+        left: 16px;
+        width: auto;
+        max-height: calc(100vh - 92px);
+      }
+      .header-account-menu::before {
+        right: 22px;
+      }
+      .account-menu-card {
+        padding: 14px;
+      }
     }
   </style>
 </head>

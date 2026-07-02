@@ -1,142 +1,228 @@
 (function () {
-  const mobileQuery = window.matchMedia('(max-width: 780px)');
+  const nav = document.querySelector('.mobile-page-nav');
   const prevButton = document.querySelector('[data-mobile-prev]');
   const nextButton = document.querySelector('[data-mobile-next]');
-  const nav = document.querySelector('.mobile-page-nav');
   const dots = Array.from(document.querySelectorAll('.mobile-page-indicator span'));
 
-  if (!nextButton || !nav) return;
-
   const pages = [
-    { id: 'home', element: document.querySelector('.hero-section') },
-    { id: 'about', element: document.getElementById('about') },
+    { id: 'home', element: document.getElementById('home') },
     { id: 'jobs', element: document.getElementById('jobs') },
+    { id: 'about', element: document.getElementById('about') },
     { id: 'contact', element: document.getElementById('contact') },
+    { id: 'apply', element: document.getElementById('apply') },
   ].filter((page) => page.element);
 
-  let activeIndex = 0;
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchEndX = 0;
-  let touchEndY = 0;
+  if (!nav || !pages.length) return;
 
-  function setActiveIndex(index) {
+  let activeIndex = 0;
+
+  function installGlobalFooters() {
+    const template = document.getElementById('global-footer-template');
+    if (!template) return;
+
+    pages.forEach((page) => {
+      if (page.id === 'apply') return;
+      if (page.element.querySelector(':scope > .section-footer')) return;
+
+      const footer = template.content.firstElementChild.cloneNode(true);
+      footer.dataset.footerFor = page.id;
+      page.element.appendChild(footer);
+    });
+  }
+
+  installGlobalFooters();
+
+  const sectionLinks = Array.from(document.querySelectorAll('a[href^="#"]'));
+
+  document.documentElement.classList.add('section-navigation-lock');
+  document.body.classList.add('section-page-mode');
+
+  function isEditableTarget(target) {
+    return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
+  }
+
+  function isInteractiveTarget(target) {
+    return Boolean(target.closest('button, input, textarea, select, a, [contenteditable="true"]'));
+  }
+
+  function getActiveSection() {
+    return pages[activeIndex]?.element || null;
+  }
+
+  function updateIndicatorVisibility(section = getActiveSection()) {
+    nav.classList.toggle('is-indicator-hidden', Boolean(section && section.scrollTop > 24));
+  }
+
+  function scrollActiveSection(key, shiftKey) {
+    const section = getActiveSection();
+    if (!section) return;
+
+    const step = Math.max(48, Math.round(section.clientHeight * 0.12));
+    const pageStep = Math.max(120, Math.round(section.clientHeight * 0.82));
+    const scrollOptions = { behavior: 'smooth' };
+
+    if (key === 'Home') {
+      section.scrollTo({ top: 0, ...scrollOptions });
+      return;
+    }
+
+    if (key === 'End') {
+      section.scrollTo({ top: section.scrollHeight, ...scrollOptions });
+      return;
+    }
+
+    const deltas = {
+      ArrowUp: -step,
+      ArrowDown: step,
+      PageUp: -pageStep,
+      PageDown: pageStep,
+      ' ': shiftKey ? -pageStep : pageStep,
+    };
+
+    if (Object.prototype.hasOwnProperty.call(deltas, key)) {
+      section.scrollBy({ top: deltas[key], ...scrollOptions });
+    }
+  }
+
+  function setActiveIndex(index, options = {}) {
     const nextIndex = Math.max(0, Math.min(index, pages.length - 1));
     const previousIndex = activeIndex;
     activeIndex = nextIndex;
 
-    const previous = pages[activeIndex - 1];
-    const next = pages[activeIndex + 1];
-
     pages.forEach((page, pageIndex) => {
-      page.element.classList.toggle('is-mobile-active', pageIndex === activeIndex);
+      const isActive = pageIndex === activeIndex;
+
+      page.element.classList.toggle('is-section-active', isActive);
+      page.element.classList.toggle('is-section-before', pageIndex < activeIndex);
+      page.element.classList.toggle('is-section-after', pageIndex > activeIndex);
+      page.element.classList.toggle('is-mobile-active', isActive);
       page.element.classList.toggle('is-mobile-before', pageIndex < activeIndex);
       page.element.classList.toggle('is-mobile-after', pageIndex > activeIndex);
-      page.element.setAttribute('aria-hidden', mobileQuery.matches && pageIndex !== activeIndex ? 'true' : 'false');
+      page.element.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+      page.element.inert = !isActive;
     });
 
     dots.forEach((dot, dotIndex) => {
       dot.classList.toggle('is-active', dotIndex === activeIndex);
     });
 
-    if (mobileQuery.matches && previousIndex !== activeIndex) {
-      nav.classList.remove('is-moving-next', 'is-moving-prev');
-      nav.classList.add(activeIndex > previousIndex ? 'is-moving-next' : 'is-moving-prev');
-      window.setTimeout(() => {
-        nav.classList.remove('is-moving-next', 'is-moving-prev');
-      }, 360);
-    }
+    sectionLinks.forEach((link) => {
+      const href = link.getAttribute('href');
+      const isActiveLink = href === `#${pages[activeIndex].id}`;
 
-    prevButton?.classList.toggle('is-hidden', !previous);
-    nextButton.classList.toggle('is-hidden', !next);
-
-    if (previous && prevButton) prevButton.href = `#${previous.id}`;
-    if (next) nextButton.href = `#${next.id}`;
-
-    nav.classList.toggle('is-on-hero', activeIndex === 0);
-    document.body.dataset.mobilePage = pages[activeIndex]?.id || 'home';
-    history.replaceState(null, '', `#${pages[activeIndex].id}`);
-  }
-
-  function goToPage(index) {
-    if (!mobileQuery.matches) return;
-    setActiveIndex(index);
-  }
-
-  function enableMobileMode() {
-    document.body.classList.toggle('mobile-page-mode', mobileQuery.matches);
-
-    if (!mobileQuery.matches) {
-      pages.forEach((page) => {
-        page.element.classList.remove('is-mobile-active', 'is-mobile-before', 'is-mobile-after');
-        page.element.removeAttribute('aria-hidden');
-      });
-      document.body.removeAttribute('data-mobile-page');
-      return;
-    }
-
-    const hashIndex = pages.findIndex((page) => `#${page.id}` === window.location.hash);
-    setActiveIndex(hashIndex >= 0 ? hashIndex : activeIndex);
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-  }
-
-  document.querySelectorAll('a[href^="#"]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      if (!mobileQuery.matches) return;
-      if (link.matches('[data-mobile-next], [data-mobile-prev]')) return;
-
-      const targetIndex = pages.findIndex((page) => `#${page.id}` === link.getAttribute('href'));
-      if (targetIndex >= 0) {
-        event.preventDefault();
-        goToPage(targetIndex);
+      link.classList.toggle('is-active', isActiveLink);
+      if (link.closest('.site-nav')) {
+        if (isActiveLink) {
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.removeAttribute('aria-current');
+        }
       }
+    });
+
+    nav.classList.remove('is-moving-next', 'is-moving-prev');
+    if (previousIndex !== activeIndex) {
+      nav.classList.add(activeIndex > previousIndex ? 'is-moving-next' : 'is-moving-prev');
+      window.setTimeout(() => nav.classList.remove('is-moving-next', 'is-moving-prev'), 360);
+    }
+
+    nav.classList.toggle('is-on-hero', pages[activeIndex].id === 'home');
+    document.body.dataset.mobilePage = pages[activeIndex].id;
+    updateIndicatorVisibility();
+    window.scrollTo(0, 0);
+
+    const previous = pages[activeIndex - 1];
+    const next = pages[activeIndex + 1];
+
+    if (prevButton) {
+      prevButton.classList.toggle('is-hidden', !previous);
+      if (previous) prevButton.href = `#${previous.id}`;
+    }
+
+    if (nextButton) {
+      nextButton.classList.toggle('is-hidden', !next);
+      if (next) nextButton.href = `#${next.id}`;
+    }
+
+    if (!options.skipHash) {
+      const hash = `#${pages[activeIndex].id}`;
+      if (window.location.hash !== hash) {
+        history.pushState({ section: pages[activeIndex].id }, '', hash);
+      }
+    }
+  }
+
+  function goToHash(hash, options = {}) {
+    const targetIndex = pages.findIndex((page) => `#${page.id}` === hash);
+    if (targetIndex < 0) return false;
+
+    setActiveIndex(targetIndex, options);
+    return true;
+  }
+
+  pages.forEach((page) => {
+    let scrollFrame = 0;
+
+    page.element.addEventListener('scroll', () => {
+      if (page.element !== getActiveSection() || scrollFrame) return;
+
+      scrollFrame = window.requestAnimationFrame(() => {
+        scrollFrame = 0;
+        updateIndicatorVisibility(page.element);
+      });
+    }, { passive: true });
+  });
+
+  sectionLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      if (link.matches('[data-mobile-prev], [data-mobile-next]')) return;
+
+      const href = link.getAttribute('href');
+
+      if (!goToHash(href)) return;
+      event.preventDefault();
     });
   });
 
   prevButton?.addEventListener('click', (event) => {
     event.preventDefault();
-    goToPage(activeIndex - 1);
+    setActiveIndex(activeIndex - 1);
   });
 
-  nextButton.addEventListener('click', (event) => {
+  nextButton?.addEventListener('click', (event) => {
     event.preventDefault();
-    goToPage(activeIndex + 1);
+    setActiveIndex(activeIndex + 1);
   });
 
-  document.addEventListener('touchstart', (event) => {
-    if (!mobileQuery.matches || event.touches.length !== 1) return;
+  document.addEventListener('keydown', (event) => {
+    if (isEditableTarget(event.target) || isInteractiveTarget(event.target)) return;
 
-    touchStartX = event.touches[0].clientX;
-    touchStartY = event.touches[0].clientY;
-    touchEndX = touchStartX;
-    touchEndY = touchStartY;
-  }, { passive: true });
+    const scrollKeys = new Set([
+      ' ',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight',
+      'PageUp',
+      'PageDown',
+      'Home',
+      'End',
+    ]);
 
-  document.addEventListener('touchmove', (event) => {
-    if (!mobileQuery.matches || event.touches.length !== 1) return;
-
-    touchEndX = event.touches[0].clientX;
-    touchEndY = event.touches[0].clientY;
-  }, { passive: true });
-
-  document.addEventListener('touchend', () => {
-    if (!mobileQuery.matches) return;
-
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-    const isHorizontalSwipe = Math.abs(deltaX) > 58 && Math.abs(deltaX) > Math.abs(deltaY) * 1.35;
-
-    if (!isHorizontalSwipe) return;
-
-    if (deltaX < 0) {
-      goToPage(activeIndex + 1);
-    } else {
-      goToPage(activeIndex - 1);
+    if (scrollKeys.has(event.key)) {
+      event.preventDefault();
+      scrollActiveSection(event.key, event.shiftKey);
     }
-  }, { passive: true });
+  }, true);
 
-  window.addEventListener('resize', enableMobileMode);
-  mobileQuery.addEventListener?.('change', enableMobileMode);
+  window.addEventListener('popstate', () => {
+    if (!goToHash(window.location.hash, { skipHash: true })) {
+      setActiveIndex(0, { skipHash: true });
+    }
+  });
 
-  enableMobileMode();
+  if (!goToHash(window.location.hash, { skipHash: true })) {
+    history.replaceState({ section: 'home' }, '', '#home');
+    setActiveIndex(0, { skipHash: true });
+  }
 })();
